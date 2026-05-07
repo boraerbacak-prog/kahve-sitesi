@@ -110,8 +110,9 @@ const questions: {
       const list = mapped.map((p: any) =>
         `[${p.name}]({url}/urunler/${p.slug}) — ${p.price.toLocaleString("tr-TR")}₺/kg`.replace("{url}", SITE_URL)
       ).join("\n");
-      const equipName = equip === "general" ? "ekipmanınız" : equip;
-      return `${equipName} için önerdiğim kahveler:\n\n${list}\n\nDetaylı öneri için [Kahveni Bul]({url}/damak-testi) testini yapabilirsiniz.`.replace(/\{url\}/g, SITE_URL);
+      const equipNames: Record<string, string> = { "v60": "V60", "french-press": "French Press", "moka": "Moka Pot", "aeropress": "Aeropress", "cezve": "Cezve", "cold-brew": "Soğuk Demleme", "general": "ekipmanınız" };
+      const equipName = equipNames[equip] || equip;
+      return `**${equipName}** için önerdiğim kahveler:\n\n${list}\n\nDetaylı öneri için [Kahveni Bul]({url}/damak-testi) testini yapabilirsiniz.`.replace(/\{url\}/g, SITE_URL);
     },
   },
   {
