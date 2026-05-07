@@ -13,7 +13,7 @@ export default function AIBaristaPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Merhaba! ☕ Ben Kahveci'nin AI Baristasıyım. Size hangi kahveyi önerebilirim? Damak tadınızı anlatın, size en uygun kahveyi bulayım!",
+      content: "Merhaba! ☕ Ben Rostello'nun Dijital Baristasıyım. Size hangi kahveyi önerebilirim? Damak tadınızı anlatın, size en uygun kahveyi bulayım!",
     },
   ]);
   const [input, setInput] = useState("");
@@ -64,59 +64,65 @@ export default function AIBaristaPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <div className="text-center mb-8">
-        <span className="text-6xl block mb-4">🤖☕</span>
-        <h1 className="text-3xl font-bold text-amber-900">AI Barista</h1>
-        <p className="text-amber-600 mt-2">Kahve uzmanı yapay zekamıza istediğinizi sorun</p>
+    <div className="max-w-4xl mx-auto px-6 py-24">
+      <div className="text-center mb-12">
+        <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Dijital Barista</span>
+        <h1 className="text-4xl sm:text-5xl font-bold text-[#1a1a1a] mt-3 mb-4">Yapay Zeka ile Kahve Keşfi</h1>
+        <p className="text-[#4a4a4a] max-w-lg mx-auto">
+          Damak tadınıza en uygun kahveyi bulmak için kişisel baristanızla konuşun.
+        </p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-amber-100 overflow-hidden">
+      <div className="bg-white border border-[#e5e0d8] overflow-hidden">
         <div className="h-[500px] overflow-y-auto p-6 space-y-4">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
               <div
-                className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                className={`max-w-[80%] px-5 py-3 ${
                   msg.role === "user"
-                    ? "bg-amber-600 text-white rounded-br-md"
-                    : "bg-amber-50 text-amber-900 rounded-bl-md"
+                    ? "bg-[#f8f6f3] text-[#1a1a1a] border border-[#e5e0d8]"
+                    : "bg-[#1a1a1a] text-white"
                 }`}
               >
-                <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
               </div>
             </div>
           ))}
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-amber-50 rounded-2xl rounded-bl-md px-4 py-3">
-                <p className="text-amber-600">☕ Düşünüyor...</p>
+              <div className="bg-[#1a1a1a] px-5 py-3">
+                <div className="flex gap-1">
+                  <div className="w-2 h-2 bg-[#C4724B] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                  <div className="w-2 h-2 bg-[#C4724B] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                  <div className="w-2 h-2 bg-[#C4724B] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                </div>
               </div>
             </div>
           )}
           <div ref={bottomRef} />
         </div>
 
-        <div className="border-t border-amber-100 p-4">
-          <div className="flex gap-2">
+        <div className="border-t border-[#e5e0d8] p-6">
+          <div className="flex gap-3">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Kahve tercihlerinizi anlatın..."
-              className="flex-1 border border-amber-200 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900"
+              className="flex-1 border border-[#e5e0d8] px-5 py-3 text-sm focus:outline-none focus:border-[#C4724B] text-[#1a1a1a] bg-white"
               disabled={loading}
             />
             <button
               onClick={handleSend}
               disabled={loading || !input.trim()}
-              className="bg-amber-600 hover:bg-amber-500 disabled:bg-amber-300 text-white px-6 py-2 rounded-full font-medium transition"
+              className="bg-[#C4724B] hover:bg-[#B0603A] disabled:bg-[#E8C4A0] text-white px-8 py-3 text-sm font-medium tracking-wide uppercase transition"
             >
               Gönder
             </button>
           </div>
           {!session && (
-            <p className="text-xs text-amber-500 mt-2 text-center">
+            <p className="text-xs text-[#8c8c8c] mt-3 text-center">
               Sohbet geçmişi için giriş yapın. Giriş yapmadan da kullanabilirsiniz.
             </p>
           )}
