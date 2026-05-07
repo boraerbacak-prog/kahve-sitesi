@@ -12,10 +12,12 @@ interface Message {
 const suggestions = [
   "Bana kahve öner",
   "Hangi kahve sütlü içecekler için uygun?",
+  "Kahveni Bul testini yap",
   "Abonelik paketlerini anlat",
   "V60 nasıl demlenir?",
   "Kurumsal alım yapmak istiyorum",
   "Siparişim ne zaman gelir?",
+  "Ekipman önerir misin?",
 ];
 
 function formatContent(content: string) {

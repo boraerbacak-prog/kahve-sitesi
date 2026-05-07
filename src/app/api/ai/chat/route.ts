@@ -133,6 +133,39 @@ const questions: {
     },
   },
   {
+    patterns: [/v60.*kahve/i, /french.*press.*kahve/i, /ekipman.*öner/i, /hangi.*ekipman/i, /ekipman.*hangi/i, /moka.*kahve/i, /aeropress.*kahve/i, /cezve.*kahve/i, /filtre.*makine.*kahve/i],
+    response: (msg, products) => {
+      let equip = "";
+      if (msg.includes("v60")) equip = "v60";
+      else if (msg.includes("french") || msg.includes("press")) equip = "french-press";
+      else if (msg.includes("moka")) equip = "moka";
+      else if (msg.includes("aeropress")) equip = "aeropress";
+      else if (msg.includes("cezve")) equip = "cezve";
+      else if (msg.includes("soğuk") || msg.includes("cold")) equip = "cold-brew";
+      else equip = "general";
+
+      const mapped = products.filter((p: any) => {
+        const r = p.roastLevel || "";
+        if (equip === "v60") return r === "light" || r === "medium";
+        if (equip === "french-press") return r === "medium" || r === "dark";
+        if (equip === "moka") return r === "medium" || r === "dark";
+        if (equip === "aeropress") return true;
+        if (equip === "cezve") return r === "medium" || r === "dark";
+        if (equip === "cold-brew") return r === "medium" || r === "dark";
+        return true;
+      }).slice(0, 3);
+
+      if (mapped.length === 0) {
+        return "Size uygun kahve önerebilmem için hangi ekipmanı kullandığınızı söyler misiniz? (V60, French Press, Moka Pot, Aeropress, Cezve, Soğuk Demleme vb.)";
+      }
+      const list = mapped.map((p: any) =>
+        `[${p.name}]({url}/urunler/${p.slug}) — ${p.price.toLocaleString("tr-TR")}₺/kg`.replace("{url}", SITE_URL)
+      ).join("\n");
+      const equipName = equip === "general" ? "ekipmanınız" : equip;
+      return `${equipName} için önerdiğim kahveler:\n\n${list}\n\nDetaylı öneri için [Kahveni Bul]({url}/damak-testi) testini yapabilirsiniz.`.replace(/\{url\}/g, SITE_URL);
+    },
+  },
+  {
     patterns: [/ekipman/i, /alet/i, /malzeme/i, /terazi/i, /kettle/i, /değirmen/i, /kahve makinesi/i],
     response: () =>
       `Ekipmanlarımız:\n\n• [V60 Dripper]({url}/ekipmanlar) — 350 ₺\n• [French Press]({url}/ekipmanlar) — 450 ₺\n• [Aeropress]({url}/ekipmanlar) — 750 ₺\n• [Dijital Terazi]({url}/ekipmanlar) — 890 ₺\n• [Su Isıtıcı]({url}/ekipmanlar) — 1.290 ₺\n• [El Değirmeni]({url}/ekipmanlar) — 1.590 ₺\n\nTüm ekipmanlar için [sayfamızı]({url}/ekipmanlar) ziyaret edin.`.replace(/\{url\}/g, SITE_URL),
@@ -163,9 +196,9 @@ const questions: {
       `Blogumuzda kahve kültürü, demleme teknikleri ve sektör trendleri hakkında yazılar bulabilirsiniz:\n\n[Blog sayfamızı ziyaret edin]({url}/blog)`.replace("{url}", SITE_URL),
   },
   {
-    patterns: [/damak test/i, /test/i, /profil/i, /keşfet/i],
+    patterns: [/kahveni bul/i, /kahvemi bul/i, /test/i, /profil/i, /keşfet/i, /bul/i],
     response: () =>
-      "Damak testi şu anda geliştirme aşamasında. Ama şimdiden size özel öneriler yapabilirim! Kahveyi nasıl içmeyi seversiniz? Sütlü mü, sade mi? Meyvemsi notalar mı, çikolatalı mı?",
+      "Kahveni Bul testi ile size en uygun kahveyi bulalım! 🎯\n\nBirkaç soruyla damak tadınıza ve kullandığınız ekipmana göre özel öneriler sunuyorum.\n\nHemen başlamak için [Kahveni Bul]({url}/damak-testi) sayfasını ziyaret edin.\n\nYa da doğrudan bana sorun:\n• Kahveyi nasıl içersiniz? (sütlü/sade/soğuk)\n• Hangi ekipmanı kullanıyorsunuz?\n• Hangi lezzetleri seversiniz?".replace("{url}", SITE_URL),
   },
   {
     patterns: [/hangi/i, /fark/i, /n[/i]ye/i, /neden/i, /nasıl/i, /ne demek/i, /specialty/i, /arabica/i, /robusta/i],

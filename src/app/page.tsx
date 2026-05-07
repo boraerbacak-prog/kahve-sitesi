@@ -41,7 +41,7 @@ export default function Home() {
                   href="/damak-testi"
                   className="border border-[#C4724B]/30 hover:border-[#C4724B]/60 text-white/80 hover:text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition"
                 >
-                  Damak Testi
+                  Kahveni Bul
                 </Link>
               </div>
             </div>
@@ -63,12 +63,12 @@ export default function Home() {
           <div>
             <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Keşif</span>
             <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mt-3 mb-6 leading-tight">
-              Damak Testi ile<br />
+              Kahveni Bul ile<br />
               <span className="text-[#C4724B]">Kahve Profilinizi</span> Oluşturun
             </h2>
             <p className="text-[#4a4a4a] leading-relaxed mb-8">
-              Birkaç soruyla damak tadınızı analiz ediyor, size özel kahve önerileri sunuyoruz. 
-              Sevdiğiniz tat profillerini keşfedin ve kahve yolculuğunuzda bir sonraki adımı bulun.
+              Birkaç soruyla damak tadınızı analiz ediyor, ekipmanınıza göre kahve önerileri sunuyoruz.
+              Kahve profilinizi keşfedin ve size en uygun kahveyi bulun.
             </p>
             <Link
               href="/damak-testi"
@@ -207,7 +207,7 @@ export default function Home() {
               <h4 className="text-sm font-semibold tracking-wider uppercase mb-4 text-[#C4724B]">Keşfet</h4>
               <div className="flex flex-col gap-2">
                 <Link href="/ai-barista" className="text-sm text-white/50 hover:text-white transition">Dijital Barista</Link>
-                <Link href="/damak-testi" className="text-sm text-white/50 hover:text-white transition">Damak Testi</Link>
+                <Link href="/damak-testi" className="text-sm text-white/50 hover:text-white transition">Kahveni Bul</Link>
                 <Link href="/demleme" className="text-sm text-white/50 hover:text-white transition">Demleme Yöntemleri</Link>
                 <Link href="/abonelik" className="text-sm text-white/50 hover:text-white transition">Abonelik</Link>
                 <Link href="/blog" className="text-sm text-white/50 hover:text-white transition">Blog</Link>

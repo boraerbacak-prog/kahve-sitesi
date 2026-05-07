@@ -14,7 +14,7 @@ const menuItems = [
       { label: "Ekipmanlar", href: "/ekipmanlar" },
     ],
   },
-  { label: "Damak Testi", href: "/damak-testi" },
+  { label: "Kahveni Bul", href: "/damak-testi" },
   { label: "Demleme Yöntemleri", href: "/demleme" },
   { label: "Abonelik", href: "/abonelik" },
   { label: "B2B", href: "/b2b" },
