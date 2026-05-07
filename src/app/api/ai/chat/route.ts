@@ -260,14 +260,22 @@ function hasOpenAIKey(): boolean {
 }
 
 export async function POST(req: Request) {
+  let message = "";
+  let threadId: string | null = null;
+  try {
+    const body = await req.json();
+    message = body.message || "";
+    threadId = body.threadId || null;
+  } catch {
+    return NextResponse.json({ error: "Geçersiz istek" }, { status: 400 });
+  }
+  if (!message) {
+    return NextResponse.json({ error: "Mesaj gerekli" }, { status: 400 });
+  }
+
   try {
     let session: any = null;
     try { session = await auth(); } catch {}
-    const { message, threadId } = await req.json();
-
-    if (!message) {
-      return NextResponse.json({ error: "Mesaj gerekli" }, { status: 400 });
-    }
 
     let products: any[] = [];
     try {
@@ -375,10 +383,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ reply, threadId: currentThreadId });
   } catch (error: any) {
-    console.error("AI error:", error);
+    console.error("AI chat error:", error?.message || error, "Message was:", message);
     let fallbackReply = "Üzgünüm, bir teknik aksaklık yaşıyorum. Lütfen biraz sonra tekrar dener misiniz? ☕";
     try {
-      fallbackReply = await getFallbackReply("merhaba", []);
+      fallbackReply = await getFallbackReply(message || "merhaba", []);
     } catch {}
     return NextResponse.json({ reply: fallbackReply, threadId: null });
   }
