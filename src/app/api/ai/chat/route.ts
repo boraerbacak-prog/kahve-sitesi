@@ -163,7 +163,7 @@ const questions: {
     },
   },
   {
-    patterns: [/günde.*kaç/i, /kaç fincan/i, /günlük.*tüketim/i, /haftada.*kaç/i, /ayda.*kaç/i, /ne kadar.*iç/i],
+    patterns: [/günde/i, /kaç fincan/i, /fincan.*iç/i, /günlük.*tüketim/i, /haftada.*kaç/i, /ayda.*kaç/i, /ne kadar.*iç/i],
     response: (msg) => {
       const lm = msg.toLowerCase();
       if (lm.includes("1") || lm.includes("bir")) return `Günde 1 fincan için **Başlangıç** (199 ₺/ay) paketi yeterli. Ayda 1 paket (250g) taze kavrum kahve, ücretsiz kargo. Düzenli kahve keyfi için ideal! ☕\n\nDetaylı bilgi: [Abonelik]({url}/abonelik)`.replace("{url}", SITE_URL);
