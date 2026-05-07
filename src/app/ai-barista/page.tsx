@@ -206,32 +206,6 @@ export default function AIBaristaPage() {
         </div>
       </div>
 
-      {/* FAQ */}
-      <section className="max-w-3xl mx-auto px-6 pb-24">
-        <div className="text-center mb-12">
-          <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">SSS</span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#1a1a1a] mt-2">Sıkça Sorulan Sorular</h2>
-        </div>
-        <div className="space-y-3">
-          {[
-            { q: "Hangi kahveyi almalıyım?", a: "Damak tadınıza bağlı! Sütlü içecekler için orta/koyu kavrum, sade içim için hafif/orta kavrum öneririz. [Kahveni Bul](/damak-testi) testimizle size en uygun kahveyi bulabilirsiniz." },
-            { q: "Abonelik nasıl işliyor?", a: "3 paket seçeneğimiz var: Başlangıç (199₺, 1 paket/ay), Keyif (379₺, 2 paket/ay), Gurme (549₺, 3 paket/ay). Her ay taze kavrulmuş kahve kapınızda. Dilediğiniz zaman iptal edebilirsiniz." },
-            { q: "Ne kadar sürede kargolanıyor?", a: "Tüm siparişler 24 saat içinde kavrulup kargoya verilir. Aboneliklerde ücretsiz kargo, diğer siparişlerde belirli tutar üzeri ücretsiz." },
-            { q: "Kahvemi nasıl saklamalıyım?", a: "Hava geçirmez bir kapta, serin ve karanlık bir yerde saklayın. Buzdolabında saklamayın! Kavrumdan sonra 2-4 hafta içinde tüketmenizi öneririz." },
-            { q: "Hangi demleme yöntemi bana uygun?", a: "Pratik bir çözüm istiyorsanız French Press veya Aeropress, aromatik bir deneyim istiyorsanız V60, yoğun kahve için Moka Pot veya espresso makinesi öneririz." },
-            { q: "Kurumsal alım yapabilir miyim?", a: "Evet! Kafe, restoran, ofis ve oteller için özel çözümlerimiz var. Detaylı bilgi için [B2B](/b2b) sayfamızı ziyaret edin." },
-            { q: "Specialty coffee nedir?", a: "Specialty coffee, 80 üzeri puan almış, tek köken ve izlenebilir çekirdeklerdir. Rostello'da hem specialty hem de standart segmentte kahveler sunuyoruz." },
-          ].map((faq) => (
-            <details key={faq.q} className="bg-white border border-[#e5e0d8] group">
-              <summary className="px-6 py-4 cursor-pointer text-sm font-semibold text-[#1a1a1a] hover:text-[#C4724B] transition flex items-center justify-between list-none [&::-webkit-details-marker]:hidden">
-                {faq.q}
-                <svg className="w-4 h-4 text-[#8c8c8c] group-open:rotate-180 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-              </summary>
-              <div className="px-6 pb-4 text-sm text-[#4a4a4a] leading-relaxed [&_a]:text-[#C4724B] [&_a]:underline">{formatContent(faq.a)}</div>
-            </details>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }

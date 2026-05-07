@@ -58,6 +58,26 @@ function fmtProd(p: any): string {
   return `${plink(p.name, p.slug, p.price)}${n ? " | " + n : ""}`;
 }
 
+const faqAnswers: Record<string, string> = {
+  "nasıl sakla": "Kahvenizi hava geçirmez bir kapta, serin ve karanlık bir yerde saklayın. Buzdolabında saklamayın! Kavrumdan sonra 2-4 hafta içinde tüketmenizi öneririz.",
+  "saklama": "Kahvenizi hava geçirmez bir kapta, serin ve karanlık bir yerde saklayın. Buzdolabında saklamayın! Kavrumdan sonra 2-4 hafta içinde tüketmenizi öneririz.",
+  "ne kadar gider": "Taze kavrum kahve, kavrumdan sonra 2-4 hafta içinde en iyi lezzetini korur. Hava geçirmez kapta saklarsanız bu süre uzayabilir.",
+  "son kullanma": "Taze kavrum kahve, kavrumdan sonra 2-4 hafta içinde en iyi lezzetini korur. Hava geçirmez kapta saklarsanız bu süre uzayabilir.",
+  "hangi kahve": "Damak tadınıza bağlı! Sütlü içecekler için orta/koyu kavrum, sade içim için hafif/orta kavrum öneririz. [Kahveni Bul]({url}/damak-testi) testimizle size en uygun kahveyi bulabilirsiniz.",
+  "önerir misin": "Size nasıl bir kahve lazım? Sütlü mü, sade mi? Meyvemsi mi, çikolatalı mı? Hangi ekipmanı kullanıyorsunuz? Biraz detay verirseniz size özel öneri yapayım! Ya da [Kahveni Bul]({url}/damak-testi) testimizi çözün.",
+  "hangi yöntem": "Pratik bir çözüm istiyorsanız French Press veya Aeropress, aromatik bir deneyim istiyorsanız V60, yoğun kahve için Moka Pot veya espresso makinesi öneririz.",
+  "nasıl demle": "Hangi ekipmanı kullanıyorsunuz? V60, French Press, Moka Pot, Aeropress... Her yöntemin detaylı anlatımı için [Demleme Rehberi]({url}/demleme) sayfamıza göz atabilirsiniz.",
+  "kurumsal": "Evet! Kafe, restoran, ofis ve oteller için özel çözümlerimiz var. Detaylı bilgi için [B2B]({url}/b2b) sayfamızı ziyaret edin veya info@rostello.com adresine yazın.",
+  "toptan": "Evet! Kafe, restoran, ofis ve oteller için özel çözümlerimiz var. Detaylı bilgi için [B2B]({url}/b2b) sayfamızı ziyaret edin veya info@rostello.com adresine yazın.",
+  "specialty": "Specialty coffee, 80 üzeri puan almış, tek köken ve izlenebilir çekirdeklerdir. Rostello'da hem specialty hem de standart segmentte kahveler sunuyoruz. [Specialty kahvelerimizi inceleyin]({url}/urunler).",
+  "ne demek": "Specialty coffee: 80+ puanlı, tek köken, izlenebilir çekirdek. Arabica daha aromatik, Robusta daha kafeinli. Tek köken tek bölgeden, harman farklı bölgelerin karışımıdır.",
+  "iade": "Paket açılmamış ürünlerde 14 gün içinde iade yapabilirsiniz. İade için sipariş numaranızla info@rostello.com adresine e-posta göndermeniz yeterli.",
+  "değişim": "Paket açılmamış ürünlerde 14 gün içinde iade/değişim yapabilirsiniz. Detaylar için info@rostello.com adresine yazın.",
+  "kargo": "Tüm siparişler 24 saat içinde kavrulup kargoya verilir. Aboneliklerde ve belirli tutar üzeri siparişlerde kargo ücretsizdir.",
+  "ücretsiz kargo": "Aboneliklerde ve belirli tutar üzeri siparişlerde kargo ücretsizdir. 24 saat içinde kavrulup kargoya verilir.",
+  "ne zaman gelir": "Siparişiniz 24 saat içinde kavrulup kargoya verilir. Ortalama teslimat süresi 2-4 iş günüdür. Kesin takip için sipariş numaranızı paylaşın.",
+};
+
 const questions: {
   patterns: RegExp[];
   response: (msg: string, products: any[]) => string | null;
@@ -66,6 +86,26 @@ const questions: {
     patterns: [/merhaba/i, /selam/i, /hey/i, /günaydın/i, /iyi günler/i],
     response: () =>
       "Merhaba! ☕ Ben **Rostello'nun Baş Baristası**. Size nasıl yardımcı olabilirim?\n\nKahve önerisi için:\n• [Kahveni Bul]({url}/damak-testi) testimizi çözün\n• Ya da bana kahve tercihlerinizi anlatın\n\nÖrneğin: *\"Sütlü kahve önerir misin?\"* ya da *\"Meyvemsi bir şey arıyorum\"*\n\nAşağıdaki konularda da bilgi verebilirim:\n[Demleme]({url}/demleme) · [Abonelik]({url}/abonelik) · [B2B]({url}/b2b)".replace(/\{url\}/g, SITE_URL),
+  },
+  {
+    patterns: [/nasıl sakla/i, /saklama/i, /raf ömrü/i, /ne kadar gider/i, /son kullanma/i, /tazelik/i, /taze.*kal/i],
+    response: () => `Kahve saklama önerileri:\n\n${faqAnswers["nasıl sakla"]}\n\n[Tüm kahveler]({url}/urunler) · [Abonelik]({url}/abonelik)`.replace(/\{url\}/g, SITE_URL),
+  },
+  {
+    patterns: [/hangi yöntem/i, /nasıl demle/i, /demleme.*öner/i, /hangi.*demle/i],
+    response: () => `${faqAnswers["hangi yöntem"]}\n\nDetaylı anlatım: [Demleme Rehberi]({url}/demleme)`.replace(/\{url\}/g, SITE_URL),
+  },
+  {
+    patterns: [/kargo/i, /ücretsiz kargo/i, /ne zaman gelir/i, /kaç günde/i, /teslimat/i, /gönderim/i],
+    response: () => `Kargo ve teslimat:\n\n${faqAnswers["kargo"]}\n\n${faqAnswers["ne zaman gelir"]}`,
+  },
+  {
+    patterns: [/iade/i, /değişim/i, /para iade/i, /geri gönder/i],
+    response: () => `İade politikamız:\n\n${faqAnswers["iade"]}`,
+  },
+  {
+    patterns: [/specialty/i, /ne demek.*specialty/i, /özel kahve/i, /kalite/i, /puan/i],
+    response: () => faqAnswers["specialty"].replace(/\{url\}/g, SITE_URL),
   },
   {
     patterns: [/nasılsın/i, /naber/i, /naptın/i],
