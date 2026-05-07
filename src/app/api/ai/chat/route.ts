@@ -81,6 +81,39 @@ const questions: {
     },
   },
   {
+    patterns: [/v60.*kahve/i, /french.*press.*kahve/i, /ekipman.*öner/i, /hangi.*ekipman/i, /ekipman.*hangi/i, /moka.*kahve/i, /aeropress.*kahve/i, /cezve.*kahve/i, /filtre.*makine.*kahve/i],
+    response: (msg, products) => {
+      let equip = "";
+      if (msg.includes("v60")) equip = "v60";
+      else if (msg.includes("french") || msg.includes("press")) equip = "french-press";
+      else if (msg.includes("moka")) equip = "moka";
+      else if (msg.includes("aeropress")) equip = "aeropress";
+      else if (msg.includes("cezve")) equip = "cezve";
+      else if (msg.includes("soğuk") || msg.includes("cold")) equip = "cold-brew";
+      else equip = "general";
+
+      const mapped = products.filter((p: any) => {
+        const r = p.roastLevel || "";
+        if (equip === "v60") return r === "light" || r === "medium";
+        if (equip === "french-press") return r === "medium" || r === "dark";
+        if (equip === "moka") return r === "medium" || r === "dark";
+        if (equip === "aeropress") return true;
+        if (equip === "cezve") return r === "medium" || r === "dark";
+        if (equip === "cold-brew") return r === "medium" || r === "dark";
+        return true;
+      }).slice(0, 3);
+
+      if (mapped.length === 0) {
+        return "Size uygun kahve önerebilmem için hangi ekipmanı kullandığınızı söyler misiniz? (V60, French Press, Moka Pot, Aeropress, Cezve, Soğuk Demleme vb.)";
+      }
+      const list = mapped.map((p: any) =>
+        `[${p.name}]({url}/urunler/${p.slug}) — ${p.price.toLocaleString("tr-TR")}₺/kg`.replace("{url}", SITE_URL)
+      ).join("\n");
+      const equipName = equip === "general" ? "ekipmanınız" : equip;
+      return `${equipName} için önerdiğim kahveler:\n\n${list}\n\nDetaylı öneri için [Kahveni Bul]({url}/damak-testi) testini yapabilirsiniz.`.replace(/\{url\}/g, SITE_URL);
+    },
+  },
+  {
     patterns: [/ürün/i, /kahve.*ön/i, /tavsiye/i, /öner/i, /hangisini/i, /seç/i, /ne al/i, /karar/i],
     response: (_msg, products) => {
       const featured = products.filter((p: any) => p.featured).slice(0, 4);
@@ -130,39 +163,6 @@ const questions: {
         `**${m.name}** — ${m.desc.split(".")[0]}.`
       ).join("\n");
       return `Demleme yöntemlerimiz:\n\n${list}\n\nHangisiyle ilgileniyorsunuz? Detaylı anlatım için [Demleme Rehberi]({url}/demleme) sayfamıza bakabilirsiniz.`.replace("{url}", SITE_URL);
-    },
-  },
-  {
-    patterns: [/v60.*kahve/i, /french.*press.*kahve/i, /ekipman.*öner/i, /hangi.*ekipman/i, /ekipman.*hangi/i, /moka.*kahve/i, /aeropress.*kahve/i, /cezve.*kahve/i, /filtre.*makine.*kahve/i],
-    response: (msg, products) => {
-      let equip = "";
-      if (msg.includes("v60")) equip = "v60";
-      else if (msg.includes("french") || msg.includes("press")) equip = "french-press";
-      else if (msg.includes("moka")) equip = "moka";
-      else if (msg.includes("aeropress")) equip = "aeropress";
-      else if (msg.includes("cezve")) equip = "cezve";
-      else if (msg.includes("soğuk") || msg.includes("cold")) equip = "cold-brew";
-      else equip = "general";
-
-      const mapped = products.filter((p: any) => {
-        const r = p.roastLevel || "";
-        if (equip === "v60") return r === "light" || r === "medium";
-        if (equip === "french-press") return r === "medium" || r === "dark";
-        if (equip === "moka") return r === "medium" || r === "dark";
-        if (equip === "aeropress") return true;
-        if (equip === "cezve") return r === "medium" || r === "dark";
-        if (equip === "cold-brew") return r === "medium" || r === "dark";
-        return true;
-      }).slice(0, 3);
-
-      if (mapped.length === 0) {
-        return "Size uygun kahve önerebilmem için hangi ekipmanı kullandığınızı söyler misiniz? (V60, French Press, Moka Pot, Aeropress, Cezve, Soğuk Demleme vb.)";
-      }
-      const list = mapped.map((p: any) =>
-        `[${p.name}]({url}/urunler/${p.slug}) — ${p.price.toLocaleString("tr-TR")}₺/kg`.replace("{url}", SITE_URL)
-      ).join("\n");
-      const equipName = equip === "general" ? "ekipmanınız" : equip;
-      return `${equipName} için önerdiğim kahveler:\n\n${list}\n\nDetaylı öneri için [Kahveni Bul]({url}/damak-testi) testini yapabilirsiniz.`.replace(/\{url\}/g, SITE_URL);
     },
   },
   {
