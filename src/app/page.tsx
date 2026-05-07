@@ -2,6 +2,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 
+function getProductImage(slug: string): string {
+  const imageMap: Record<string, string> = {
+    "ethiopia-sidamo-g2": "Gemini_Generated_Image_445e1s445e1s445e",
+    "ethiopia-sidamo-g4": "Gemini_Generated_Image_c7t8k5c7t8k5c7t8",
+    "ethiopia-lekempt-g4": "Gemini_Generated_Image_dvivc9dvivc9dviv",
+    "guatemala-shb-18-sc": "Gemini_Generated_Image_g74yvng74yvng74y",
+    "colombia-supremo-18-sc": "Gemini_Generated_Image_u229vnu229vnu229",
+    "brasil-mogiana": "Gemini_Generated_Image_v621nbv621nbv621",
+    "ethiopia-yirga-koke-honey-g1": "Gemini_Generated_Image_jwubysjwubysjwub",
+    "colombia-la-roca-pink-bourbon": "Gemini_Generated_Image_vzulafvzulafvzul",
+  };
+  const key = imageMap[slug];
+  return key ? `/products/${key}.png` : "/products/rostello.png";
+}
+
 export default async function Home() {
   const products = await prisma.product.findMany({
     where: { published: true, featured: true },
@@ -62,11 +77,15 @@ export default async function Home() {
               href={`/urunler/${product.slug}`}
               className="group bg-white p-6 flex flex-col"
             >
-              <div className="aspect-[4/5] bg-[#f8f6f3] mb-6 flex items-center justify-center overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-[#f8f6f3] to-[#ede8e0]">
-                  <span className="text-7xl group-hover:scale-110 transition-transform duration-500">☕</span>
-                </div>
-              </div>
+            <div className="aspect-[4/5] bg-[#f8f6f3] mb-6 flex items-center justify-center overflow-hidden">
+              <Image
+                src={getProductImage(product.slug)}
+                alt={product.name}
+                width={400}
+                height={500}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
               <div className="flex-1">
                 <span className="text-xs text-[#c8a77b] tracking-wider uppercase">{product.category.name}</span>
                 <h3 className="text-lg font-semibold text-[#1a1a1a] mt-1 group-hover:text-[#c8a77b] transition">
@@ -77,7 +96,7 @@ export default async function Home() {
                 )}
               </div>
               <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#e5e0d8]">
-                <span className="text-lg font-bold text-[#1a1a1a]">{product.price.toFixed(2)} ₺</span>
+                <span className="text-lg font-bold text-[#1a1a1a]">{product.price.toLocaleString("tr-TR")} ₺</span>
                 <span className="text-xs text-[#1a1a1a] group-hover:text-[#c8a77b] transition font-medium uppercase tracking-wider">
                   İncele →
                 </span>

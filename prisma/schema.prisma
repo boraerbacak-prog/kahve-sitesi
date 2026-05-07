@@ -40,8 +40,17 @@ model Product {
   images      String     @default("[]") // JSON array
   stock       Int        @default(0)
   weight      Int?       // gram cinsinden
-  origin      String?    // çekirdek menşei
+  origin      String?    // çekirdek menşei (ülke)
+  region      String?    // bölge (örn: Guji, Sidamo, Bugisu)
+  altitude    String?    // rakım (örn: 1700-2200m)
+  process     String?    // işleme yöntemi (Washed, Natural, Honey)
+  variety     String?    // tür/cins (Arabica, Robusta)
+  grade       String?    // kalite sınıfı (AA, G1, SHB, Supremo)
   roastLevel  String?    // light, medium, dark
+  flavorNotes String?    // JSON array tat notları
+  body        String?    // gövde (Full, Medium, Light)
+  acidity     String?    // asidite (High, Medium, Low)
+  segment     String?    // standart, specialty, blend
   featured    Boolean    @default(false)
   published   Boolean    @default(false)
   createdAt   DateTime   @default(now())
@@ -49,9 +58,9 @@ model Product {
 
   categoryId String
   category   Category   @relation(fields: [categoryId], references: [id])
-  cartItems  CartItem[]
-  orderItems OrderItem[]
-  reviews    Review[]
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  reviews     Review[]
 }
 
 model CartItem {

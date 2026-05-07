@@ -23,7 +23,7 @@ export default function AddToCartButton({ productId }: { productId: string }) {
   return (
     <button
       onClick={handleAdd}
-      className="mt-6 w-full bg-amber-600 hover:bg-amber-500 text-white py-3 px-6 rounded-full font-semibold transition"
+      className="mt-6 w-full bg-[#1a1a1a] hover:bg-[#333] text-white py-4 px-6 text-sm font-medium tracking-wide uppercase transition"
     >
       Sepete Ekle
     </button>
