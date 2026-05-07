@@ -198,18 +198,25 @@ async function getFallbackReply(msg: string, products: any[]): Promise<string> {
     }
   }
 
-  const allProducts = products.map((p: any) =>
-    `[${p.name}]({url}/urunler/${p.slug})`.replace("{url}", SITE_URL)
-  );
-  const sample = allProducts.slice(0, 5).join("\n");
+  if (products.length > 0) {
+    const allProducts = products.map((p: any) =>
+      `[${p.name}]({url}/urunler/${p.slug})`.replace("{url}", SITE_URL)
+    );
+    const sample = allProducts.slice(0, 5).join("\n");
 
-  const fallbacks = [
-    `Harika bir soru! Size en iyi şekilde yardımcı olmak için biraz daha bilgi verebilir misiniz?\n\nKahveyi nasıl içmeyi seversiniz?\n• Sütlü mü, sade mi?\n• Meyvemsi notalar mı, çikolatalı mı?\n• Hafif mi, sert mi?\n\nYa da aşağıdaki konulardan birini seçebilirsiniz:\n[Ürünler]({url}/urunler) · [Abonelik]({url}/abonelik) · [Demleme]({url}/demleme) · [B2B]({url}/b2b)`.replace(/\{url\}/g, SITE_URL),
-    `Anladım. Size daha iyi yardımcı olabilmem için birkaç sorum var:\n\nKahveyi hangi amaçla kullanacaksınız?\n• Günlük içim\n• Özel günler için\n• Hediye\n• Ofis / iş yeri\n\n[Ürünlerimize]({url}/urunler) göz atabilir veya bana biraz daha detay verebilirsiniz.`.replace(/\{url\}/g, SITE_URL),
-    `Öne çıkan ürünlerimizden bazıları:\n\n${sample}\n\nBunlardan herhangi biri ilginizi çekti mi? Ya da size özel bir öneri yapmamı ister misiniz?`,
+    const fallbacks = [
+      `Size en iyi şekilde yardımcı olmak için biraz daha bilgi verebilir misiniz?\n\nKahveyi nasıl içmeyi seversiniz?\n• Sütlü mü, sade mi?\n• Meyvemsi notalar mı, çikolatalı mı?\n• Hafif mi, sert mi?\n\nYa da aşağıdaki konulardan birini seçebilirsiniz:\n[Ürünler]({url}/urunler) · [Abonelik]({url}/abonelik) · [Demleme]({url}/demleme) · [B2B]({url}/b2b)`.replace(/\{url\}/g, SITE_URL),
+      `Anladım. Size daha iyi yardımcı olabilmem için bir sorum var:\n\nKahveyi hangi amaçla kullanacaksınız?\n• Günlük içim\n• Özel günler için\n• Hediye\n• Ofis / iş yeri\n\n[Ürünlerimize]({url}/urunler) göz atabilir veya bana biraz daha detay verebilirsiniz.`.replace(/\{url\}/g, SITE_URL),
+      `Öne çıkan ürünlerimizden bazıları:\n\n${sample}\n\nBunlardan herhangi biri ilginizi çekti mi? Ya da size özel bir öneri yapmamı ister misiniz?`,
+    ];
+    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+  }
+
+  const noDbFallbacks = [
+    `Harika bir soru! Size yardımcı olmak için şu konularda bilgi verebilirim:\n\n☕ [Tüm Kahveler]({url}/urunler)\n☕ [Demleme Yöntemleri]({url}/demleme)\n📦 [Abonelik]({url}/abonelik)\n🏢 [B2B]({url}/b2b)\n📝 [Blog]({url}/blog)\n\nHangi konuda bilgi almak istersiniz?`.replace(/\{url\}/g, SITE_URL),
+    `Rostello'ya hoş geldiniz! ☕\n\nSize nasıl yardımcı olabilirim?\n\n• **Kahve önerisi** için kahveyi nasıl içmeyi sevdiğinizi anlatın\n• **Demleme tüyoları** için yöntem adını söyleyin\n• **Abonelik** için paket bilgisi vereyim\n• **Kurumsal** için B2B çözümlerimizi anlatayım`,
   ];
-
-  return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+  return noDbFallbacks[Math.floor(Math.random() * noDbFallbacks.length)];
 }
 
 function hasOpenAIKey(): boolean {
@@ -226,15 +233,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Mesaj gerekli" }, { status: 400 });
     }
 
-    const products = await prisma.product.findMany({
-      where: { published: true },
-      include: { category: true },
-    });
+    let products: any[] = [];
+    try {
+      products = await prisma.product.findMany({
+        where: { published: true },
+        include: { category: true },
+      });
+    } catch (dbError) {
+      console.error("DB error in AI chat:", dbError);
+    }
 
     let reply: string;
     let currentThreadId = threadId;
 
-    if (hasOpenAIKey()) {
+    if (hasOpenAIKey() && products.length > 0) {
       const { OpenAI } = await import("openai");
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -328,9 +340,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ reply, threadId: currentThreadId });
   } catch (error: any) {
     console.error("AI error:", error);
-    return NextResponse.json(
-      { error: "AI servisi şu an çalışmıyor.", reply: "Üzgünüm, bir teknik aksaklık yaşıyorum. Lütfen biraz sonra tekrar dener misiniz? ☕" },
-      { status: 200 }
-    );
+    if (!hasOpenAIKey()) {
+      return NextResponse.json({
+        reply: `Merhaba! ☕ Ben **Rostello'nun Baş Baristası**. Size nasıl yardımcı olabilirim?\n\nKahve önerisi, demleme tüyoları, abonelik veya [ürünlerimiz]({url}/urunler) hakkında bilgi alabilirsiniz.`.replace("{url}", SITE_URL),
+        threadId: null,
+      });
+    }
+    return NextResponse.json({
+      reply: "Üzgünüm, bir teknik aksaklık yaşıyorum. Lütfen biraz sonra tekrar dener misiniz? ☕",
+      threadId: null,
+    });
   }
 }
