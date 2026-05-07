@@ -20,7 +20,7 @@ function fmt(content: string) {
   const parts = content.split(/(\[[^\]]+\]\([^)]+\))/g);
   return parts.map((part, i) => {
     const m = part.match(/\[([^\]]+)\]\(([^)]+)\)/);
-    if (m) return <a key={i} href={m[2]} target="_blank" rel="noopener noreferrer" className="text-[#C4724B] underline hover:text-[#B0603A] transition">{m[1]}</a>;
+    if (m) return <a key={i} href={m[2]} className="text-[#C4724B] underline hover:text-[#B0603A] transition">{m[1]}</a>;
     return <span key={i}>{part}</span>;
   });
 }

@@ -146,16 +146,20 @@ const questions: {
     },
   },
   {
-    patterns: [/v60.*kahve/i, /french.*press.*kahve/i, /ekipman.*öner/i, /hangi.*ekipman/i, /ekipman.*hangi/i, /moka.*kahve/i, /aeropress.*kahve/i, /cezve.*kahve/i, /filtre.*makine.*kahve/i],
+    patterns: [/v60.*kahve/i, /french.*press.*kahve/i, /ekipman.*öner/i, /hangi.*ekipman/i, /ekipman.*hangi/i, /moka.*kahve/i, /aeropress.*kahve/i, /cezve.*kahve/i, /filtre.*makine.*kahve/i, /espresso.*kahve/i],
     response: (msg, products) => {
       const lm = msg.toLowerCase();
-      const equipMap: Record<string, string> = { v60: "v60", french: "french-press", press: "french-press", moka: "moka", aeropress: "aeropress", cezve: "cezve", soğuk: "cold-brew", cold: "cold-brew" };
+      const equipMap: Record<string, string> = { v60: "v60", french: "french-press", press: "french-press", espresso: "espresso", moka: "moka", aeropress: "aeropress", cezve: "cezve", soğuk: "cold-brew", cold: "cold-brew", filtre: "filter" };
       let equip = "general";
       for (const [key, val] of Object.entries(equipMap)) { if (lm.includes(key)) { equip = val; break; } }
+      if (equip === "general") {
+        return "Hangi ekipmanı kullanıyorsunuz? ☕\n\nSize uygun kahveyi önerebilmem için hangi yöntemle demlediğinizi söyleyin:\n\n• **V60** — Hafif, aromatik filtre kahve\n• **French Press** — Dolgun gövdeli, zengin tat\n• **Espresso Makinesi** — Yoğun ve konsantre\n• **Moka Pot** — İtalyan usulü sert kahve\n• **Aeropress** — Pratik ve hızlı\n• **Cezve** — Geleneksel Türk kahvesi\n• **Filtre Makine** — Otomatik damlama\n• **Soğuk Demleme** — Soğuk suda 12-24 saat\n\nYa da [Kahveni Bul]({url}/damak-testi) testimizi çözün!".replace(/\{url\}/g, SITE_URL);
+      }
       const mapped = products.filter((p: any) => {
         const r = p.roastLevel || "";
-        if (equip === "v60") return r === "light" || r === "medium";
+        if (equip === "v60" || equip === "filter") return r === "light" || r === "medium";
         if (equip === "french-press") return r === "medium" || r === "dark";
+        if (equip === "espresso") return r === "medium" || r === "dark";
         if (equip === "moka") return r === "medium" || r === "dark";
         if (equip === "aeropress") return true;
         if (equip === "cezve") return r === "medium" || r === "dark";
@@ -164,7 +168,7 @@ const questions: {
       }).slice(0, 4);
       if (mapped.length === 0) return null;
       const list = mapped.map(fmtProd).join("\n");
-      const equipNames: Record<string, string> = { v60: "V60", "french-press": "French Press", moka: "Moka Pot", aeropress: "Aeropress", cezve: "Cezve", "cold-brew": "Soğuk Demleme", general: "ekipmanınız" };
+      const equipNames: Record<string, string> = { v60: "V60", "french-press": "French Press", espresso: "Espresso", moka: "Moka Pot", aeropress: "Aeropress", cezve: "Cezve", "cold-brew": "Soğuk Demleme", filter: "Filtre Makine" };
       return `**${equipNames[equip]}** için önerdiğim kahveler:\n\n${list}\n\n📍 [Kahveni Bul]({url}/damak-testi) testiyle daha kişisel öneriler alın.`.replace(/\{url\}/g, SITE_URL);
     },
   },

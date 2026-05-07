@@ -29,8 +29,6 @@ function formatContent(content: string) {
         <a
           key={i}
           href={match[2]}
-          target="_blank"
-          rel="noopener noreferrer"
           className="text-[#C4724B] underline hover:text-[#B0603A] transition"
         >
           {match[1]}
