@@ -129,6 +129,29 @@ const questions: {
     },
   },
   {
+    patterns: [/kahveni bul/i, /test/i, /profil/i, /bul/i],
+    response: () =>
+      "Kahveni Bul testi ile size en uygun kahveyi bulalım! 🎯\n\nBirkaç soruyla damak tadınıza ve ekipmanınıza göre özel öneriler.\n\n[Hemen başlayın →]({url}/damak-testi)\n\nYa da bana şunları söyleyin:\n• **Sütlü** mü içersiniz?\n• **Sade/Siyah** mı tercih edersiniz?\n• Hangi **ekipmanı** kullanıyorsunuz?\n• **Meyvemsi** mi, **çikolatalı** mı?".replace(/\{url\}/g, SITE_URL),
+  },
+  {
+    patterns: [/soğuk/i, /cold brew/i, /iced/i, /buzlu/i, /soğuk.*kahve/i],
+    response: (_msg, products) => {
+      const suitable = products.filter((p: any) => p.roastLevel === "medium" || p.roastLevel === "dark");
+      if (suitable.length === 0) return null;
+      const list = suitable.slice(0, 3).map(fmtProd).join("\n");
+      return `Soğuk kahve severler için öneriler 🧊\n\n${list}\n\nBu kahveler soğuk demleme için ideal. Dilerseniz [soğuk demleme rehberimize]({url}/demleme) de göz atın.`.replace(/\{url\}/g, SITE_URL);
+    },
+  },
+  {
+    patterns: [/specialty/i, /tek köken/i, /özel üretim/i, /single origin/i],
+    response: (_msg, products) => {
+      const suitable = products.filter((p: any) => p.category?.name === "Specialty");
+      if (suitable.length === 0) return null;
+      const list = suitable.slice(0, 4).map(fmtProd).join("\n");
+      return `Specialty kahvelerimiz ☕🏆\n\n${list}\n\nSpecialty coffee, 80+ puan almış, tek köken, izlenebilir çekirdeklerdir.\n[Tüm specialty kahveler]({url}/urunler) · [Kahveni Bul]({url}/damak-testi)`.replace(/\{url\}/g, SITE_URL);
+    },
+  },
+  {
     patterns: [/öner/i, /tavsiye/i, /seç/i, /ne al/i, /karar/i, /ürün/i, /hangisini/i, /kahve.*ön/i, /kahve/i],
     response: (_msg, products) => {
       const featured = products.filter((p: any) => p.featured).slice(0, 4);
@@ -137,13 +160,6 @@ const questions: {
         return `Öne çıkan kahvelerimiz:\n\n${list}\n\nHangisi ilginizi çekti? Size daha iyi yardımcı olabilmem için hangi tür kahve aradığınızı seçin:\n\n🥛 **Sütlü** içerim — latte, cappuccino\n⚫ **Sade** içerim — filtre, espresso\n🧊 **Soğuk** severim — cold brew\n🌸 **Meyvemsi** — çiçeksi, hafif\n🍫 **Çikolatalı** — dolgun, sert\n🧪 **Specialty** — tek köken, özel üretim`;
       }
       return `Size nasıl bir kahve lazım? 🤔\n\n🥛 **Sütlü mü?** Latte, cappuccino için uygun kahveler\n⚫ **Sade/Siyah mı?** Filtre, espresso için ideal seçenekler\n🧊 **Soğuk mu?** Cold brew, iced latte için\n🌸 **Meyvemsi mi?** Çiçeksi, hafif kavrumlar\n🍫 **Çikolatalı mı?** Dolgun, sert kavrumlar\n🔬 **Specialty mi?** Tek köken, özel üretimler\n\nYa da [Kahveni Bul]({url}/damak-testi) testimizi çözün, size en uygun kahveyi bulalım! 🎯`.replace(/\{url\}/g, SITE_URL);
-    },
-  },
-  {
-    patterns: [/abonelik/i, /üyelik/i, /her ay/i, /düzenli/i, /paket/i, /abone/i],
-    response: () => {
-      const list = subscriptions.map((s) => `**${s.name}** (${s.price} ₺/ay): ${s.desc}`).join("\n");
-      return `Abonelik paketlerimiz:\n\n${list}\n\n**Biraz daha bilgi verir misiniz?** 🤔\n\n☕ Günde kaç fincan kahve içiyorsunuz?\n• 1 fincan — **Başlangıç** paketi yeterli\n• 2-3 fincan — **Keyif** paketi ideal\n• 3+ fincan — **Gurme** paketi önerilir\n\n🔄 Yeni lezzetler dener misiniz?\n• **Evet** — Her ay farklı çekirdek gönderiyoruz\n• **Hayır** — Sürekli aynı kahveyi alabilirsiniz\n\nTüm paketlerde dilediğiniz zaman iptal hakkınız var.\n[Abonelik sayfamız]({url}/abonelik) — [Bize yazın](mailto:info@rostello.com)`.replace(/\{url\}/g, SITE_URL);
     },
   },
   {
@@ -162,6 +178,13 @@ const questions: {
       `Harika! Yeni lezzetlere açık olmanız çok güzel. 🎉 **Abonelik** paketlerimizde her ay farklı bir çekirdek gönderiyoruz, böylece sürekli yeni tatlar keşfediyorsunuz.\n\n[Abonelik]({url}/abonelik) · [Tüm kahveler]({url}/urunler)`.replace(/\{url\}/g, SITE_URL),
       `Mükemmel! O zaman **Keyif** veya **Gurme** abonelik paketlerimiz size göre. Her ay farklı bir çekirdek, taze kavrulmuş ve kapınıza kadar ücretsiz kargo.\n\n[Abonelik]({url}/abonelik) sayfamıza göz atın!`.replace(/\{url\}/g, SITE_URL),
     ][Math.floor(Math.random() * 2)],
+  },
+  {
+    patterns: [/abonelik/i, /üyelik/i, /her ay/i, /düzenli/i, /paket/i, /abone/i],
+    response: () => {
+      const list = subscriptions.map((s) => `**${s.name}** (${s.price} ₺/ay): ${s.desc}`).join("\n");
+      return `Abonelik paketlerimiz:\n\n${list}\n\n**Biraz daha bilgi verir misiniz?** 🤔\n\n☕ Günde kaç fincan kahve içiyorsunuz?\n• 1 fincan — **Başlangıç** paketi yeterli\n• 2-3 fincan — **Keyif** paketi ideal\n• 3+ fincan — **Gurme** paketi önerilir\n\n🔄 Yeni lezzetler dener misiniz?\n• **Evet** — Her ay farklı çekirdek gönderiyoruz\n• **Hayır** — Sürekli aynı kahveyi alabilirsiniz\n\nTüm paketlerde dilediğiniz zaman iptal hakkınız var.\n[Abonelik sayfamız]({url}/abonelik) — [Bize yazın](mailto:info@rostello.com)`.replace(/\{url\}/g, SITE_URL);
+    },
   },
   {
     patterns: [/b2b/i, /kurumsal/i, /toptan/i, /iş birliği/i, /cafe/i, /restoran/i, /otel/i, /ofis/i, /perakende/i],
@@ -216,29 +239,6 @@ const questions: {
     patterns: [/blog/i, /yazı/i, /makale/i, /içerik/i],
     response: () =>
       `Blogumuzda kahve kültürü, demleme teknikleri ve sektör trendleri hakkında yazılar bulabilirsiniz:\n\n[Blog]({url}/blog)`.replace("{url}", SITE_URL),
-  },
-  {
-    patterns: [/kahveni bul/i, /test/i, /profil/i, /bul/i],
-    response: () =>
-      "Kahveni Bul testi ile size en uygun kahveyi bulalım! 🎯\n\nBirkaç soruyla damak tadınıza ve ekipmanınıza göre özel öneriler.\n\n[Hemen başlayın →]({url}/damak-testi)\n\nYa da bana şunları söyleyin:\n• **Sütlü** mü içersiniz?\n• **Sade/Siyah** mı tercih edersiniz?\n• Hangi **ekipmanı** kullanıyorsunuz?\n• **Meyvemsi** mi, **çikolatalı** mı?".replace(/\{url\}/g, SITE_URL),
-  },
-  {
-    patterns: [/soğuk/i, /cold brew/i, /iced/i, /buzlu/i, /soğuk.*kahve/i],
-    response: (_msg, products) => {
-      const suitable = products.filter((p: any) => p.roastLevel === "medium" || p.roastLevel === "dark");
-      if (suitable.length === 0) return null;
-      const list = suitable.slice(0, 3).map(fmtProd).join("\n");
-      return `Soğuk kahve severler için öneriler 🧊\n\n${list}\n\nBu kahveler soğuk demleme için ideal. Dilerseniz [soğuk demleme rehberimize]({url}/demleme) de göz atın.`.replace(/\{url\}/g, SITE_URL);
-    },
-  },
-  {
-    patterns: [/specialty/i, /tek köken/i, /özel üretim/i, /single origin/i],
-    response: (_msg, products) => {
-      const suitable = products.filter((p: any) => p.category?.name === "Specialty");
-      if (suitable.length === 0) return null;
-      const list = suitable.slice(0, 4).map(fmtProd).join("\n");
-      return `Specialty kahvelerimiz ☕🏆\n\n${list}\n\nSpecialty coffee, 80+ puan almış, tek köken, izlenebilir çekirdeklerdir.\n[Tüm specialty kahveler]({url}/urunler) · [Kahveni Bul]({url}/damak-testi)`.replace(/\{url\}/g, SITE_URL);
-    },
   },
   {
     patterns: [/hangi/i, /fark/i, /n[/i]ye/i, /neden/i, /nasıl/i, /ne demek/i, /arabica/i, /robusta/i],
