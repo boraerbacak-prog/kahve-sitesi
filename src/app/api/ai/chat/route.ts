@@ -83,13 +83,14 @@ const questions: {
   {
     patterns: [/v60.*kahve/i, /french.*press.*kahve/i, /ekipman.*öner/i, /hangi.*ekipman/i, /ekipman.*hangi/i, /moka.*kahve/i, /aeropress.*kahve/i, /cezve.*kahve/i, /filtre.*makine.*kahve/i],
     response: (msg, products) => {
+      const lm = msg.toLowerCase();
       let equip = "";
-      if (msg.includes("v60")) equip = "v60";
-      else if (msg.includes("french") || msg.includes("press")) equip = "french-press";
-      else if (msg.includes("moka")) equip = "moka";
-      else if (msg.includes("aeropress")) equip = "aeropress";
-      else if (msg.includes("cezve")) equip = "cezve";
-      else if (msg.includes("soğuk") || msg.includes("cold")) equip = "cold-brew";
+      if (lm.includes("v60")) equip = "v60";
+      else if (lm.includes("french") || lm.includes("press")) equip = "french-press";
+      else if (lm.includes("moka")) equip = "moka";
+      else if (lm.includes("aeropress")) equip = "aeropress";
+      else if (lm.includes("cezve")) equip = "cezve";
+      else if (lm.includes("soğuk") || lm.includes("cold")) equip = "cold-brew";
       else equip = "general";
 
       const mapped = products.filter((p: any) => {
