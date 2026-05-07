@@ -301,7 +301,7 @@ const questions: {
 ];
 
 async function getFallbackReply(msg: string, products: any[]): Promise<string> {
-  const lower = msg.toLowerCase();
+  const lower = msg.replace(/İ/g, "i").toLowerCase();
 
   for (const q of questions) {
     const match = q.patterns.some((p) => p.test(lower));
