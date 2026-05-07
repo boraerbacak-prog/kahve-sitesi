@@ -157,21 +157,20 @@ export default function AIBaristaPage() {
           </div>
 
           {/* Suggestions */}
-          {messages.length <= 2 && (
-            <div className="px-6 pb-2">
-              <div className="flex flex-wrap gap-2">
-                {suggestions.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => handleSend(s)}
-                    className="text-xs border border-[#e5e0d8] px-3 py-1.5 text-[#4a4a4a] hover:border-[#C4724B] hover:text-[#C4724B] transition"
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
+          <div className="px-6 pb-2">
+            <div className="flex flex-wrap gap-2">
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => handleSend(s)}
+                  disabled={loading}
+                  className="text-xs border border-[#e5e0d8] px-3 py-1.5 text-[#4a4a4a] hover:border-[#C4724B] hover:text-[#C4724B] transition disabled:opacity-40"
+                >
+                  {s}
+                </button>
+              ))}
             </div>
-          )}
+          </div>
 
           {/* Input */}
           <div className="border-t border-[#e5e0d8] p-6">

@@ -226,7 +226,8 @@ function hasOpenAIKey(): boolean {
 
 export async function POST(req: Request) {
   try {
-    const session = await auth();
+    let session: any = null;
+    try { session = await auth(); } catch {}
     const { message, threadId } = await req.json();
 
     if (!message) {
@@ -340,15 +341,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ reply, threadId: currentThreadId });
   } catch (error: any) {
     console.error("AI error:", error);
-    if (!hasOpenAIKey()) {
-      return NextResponse.json({
-        reply: `Merhaba! ☕ Ben **Rostello'nun Baş Baristası**. Size nasıl yardımcı olabilirim?\n\nKahve önerisi, demleme tüyoları, abonelik veya [ürünlerimiz]({url}/urunler) hakkında bilgi alabilirsiniz.`.replace("{url}", SITE_URL),
-        threadId: null,
-      });
-    }
-    return NextResponse.json({
-      reply: "Üzgünüm, bir teknik aksaklık yaşıyorum. Lütfen biraz sonra tekrar dener misiniz? ☕",
-      threadId: null,
-    });
+    let fallbackReply = "Üzgünüm, bir teknik aksaklık yaşıyorum. Lütfen biraz sonra tekrar dener misiniz? ☕";
+    try {
+      fallbackReply = await getFallbackReply("merhaba", []);
+    } catch {}
+    return NextResponse.json({ reply: fallbackReply, threadId: null });
   }
 }
