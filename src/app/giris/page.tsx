@@ -15,19 +15,25 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-    if (result?.error) {
-      setError("E-posta veya şifre hatalı");
-      return;
+      if (result?.error) {
+        setError("E-posta veya şifre hatalı");
+        return;
+      }
+
+      if (result?.ok) {
+        router.push("/admin");
+        router.refresh();
+      }
+    } catch {
+      setError("Bir hata oluştu. Lütfen tekrar deneyin.");
     }
-
-    router.push("/admin");
-    router.refresh();
   };
 
   return (

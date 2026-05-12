@@ -1,24 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import CartPanel from "@/components/CartPanel";
-import Providers from "@/components/Providers";
 import FloatingBarista from "@/components/FloatingBarista";
+import Providers from "@/components/Providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
   title: "Rostello - Özel Kahve",
   description: "En taze özel kahve çekirdekleri, özenle kavrulur.",
+  icons: { icon: "/icon.svg" },
 };
 
 export default function RootLayout({
@@ -27,13 +25,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="tr" className={`${montserrat.variable}`}>
       <body className="min-h-screen flex flex-col bg-[#f8f6f3] text-[#1a1a1a]">
         <Providers>
           <Header />
           <CartPanel />
-          <main className="flex-1">{children}</main>
           <FloatingBarista />
+          <main className="flex-1">{children}</main>
+          <Footer />
         </Providers>
       </body>
     </html>

@@ -374,14 +374,40 @@ export async function POST(req: Request) {
         `- ${p.name} — ${p.origin || "Menşei bilinmiyor"} | ${p.category?.name || ""} | ${p.price.toLocaleString("tr-TR")}₺/kg | Kavrum: ${p.roastLevel === "light" ? "Hafif" : p.roastLevel === "medium" ? "Orta" : "Koyu"} | Detay: ${SITE_URL}/urunler/${p.slug}`
       ).join("\n");
 
+      let userSubInfo = "";
+      if (session?.user?.id) {
+        try {
+          const userSubs = await prisma.userSubscription.findMany({
+            where: { userId: session.user.id, status: { in: ["active", "paused"] } },
+            include: { plan: true, deliveries: { orderBy: { createdAt: "desc" }, take: 1 } },
+          });
+          if (userSubs.length > 0) {
+            userSubInfo = "\n\nKullanıcının Abonelik Durumu:\n" + userSubs.map((s) =>
+              `- ${s.plan.name} (${s.plan.price}₺/ay) — Durum: ${s.status}` +
+              `${s.equipment ? ", Ekipman: " + s.equipment : ""}` +
+              `${s.flavorProfile ? ", Lezzet Profili: " + s.flavorProfile : ""}` +
+              `${s.grindSetting ? ", Öğütme: " + s.grindSetting : ""}` +
+              `${s.deliveryFrequency ? ", Sıklık: " + s.deliveryFrequency : ""}` +
+              `${s.notes ? ", Notlar: " + s.notes : ""}`
+            ).join("\n");
+          }
+        } catch {}
+      }
+
       const SYSTEM_PROMPT = [
         `SEN ROSTELLO'NUN BAŞ BARISTASISIN.`,
         `KİŞİLİK: Kibar, uzman, tutkulu, çözüm odaklı. Satış temsilcisi değil, kahve rehberi gibi konuş. Türkçe konuş.`,
         `GÖREVLERİN:`,
         `1. MÜŞTERİ ANALİZİ: Kahveyi nasıl sevdiğini sor (sütlü/sert/meyvemsi/çikolatalı/soğuk).`,
         `2. KAHVE ÖNERİSİ: Katalogdaki ürünlere göre öner, link ver. 3-4 ürün öner.`,
-        `3. ABONELİK: Günlük tüketimini sor, paket öner.`,
+        `3. ABONELİK: Günlük tüketimini sor, paket öner. Kullanıcının aboneliği varsa yönetmesine yardım et (duraklat, iptal, profil güncelle).`,
         `4. SİTE HAKİMİYETİ: Demleme, abonelik, B2B, Kahveni Bul sayfalarına yönlendir.`,
+        `5. ABONELİK YÖNETİMİ: Kullanıcının aboneliğini yönetmesine yardımcı ol. Şunları yapabilir:` +
+        ` - Duraklatmak için "aboneliğimi duraklat" de`,
+        ` - İptal için "aboneliğimi iptal et" de`,
+        ` - Profil güncellemek için "ekipmanımı değiştir" veya "öğütme tercihimi değiştir" de`,
+        ` - Değerlendirme için "teslimatımı değerlendir" de`,
+        `KULLANICI ABONELİK YÖNETİMİ İÇİN ŞU SAYFAYA YÖNLENDİR: ${SITE_URL}/abonelik/yonetim`,
         `KISITLAMALAR: Her yanıtında yönlendirme linki olmalı. Rostello dışı markaları övme. Linklerde tam URL kullan.`,
         ``,
         `Site Sayfaları:`,
@@ -392,15 +418,18 @@ export async function POST(req: Request) {
         `- Kahveni Bul: ${SITE_URL}/damak-testi`,
         `- Demleme: ${SITE_URL}/demleme`,
         `- Abonelik: ${SITE_URL}/abonelik`,
+        `- Abonelik Yönetimi: ${SITE_URL}/abonelik/yonetim`,
         `- B2B: ${SITE_URL}/b2b`,
         `- Blog: ${SITE_URL}/blog`,
         `- Sepet: ${SITE_URL}/sepet`,
         ``,
-        `Abonelik: Başlangıç 199₺/ay (günde 1 fincan), Keyif 379₺/ay (günde 2-3 fincan), Gurme 549₺/ay (günde 3+ fincan).`,
+        `Abonelik: Başlangıç 199₺/ay (günde 1 fincan, 1 paket 250g), Keyif 379₺/ay (günde 2-3 fincan, 2 paket), Gurme 549₺/ay (günde 3+ fincan, 3 paket, specialty).`,
+        `Abonelik kişiselleştirme: Ekipmana göre kahve seçimi, öğütme derecesi, lezzet profili, teslimat sıklığı.`,
         `Sipariş: 24 saat içinde kavrulup kargoya verilir. 14 gün iade.`,
         ``,
         `Ürün Kataloğu:`,
         productCatalog,
+        userSubInfo,
       ].join("\n");
 
       const msgs: { role: "system" | "user" | "assistant"; content: string }[] = [

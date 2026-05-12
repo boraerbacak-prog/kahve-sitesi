@@ -46,7 +46,9 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-28 lg:h-36">
           <Link href="/" className="flex items-center gap-3 group shrink-0">
-            <Image src="/logo.png" alt="Rostello" width={1380} height={752} className="w-28 lg:w-52 h-auto" />
+            <div className="relative w-28 lg:w-52" style={{ aspectRatio: "1380/752" }}>
+              <Image src="/logo.png" alt="Rostello" fill className="object-contain object-left" />
+            </div>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">

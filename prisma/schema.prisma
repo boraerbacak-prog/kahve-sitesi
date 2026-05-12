@@ -16,10 +16,11 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  cartItems   CartItem[]
-  orders      Order[]
-  reviews     Review[]
-  chatThreads ChatThread[]
+  cartItems     CartItem[]
+  orders        Order[]
+  reviews       Review[]
+  chatThreads   ChatThread[]
+  subscriptions UserSubscription[]
 }
 
 model Category {
@@ -61,6 +62,7 @@ model Product {
   cartItems   CartItem[]
   orderItems  OrderItem[]
   reviews     Review[]
+  subscriptionDeliveryItems SubscriptionDeliveryItem[]
 }
 
 model CartItem {
@@ -139,4 +141,131 @@ model ChatMessage {
 
   threadId String
   thread   ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+}
+
+model SubscriptionPlan {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  description     String
+  price           Float
+  packageCount    Int      @default(1)
+  packageSize     Int      @default(250)
+  hasDiscovery    Boolean  @default(false)
+  hasSpecialty    Boolean  @default(false)
+  hasPriority     Boolean  @default(false)
+  discountPercent Int      @default(0)
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  stripePriceId   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  subscriptions UserSubscription[]
+}
+
+model UserSubscription {
+  id                  String   @id @default(cuid())
+  status              String   @default("active")
+  startDate           DateTime @default(now())
+  nextDelivery        DateTime?
+  pauseDate           DateTime?
+  cancelledDate       DateTime?
+  equipment           String?
+  grindSetting        String?
+  flavorProfile       String?
+  roastPreference     String?
+  deliveryFrequency   String   @default("monthly")
+  packageCount        Int?
+  notes               String?
+  stripeSubscriptionId String? @unique
+  stripeCustomerId    String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  userId      String
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId      String
+  plan        SubscriptionPlan    @relation(fields: [planId], references: [id])
+  deliveries  SubscriptionDelivery[]
+}
+
+model SubscriptionDelivery {
+  id             String   @id @default(cuid())
+  status         String   @default("pending")
+  roastDate      DateTime?
+  shipDate       DateTime?
+  deliveredDate  DateTime?
+  trackingNumber String?
+  trackingUrl    String?
+  packageCount   Int
+  notes          String?
+  rating         Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  subscriptionId String
+  subscription   UserSubscription          @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  items          SubscriptionDeliveryItem[]
+}
+
+model SubscriptionDeliveryItem {
+  id        String   @id @default(cuid())
+  quantity  Int      @default(1)
+
+  deliveryId  String
+  delivery    SubscriptionDelivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product              @relation(fields: [productId], references: [id])
+}
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+  group String @default("general")
+}
+
+model MenuItem {
+  id        String     @id @default(cuid())
+  label     String
+  href      String
+  parentId  String?
+  sortOrder Int        @default(0)
+  isVisible Boolean    @default(true)
+  icon      String?
+
+  parent   MenuItem?  @relation("MenuHierarchy", fields: [parentId], references: [id])
+  children MenuItem[] @relation("MenuHierarchy")
+}
+
+model CustomPage {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String
+  template  String   @default("default")
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HomepageBlock {
+  id        String   @id @default(cuid())
+  section   String   @default("hero")
+  blockType String   @default("hero-kahveni-bul") // hero-kahveni-bul, hero-barista, etc.
+  title     String   @default("")
+  subtitle  String   @default("")
+  content   String   @default("")
+  imageUrl  String   @default("")
+  imageSize String   @default("w-[420px] h-[420px] lg:w-[600px] lg:h-[600px]")
+  audioUrl  String   @default("")
+  linkUrl   String   @default("")
+  linkText  String   @default("")
+  badgeText String   @default("")
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  styles    String   @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -1,11 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
+import SectionAudio from "@/components/SectionAudio";
 
 interface Block {
   id: string; section: string; blockType: string;
   title: string; subtitle: string; content: string;
   imageUrl: string; imageSize: string;
+  audioUrl: string;
   linkUrl: string; linkText: string;
   badgeText: string; sortOrder: number;
   isActive: boolean; styles: string;
@@ -35,16 +37,18 @@ function FilmReel() {
   const items = [...productImages, ...productImages];
   return (
     <div className="flex flex-col items-center shrink-0 z-10">
-      <div className="relative overflow-hidden" style={{ height: "390px", width: "140px" }}>
-        <div className="absolute inset-x-0 top-0 h-10 z-10 bg-gradient-to-b from-[#f5f2ed] to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-10 z-10 bg-gradient-to-t from-[#f5f2ed] to-transparent" />
-        <div className="flex flex-col animate-scroll-down">
-          {items.map((src, i) => (
-            <div key={i} className="relative w-[140px] h-[130px] shrink-0">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#C4724B]/20 via-transparent to-[#D4A574]/10 z-10 pointer-events-none" />
-              <Image src={src} alt="" fill className="object-contain p-3" />
-            </div>
-          ))}
+      <div style={{ width: "168px", height: "468px" }}>
+        <div className="relative overflow-hidden" style={{ transform: "scale(1.2)", transformOrigin: "top left", width: "140px", height: "390px" }}>
+          <div className="absolute inset-x-0 top-0 h-10 z-10 bg-gradient-to-b from-[#f5f2ed] to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-10 z-10 bg-gradient-to-t from-[#f5f2ed] to-transparent" />
+          <div className="flex flex-col animate-scroll-down">
+            {items.map((src, i) => (
+              <div key={i} className="relative w-[140px] h-[130px] shrink-0">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#C4724B]/20 via-transparent to-[#D4A574]/10 z-10 pointer-events-none" />
+                <Image src={src} alt="" fill className="object-contain p-3" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       <div className="text-center mt-3">
@@ -58,8 +62,8 @@ function FilmReel() {
 function HeroKahveniBul({ block }: { block: Block }) {
   const s = parseStyles(block.styles);
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-      <div className={`relative ${block.imageSize || "w-[350px] h-[350px] lg:w-[450px] lg:h-[450px]"} shrink-0`}>
+    <div className="relative flex flex-col lg:flex-row items-center justify-between gap-6">
+      <div className={`relative ${block.imageSize || "w-[420px] h-[420px] lg:w-[540px] lg:h-[540px]"} shrink-0`}>
         <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#C4724B] to-[#D4A574] animate-pulse opacity-15" />
         <div className="relative w-full h-full rounded-full overflow-hidden animate-slow-spin">
           <Image src={block.imageUrl} alt="Kahveni Bul" fill className="object-contain" />
@@ -78,6 +82,7 @@ function HeroKahveniBul({ block }: { block: Block }) {
         )}
       </div>
       <FilmReel />
+      <SectionAudio src={block.audioUrl} />
     </div>
   );
 }

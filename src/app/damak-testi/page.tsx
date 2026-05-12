@@ -160,6 +160,12 @@ export default function KahveniBulPage() {
         <div className="text-center">
           <span className="text-6xl block mb-6 animate-pulse">☕</span>
           <p className="text-[#4a4a4a]">Hazırlanıyor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
     <div className="min-h-screen bg-[#f8f6f3]">
       {/* Hero */}
       <section className="bg-[#1a1a1a] py-20">
@@ -282,6 +288,12 @@ export default function KahveniBulPage() {
                 className="border border-[#1a1a1a] text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition"
               >
                 Tüm Ürünler
+              </Link>
+              <Link
+                href={`/abonelik?equipment=${answers.equipment || ""}&flavor=${answers.flavor || ""}&roast=${answers.roast || ""}`}
+                className="bg-[#C4724B] hover:bg-[#B0603A] text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition"
+              >
+                Abone Ol 🎯
               </Link>
               <Link
                 href="/ai-barista"

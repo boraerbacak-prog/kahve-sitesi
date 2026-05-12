@@ -119,6 +119,133 @@ async function main() {
   }
 
   console.log(`${products.length} ürün oluşturuldu`);
+
+  const plans = [
+    { name: "Başlangıç", slug: "baslangic", description: "Ayda 1 paket taze kahve. Yeni tatlar keşfetmek isteyenler için ideal.", price: 199, packageCount: 1, packageSize: 250, sortOrder: 1 },
+    { name: "Keyif", slug: "keyif", description: "Ayda 2 paket. Düzenli kahve tüketenler için en popüler seçenek.", price: 379, packageCount: 2, packageSize: 250, hasDiscovery: true, discountPercent: 5, sortOrder: 2 },
+    { name: "Gurme", slug: "gurme", description: "Ayda 3 paket. Gerçek kahve tutkunları için özel seçki.", price: 549, packageCount: 3, packageSize: 250, hasDiscovery: true, hasSpecialty: true, hasPriority: true, discountPercent: 10, sortOrder: 3 },
+  ];
+
+  for (const plan of plans) {
+    await prisma.subscriptionPlan.upsert({
+      where: { slug: plan.slug },
+      update: {},
+      create: plan,
+    });
+  }
+
+  console.log(`${plans.length} abonelik planı oluşturuldu`);
+
+  await prisma.menuItem.deleteMany({ where: { parentId: { not: null } } });
+  await prisma.menuItem.deleteMany();
+
+  const menuItems = [
+    { label: "Dijital Barista", href: "/ai-barista", sortOrder: 1 },
+    { label: "Kahveler", href: "/urunler", sortOrder: 2 },
+    { label: "Kahveni Bul", href: "/damak-testi", sortOrder: 3 },
+    { label: "Abonelik", href: "/abonelik", sortOrder: 4 },
+    { label: "Demleme", href: "/demleme", sortOrder: 5 },
+    { label: "Akademi", href: "/blog", sortOrder: 6 },
+    { label: "B2B", href: "/b2b", sortOrder: 7 },
+  ];
+
+  const created: Record<string, string> = {};
+  for (const item of menuItems) {
+    const m = await prisma.menuItem.create({ data: item });
+    created[item.label] = m.id;
+  }
+
+  const subs = [
+    { label: "Tüm Kahveler", href: "/urunler", parentLabel: "Kahveler", sortOrder: 1 },
+    { label: "İmza Ürünler", href: "/imza-urunler", parentLabel: "Kahveler", sortOrder: 2 },
+    { label: "Ekipmanlar", href: "/ekipmanlar", parentLabel: "Kahveler", sortOrder: 3 },
+  ];
+
+  for (const sub of subs) {
+    await prisma.menuItem.create({
+      data: { label: sub.label, href: sub.href, parentId: created[sub.parentLabel], sortOrder: sub.sortOrder },
+    });
+  }
+
+  const totalMenus = menuItems.length + subs.length;
+  console.log(`${totalMenus} menü öğesi oluşturuldu`);
+
+  const pages = [
+    {
+      title: "Hakkımızda",
+      slug: "hakkimizda",
+      content: "<p>Rostello, en taze özel kahve çekirdeklerini özenle seçip kavuran bir kahve markasıdır.</p><p>Kahve tutkunlarına sipariş üzerine kavrulmuş, en kaliteli çekirdekleri sunuyoruz.</p>",
+      published: true,
+    },
+    {
+      title: "İletişim",
+      slug: "iletisim",
+      content: "<p>Bize ulaşmak için:</p><ul><li>Email: info@rostello.com</li><li>Instagram: @rostello</li></ul>",
+      published: true,
+    },
+  ];
+
+  for (const page of pages) {
+    const existing = await prisma.customPage.findUnique({ where: { slug: page.slug } });
+    if (!existing) {
+      await prisma.customPage.create({ data: page });
+    }
+  }
+  console.log(`${pages.length} sayfa oluşturuldu`);
+
+  await prisma.homepageBlock.deleteMany();
+
+  const blocks = [
+    {
+      section: "hero",
+      blockType: "hero-heading",
+      title: "Kahvenizi <span class=\"animate-copper mx-2\">Yapay Zeka</span> ile Keşfedin",
+      subtitle: "",
+      content: "",
+      imageUrl: "",
+      imageSize: "",
+      linkUrl: "",
+      linkText: "",
+      badgeText: "",
+      sortOrder: 0,
+      styles: JSON.stringify({ textSize: "text-2xl sm:text-3xl lg:text-4xl", marginBottom: "mb-6" }),
+    },
+    {
+      section: "hero",
+      blockType: "hero-kahveni-bul",
+      title: "Kahveni Bul",
+      subtitle: "",
+      content: "Damak tadınıza uygun kahveyi bulmak için testi çözün, size özel kahve profilinizi oluşturun.",
+      imageUrl: "/celsus/kahveni-bul-carki.png",
+      imageSize: "w-[420px] h-[420px] lg:w-[600px] lg:h-[600px]",
+      linkUrl: "/damak-testi",
+      linkText: "Teste Başla →",
+      badgeText: "",
+      sortOrder: 1,
+      styles: JSON.stringify({ gap: "gap-8 lg:gap-12", titleSize: "text-3xl lg:text-4xl", contentSize: "text-base lg:text-lg", buttonSize: "px-8 py-4 text-sm" }),
+    },
+    {
+      section: "hero",
+      blockType: "hero-barista",
+      title: "Barista ile Konuş",
+      subtitle: "",
+      content: "Kahve önerileri, demleme tüyoları ve daha fazlası için yapay zeka baristanızla sohbet edin.",
+      imageUrl: "/celsus/dijital-barista.png",
+      imageSize: "w-20 h-20",
+      linkUrl: "/ai-barista",
+      linkText: "",
+      badgeText: "",
+      sortOrder: 2,
+      isActive: false,
+      styles: JSON.stringify({ cardStyle: "bg-white border-2 border-[#D4A574] hover:border-[#C4724B]" }),
+    },
+  ];
+
+  for (const block of blocks) {
+    await prisma.homepageBlock.create({ data: block });
+  }
+  console.log(`${blocks.length} ana sayfa bloğu oluşturuldu`);
+
   console.log("\nAdmin: admin@kahveci.com / admin123");
 }
 
