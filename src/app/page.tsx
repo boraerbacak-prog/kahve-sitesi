@@ -1,55 +1,158 @@
 import Link from "next/link";
 import Image from "next/image";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
+interface Block {
+  id: string; section: string; blockType: string;
+  title: string; subtitle: string; content: string;
+  imageUrl: string; imageSize: string;
+  linkUrl: string; linkText: string;
+  badgeText: string; sortOrder: number;
+  isActive: boolean; styles: string;
+}
+
+function parseStyles(s: string): Record<string, string> {
+  try { return JSON.parse(s); } catch { return {}; }
+}
+
+function HeroHeading({ block }: { block: Block }) {
+  const s = parseStyles(block.styles);
+  return (
+    <div className={s.marginBottom || "mb-6"}>
+      <h1 className={s.textSize || "text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1a1a1a] tracking-tight leading-tight"}
+        dangerouslySetInnerHTML={{ __html: block.title }} />
+    </div>
+  );
+}
+
+const productImages = [
+  "/celsus/urun/urun1.png",
+  "/celsus/urun/urun2.png",
+  "/celsus/urun/urun3.png",
+];
+
+function FilmReel() {
+  const items = [...productImages, ...productImages];
+  return (
+    <div className="flex flex-col items-center shrink-0 z-10">
+      <div className="relative overflow-hidden" style={{ height: "390px", width: "140px" }}>
+        <div className="absolute inset-x-0 top-0 h-10 z-10 bg-gradient-to-b from-[#f5f2ed] to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-10 z-10 bg-gradient-to-t from-[#f5f2ed] to-transparent" />
+        <div className="flex flex-col animate-scroll-down">
+          {items.map((src, i) => (
+            <div key={i} className="relative w-[140px] h-[130px] shrink-0">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#C4724B]/20 via-transparent to-[#D4A574]/10 z-10 pointer-events-none" />
+              <Image src={src} alt="" fill className="object-contain p-3" />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="text-center mt-3">
+        <p className="text-[10px] tracking-[0.15em] uppercase text-[#C4724B] font-semibold">Taze Kavurum</p>
+        <p className="text-[9px] tracking-[0.1em] uppercase text-[#8c8c8c] font-medium mt-0.5">Üstün Lezzet Deneyimi</p>
+      </div>
+    </div>
+  );
+}
+
+function HeroKahveniBul({ block }: { block: Block }) {
+  const s = parseStyles(block.styles);
+  return (
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+      <div className={`relative ${block.imageSize || "w-[350px] h-[350px] lg:w-[450px] lg:h-[450px]"} shrink-0`}>
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#C4724B] to-[#D4A574] animate-pulse opacity-15" />
+        <div className="relative w-full h-full rounded-full overflow-hidden animate-slow-spin">
+          <Image src={block.imageUrl} alt="Kahveni Bul" fill className="object-contain" />
+        </div>
+      </div>
+      <div className="flex-1 min-w-0 text-center lg:text-left px-4 z-10">
+        <span className={`block ${s.titleSize || "text-3xl lg:text-4xl"} font-bold text-[#1a1a1a] leading-tight`}>{block.title}</span>
+        <p className={`${s.contentSize || "text-base lg:text-lg"} text-[#4a4a4a] mt-3 leading-relaxed max-w-sm mx-auto lg:mx-0`}>
+          {block.content}
+        </p>
+        {block.linkUrl && (
+          <Link href={block.linkUrl}
+            className={`inline-flex items-center gap-2 bg-[#D4A574] hover:bg-[#C4724B] text-white ${s.buttonSize || "px-8 py-4 text-sm"} font-semibold tracking-wide uppercase transition mt-6`}>
+            {block.linkText}
+          </Link>
+        )}
+      </div>
+      <FilmReel />
+    </div>
+  );
+}
+
+function HeroBarista({ block }: { block: Block }) {
+  const s = parseStyles(block.styles);
+  return (
+    <Link href={block.linkUrl || "/ai-barista"}
+      className={`group relative ${s.cardStyle || "bg-white border-2 border-[#D4A574] hover:border-[#C4724B]"} px-10 py-8 transition-all duration-300 w-full hover:-translate-y-1 hover:shadow-xl`}>
+      <div className="flex items-center gap-6">
+        <div className={`relative ${block.imageSize || "w-20 h-20"} shrink-0`}>
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#D4A574] to-[#C4724B] animate-pulse opacity-30" />
+          <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-[#D4A574]/30 group-hover:border-[#C4724B]/50 transition-colors">
+            <Image src={block.imageUrl} alt="Barista" fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+          </div>
+        </div>
+        <div className="flex-1 min-w-0">
+          <span className="block text-lg font-bold text-[#1a1a1a] group-hover:text-[#C4724B] transition-colors">{block.title}</span>
+          <span className="text-sm text-[#666] mt-1 block leading-relaxed">{block.content}</span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+export default async function Home() {
+  const blocks = await prisma.homepageBlock.findMany({
+    where: { isActive: true, section: "hero" },
+    orderBy: { sortOrder: "asc" },
+  });
+
   return (
     <div>
-      {/* Hero - Dijital Barista */}
-      <section className="relative min-h-[90vh] bg-[#1a1a1a] flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#C4724B]/5 via-transparent to-transparent" />
-        <div className="absolute top-20 right-20 w-96 h-96 rounded-full bg-[#C4724B]/5 blur-3xl" />
-        <div className="absolute bottom-20 left-20 w-64 h-64 rounded-full bg-[#C4724B]/3 blur-3xl" />
+      <section className="relative min-h-[90vh] bg-[#f5f2ed] flex items-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#D4A574]/8 via-transparent to-[#C4724B]/5" />
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] rounded-full bg-gradient-to-bl from-[#D4A574]/8 via-[#C4724B]/3 to-transparent blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-[#C4724B]/8 via-transparent to-transparent blur-3xl" />
+        <div className="absolute top-1/4 left-1/3 w-24 h-24 rounded-full bg-[#D4A574]/10 blur-xl animate-pulse" />
+        <div className="absolute bottom-1/3 right-1/4 w-16 h-16 rounded-full bg-[#C4724B]/10 blur-xl animate-pulse" style={{ animationDelay: "1s" }} />
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMxYTFhMWEiIGZpbGwtb3BhY2l0eT0iMC4wNCI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMSIvPjwvZz48L2c+PC9zdmc+')]" />
         <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <Image src="/logo.png" alt="Rostello" width={48} height={48} className="rounded-full" />
-                <span className="text-sm tracking-[0.2em] uppercase text-[#C4724B] font-medium">Dijital Barista</span>
-              </div>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.1] mb-6">
-                Kahvenizi
-                <br />
-                <span className="animate-copper">Yapay Zeka</span>
-                <br />
-                ile Keşfedin
-              </h1>
-              <p className="text-lg text-white/60 mb-10 max-w-md leading-relaxed">
-                Rostello Dijital Barista, damak tadınıza en uygun kahveyi bulmanız için size rehberlik eder. 
-                Bir kahve sever olarak yolculuğunuzda yapay zeka destekli kişisel baristanız.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  href="/ai-barista"
-                  className="bg-[#C4724B] hover:bg-[#B0603A] text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition inline-flex items-center gap-2"
-                >
-                  Barista ile Konuş
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-                <Link
-                  href="/damak-testi"
-                  className="border border-[#C4724B]/30 hover:border-[#C4724B]/60 text-white/80 hover:text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition"
-                >
-                  Kahveni Bul
-                </Link>
-              </div>
-            </div>
-            <div className="hidden lg:flex items-center justify-center">
-              <div className="relative w-96 h-96">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#C4724B]/10 via-[#D4A574]/5 to-transparent animate-float" />
-                <div className="absolute inset-8 rounded-full bg-[#1a1a1a] border border-[#C4724B]/20 flex items-center justify-center">
-                  <Image src="/logo.png" alt="Rostello" width={160} height={160} className="rounded-full opacity-80" />
+          <div className="flex flex-col gap-6">
+            {blocks.map((block) => {
+              switch (block.blockType) {
+                case "hero-heading": return <HeroHeading key={block.id} block={block} />;
+                case "hero-kahveni-bul": return <HeroKahveniBul key={block.id} block={block} />;
+                case "hero-barista": return <HeroBarista key={block.id} block={block} />;
+                default: return null;
+              }
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Barista ile Konuş Section */}
+      <section className="relative bg-[#2c1810]">
+        <div className="relative w-full max-h-[80vh] overflow-hidden">
+          <Image src="/celsus/maskot/maskot2.jpg" alt="" width={1376} height={768} className="w-full h-auto" sizes="100vw" />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(15,9,6,0.95) 0%, rgba(15,9,6,0.85) 35%, rgba(26,15,10,0.3) 60%, transparent 100%)" }} />
+          <div className="absolute inset-0 flex items-center">
+            <div className="max-w-7xl mx-auto px-6 w-full">
+              <div className="max-w-lg">
+                <p className="text-xl sm:text-2xl lg:text-3xl text-white leading-relaxed font-medium drop-shadow-2xl [text-shadow:0_2px_8px_rgba(0,0,0,0.5)]">
+                  Kahve seçiminden demleme önerilerine, ekipman tavsiyelerinden sipariş süreçlerine kadar her an yanınızda olan kişisel kahve asistanınız.
+                </p>
+                <div className="mt-8">
+                  <Link href="/ai-barista"
+                    className="inline-flex items-center gap-2 text-white px-12 py-5 text-sm font-semibold tracking-wide uppercase transition-all duration-500 hover:brightness-110"
+                    style={{
+                      background: "linear-gradient(90deg, #C4724B, #E8C4A0, #C4724B)",
+                      backgroundSize: "200% auto",
+                      animation: "copper-shimmer 3s linear infinite",
+                    }}>
+                    Baristayı Aç →
+                  </Link>
                 </div>
               </div>
             </div>
@@ -57,65 +160,40 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Damak Testi Section */}
-      <section className="max-w-7xl mx-auto px-6 py-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Keşif</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mt-3 mb-6 leading-tight">
-              Kahveni Bul ile<br />
-              <span className="text-[#C4724B]">Kahve Profilinizi</span> Oluşturun
-            </h2>
-            <p className="text-[#4a4a4a] leading-relaxed mb-8">
-              Birkaç soruyla damak tadınızı analiz ediyor, ekipmanınıza göre kahve önerileri sunuyoruz.
-              Kahve profilinizi keşfedin ve size en uygun kahveyi bulun.
-            </p>
-            <Link
-              href="/damak-testi"
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#C4724B] hover:text-[#B0603A] transition border-b border-[#C4724B] pb-0.5"
-            >
-              Teste Başla →
-            </Link>
-          </div>
-          <div className="aspect-[4/3] bg-[#1a1a1a] flex items-center justify-center border border-[#C4724B]/10">
-            <span className="text-8xl">👅</span>
-          </div>
-        </div>
-      </section>
-
       {/* Demleme Teknikleri Section */}
-      <section className="bg-[#1a1a1a] py-32">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative bg-[#ebe7e0] py-32 overflow-hidden">
+        <div className="absolute inset-0">
+          <Image src="/celsus/demleme/demleme2.png" alt="" fill className="object-cover opacity-15" sizes="100vw" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#ebe7e0]/80 via-[#ebe7e0]/50 to-[#ebe7e0]/80" />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Rehber</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mt-3 mb-4">Demleme Yöntemleri</h2>
-            <p className="text-white/50 max-w-md mx-auto">
-              Doğru demleme tekniğiyle kahvenizden maksimum lezzeti alın.
-            </p>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1a1a1a] mt-3 mb-4">Demleme Yöntemleri</h2>
+            <p className="text-[#4a4a4a] max-w-lg mx-auto text-lg">Doğru demleme tekniğiyle kahvenizden maksimum lezzeti alın.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { emoji: "☕", title: "V60 Pour Over", desc: "Hafif ve aromatik filtre kahve için ideal." },
-              { emoji: "🫖", title: "French Press", desc: "Dolgun gövdeli, zengin tat profili." },
-              { emoji: "⚡", title: "Espresso", desc: "Yoğun ve konsantre, her yudumda lezzet." },
-              { emoji: "🧊", title: "Soğuk Demleme", desc: "Düşük asiditeli, yumuşak soğuk kahve." },
+              { title: "V60 Pour Over", desc: "Hafif ve aromatik filtre kahve için ideal." },
+              { title: "French Press", desc: "Dolgun gövdeli, zengin tat profili." },
+              { title: "Espresso", desc: "Yoğun ve konsantre, her yudumda lezzet." },
+              { title: "Soğuk Demleme", desc: "Düşük asiditeli, yumuşak soğuk kahve." },
             ].map((method) => (
-              <Link
-                key={method.title}
-                href="/demleme"
-                className="bg-white/5 border border-white/10 p-8 text-center group hover:bg-white/[0.08] hover:border-[#C4724B]/30 transition"
-              >
-                <span className="text-5xl block mb-6 group-hover:scale-110 transition-transform">{method.emoji}</span>
-                <h3 className="text-lg font-semibold text-white mb-2">{method.title}</h3>
-                <p className="text-sm text-white/50">{method.desc}</p>
+              <Link key={method.title} href="/demleme"
+                className="group bg-white border border-[#e5e0d8] p-8 text-center hover:border-[#C4724B]/30 transition-all hover:-translate-y-1 hover:shadow-lg">
+                <h3 className="text-xl font-bold text-[#1a1a1a] mb-2">{method.title}</h3>
+                <p className="text-sm text-[#666]">{method.desc}</p>
               </Link>
             ))}
           </div>
           <div className="text-center mt-12">
-            <Link
-              href="/demleme"
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#C4724B] hover:text-[#D4A574] transition border-b border-[#C4724B] pb-0.5"
-            >
+            <Link href="/demleme"
+              className="inline-flex items-center gap-2 text-white px-10 py-5 text-sm font-semibold tracking-wide uppercase transition-all duration-500 hover:brightness-110"
+              style={{
+                background: "linear-gradient(90deg, #C4724B, #E8C4A0, #C4724B)",
+                backgroundSize: "200% auto",
+                animation: "copper-shimmer 3s linear infinite",
+              }}>
               Tüm Yöntemleri İncele →
             </Link>
           </div>
@@ -123,111 +201,79 @@ export default function Home() {
       </section>
 
       {/* Abonelik Section */}
-      <section className="max-w-7xl mx-auto px-6 py-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="aspect-[4/3] bg-[#f8f6f3] flex items-center justify-center border border-[#e5e0d8] order-2 lg:order-1">
-            <span className="text-8xl">📦</span>
-          </div>
-          <div className="order-1 lg:order-2">
+      <section className="relative bg-[#f5f2ed] py-32">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
             <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Abonelik</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mt-3 mb-6 leading-tight">
-              Kahve Aboneliği ile<br />
-              <span className="text-[#C4724B]">Farkı Keşfedin</span>
-            </h2>
-            <p className="text-[#4a4a4a] leading-relaxed mb-8">
-              Her ay kapınıza gelen taze kavrulmuş kahveler. Size özel hazırlanan abonelik paketlerimizle 
-              kahve keyfinizi kesintisiz yaşayın. İstediğiniz zaman iptal edin.
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1a1a1a] mt-3 mb-4">Kahve Aboneliği ile <span className="text-[#C4724B]">Farkı Keşfedin</span></h2>
+            <p className="text-[#4a4a4a] max-w-xl mx-auto">
+              Her ay kapınıza gelen taze kavrulmuş kahveler. Size özel hazırlanan abonelik paketlerimizle kahve keyfinizi kesintisiz yaşayın.
             </p>
-            <Link
-              href="/abonelik"
-              className="inline-flex items-center gap-2 bg-[#C4724B] hover:bg-[#B0603A] text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition"
-            >
-              Abonelik Paketleri
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 max-w-5xl mx-auto mb-16">
+            {[
+              { title: "Taze Kavrum", desc: "Sipariş üzerine kavrulur, maksimum tazelik" },
+              { title: "Ücretsiz Kargo", desc: "Her abonelik teslimatında kargo bizden" },
+              { title: "Kişisel Seçim", desc: "Kendi kahveni seç, karışımını belirle" },
+              { title: "Sana Özel", desc: "İhtiyacına göre oluştur, durdur, değiştir" },
+            ].map((item) => (
+              <div key={item.title} className="text-center">
+                <div className="w-12 h-px bg-[#D4A574]/40 mx-auto mb-5" />
+                <h3 className="text-sm font-bold text-[#1a1a1a] mb-1 uppercase tracking-wide">{item.title}</h3>
+                <p className="text-xs text-[#666]">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link href="/abonelik"
+              className="inline-flex items-center gap-2 text-white px-10 py-5 text-sm font-semibold tracking-wide uppercase transition-all duration-500 hover:brightness-110"
+              style={{
+                background: "linear-gradient(90deg, #C4724B, #E8C4A0, #C4724B)",
+                backgroundSize: "200% auto",
+                animation: "copper-shimmer 3s linear infinite",
+              }}>
+              Abonelik Paketleri →
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Blog Section */}
+      {/* Akademi Section */}
       <section className="bg-[#f8f6f3] border-t border-[#e5e0d8] py-32">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between mb-12">
-            <div>
-              <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Güncel</span>
-              <h2 className="text-3xl font-bold text-[#1a1a1a] mt-2">Blog</h2>
-            </div>
-            <Link href="/blog" className="text-sm font-medium text-[#C4724B] hover:text-[#B0603A] transition border-b border-[#C4724B] pb-0.5">
-              Tüm Yazılar →
-            </Link>
+          <div className="text-center mb-16">
+            <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Öğren</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mt-2">Akademi</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { title: "Kahve Çekirdeği Seçim Rehberi", cat: "Rehber", emoji: "🫘" },
-              { title: "Evde Mükemmel Filtre Kahve", cat: "Demleme", emoji: "☕" },
-              { title: "Specialty Coffee Nedir?", cat: "Kahve Kültürü", emoji: "🏆" },
+              { title: "Kahve Çekirdeği Seçim Rehberi", cat: "Rehber" },
+              { title: "Evde Mükemmel Filtre Kahve", cat: "Demleme" },
+              { title: "Specialty Coffee Nedir?", cat: "Kahve Kültürü" },
             ].map((post) => (
-              <Link
-                key={post.title}
-                href="/blog"
-                className="bg-white border border-[#e5e0d8] p-8 group hover:border-[#C4724B]/30 transition"
-              >
-                <span className="text-4xl block mb-4">{post.emoji}</span>
+              <Link key={post.title} href="/akademi"
+                className="bg-white border border-[#e5e0d8] p-8 group hover:border-[#C4724B]/30 transition">
+                <div className="w-8 h-px bg-[#D4A574]/40 mb-4" />
                 <span className="text-[10px] tracking-[0.2em] uppercase text-[#C4724B] font-medium">{post.cat}</span>
-                <h3 className="text-lg font-semibold text-[#1a1a1a] mt-2 group-hover:text-[#C4724B] transition">
-                  {post.title}
-                </h3>
+                <h3 className="text-lg font-semibold text-[#1a1a1a] mt-2 group-hover:text-[#C4724B] transition">{post.title}</h3>
               </Link>
             ))}
           </div>
+          <div className="text-center mt-12">
+            <Link href="/akademi"
+              className="inline-flex items-center gap-2 text-white px-10 py-5 text-sm font-semibold tracking-wide uppercase transition-all duration-500 hover:brightness-110"
+              style={{
+                background: "linear-gradient(90deg, #C4724B, #E8C4A0, #C4724B)",
+                backgroundSize: "200% auto",
+                animation: "copper-shimmer 3s linear infinite",
+              }}>
+              Tüm Yazılar →
+            </Link>
+          </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-[#1a1a1a] text-white pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-12 border-b border-white/10">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <Image src="/logo.png" alt="Logo" width={40} height={40} className="rounded-full" />
-                <span className="text-lg font-bold">Rostello</span>
-              </div>
-              <p className="text-white/40 text-sm leading-relaxed">
-                Yapay zeka destekli dijital barista ile kahve keşfi.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold tracking-wider uppercase mb-4 text-[#C4724B]">Kahve</h4>
-              <div className="flex flex-col gap-2">
-                <Link href="/urunler" className="text-sm text-white/50 hover:text-white transition">Tüm Kahveler</Link>
-                <Link href="/imza-urunler" className="text-sm text-white/50 hover:text-white transition">İmza Ürünler</Link>
-                <Link href="/ekipmanlar" className="text-sm text-white/50 hover:text-white transition">Ekipmanlar</Link>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold tracking-wider uppercase mb-4 text-[#C4724B]">Keşfet</h4>
-              <div className="flex flex-col gap-2">
-                <Link href="/ai-barista" className="text-sm text-white/50 hover:text-white transition">Dijital Barista</Link>
-                <Link href="/damak-testi" className="text-sm text-white/50 hover:text-white transition">Kahveni Bul</Link>
-                <Link href="/demleme" className="text-sm text-white/50 hover:text-white transition">Demleme Yöntemleri</Link>
-                <Link href="/abonelik" className="text-sm text-white/50 hover:text-white transition">Abonelik</Link>
-                <Link href="/blog" className="text-sm text-white/50 hover:text-white transition">Blog</Link>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold tracking-wider uppercase mb-4 text-[#C4724B]">Kurumsal</h4>
-              <div className="flex flex-col gap-2">
-                <Link href="/b2b" className="text-sm text-white/50 hover:text-white transition">B2B</Link>
-                <Link href="/hikaye" className="text-sm text-white/50 hover:text-white transition">Hikayemiz</Link>
-                <div className="flex gap-4 mt-2">
-                  <a href="#" className="text-sm text-white/50 hover:text-[#C4724B] transition">Instagram</a>
-                  <a href="#" className="text-sm text-white/50 hover:text-[#C4724B] transition">Twitter</a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <p className="text-center text-sm text-white/20 mt-8">© 2025 Rostello. Tüm hakları saklıdır.</p>
-        </div>
-      </footer>
     </div>
   );
 }

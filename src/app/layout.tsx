@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+import CartPanel from "@/components/CartPanel";
 import Providers from "@/components/Providers";
 import FloatingBarista from "@/components/FloatingBarista";
 
@@ -30,6 +31,7 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col bg-[#f8f6f3] text-[#1a1a1a]">
         <Providers>
           <Header />
+          <CartPanel />
           <main className="flex-1">{children}</main>
           <FloatingBarista />
         </Providers>

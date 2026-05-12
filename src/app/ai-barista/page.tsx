@@ -1,7 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 interface Message {
@@ -39,8 +40,9 @@ function formatContent(content: string) {
   });
 }
 
-export default function AIBaristaPage() {
+function AIBaristaContent() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -51,6 +53,7 @@ export default function AIBaristaPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [threadId, setThreadId] = useState<string | null>(null);
+  const autoSent = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -73,8 +76,15 @@ export default function AIBaristaPage() {
       });
 
       const data = await res.json();
-      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-      if (data.threadId) setThreadId(data.threadId);
+      if (res.ok) {
+        setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+        if (data.threadId) setThreadId(data.threadId);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: data.reply || data.error || "Bir hata oluştu." },
+        ]);
+      }
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -91,6 +101,50 @@ export default function AIBaristaPage() {
       handleSend();
     }
   };
+
+  useEffect(() => {
+    if (autoSent.current || loading || messages.length > 1) return;
+    const quizParam = searchParams?.get("quiz");
+    if (!quizParam) return;
+
+    try {
+      const answers = JSON.parse(decodeURIComponent(quizParam));
+      if (!answers.q1) return;
+      autoSent.current = true;
+
+      const labels: Record<string, string> = {
+        memnun: "Evet, denemiş ve memnun kalmıştım",
+        yeni: "Hayır, ilk defa deneyeceğim",
+        begenmemis: "Evet ama hiç beğenmemiştim",
+        cezve: "Cezve", "filtre-makine": "Filtre kahve makinesi",
+        v60: "V60 gibi elle demleme", aeropress: "Aeropress",
+        "moka-pot": "Moka Pot", espresso: "Espresso",
+        "otomatik-espresso": "Otomatik espresso makinesi",
+        ciceksi: "Çiçeksi", "tatli-meyve": "Tatlı meyveler",
+        mayhos: "Mayhoş meyveler", yemis: "Yemişler",
+        cikolata: "Çikolatamsı", baharat: "Baharatsı",
+        acik: "Yeni tatlara açığım", "orta-acik": "Orta derecede açığım",
+        aromatik: "Aromatik profilli kahveler severim", kapali: "Klasik tatlardan şaşmam",
+        sulu: "Çok suluydu", aci: "Çok acıydı",
+        hafif: "Çok hafifti", sert: "Çok sertti", sikici: "Çok sıkıcıydı",
+      };
+
+      const answerLines = [
+        `- Daha önce Rostello deneyimi: ${labels[answers.q1] || answers.q1}`,
+        `- Demleme yöntemi: ${labels[answers.q2] || answers.q2}`,
+        `- Lezzet profili: ${labels[answers.q3] || answers.q3}`,
+        `- Yeni tatlara açıklık: ${labels[answers.q4] || answers.q4}`,
+      ];
+      if (answers.q5) {
+        answerLines.push(`- Beğenmeme sebebi: ${labels[answers.q5] || answers.q5}`);
+      }
+
+      const quizMessage = `Kahve testimden geliyorum! İşte cevaplarım:\n${answerLines.join("\n")}\n\nBana en uygun Rostello kahvelerini önerebilir misin?`;
+      sendMessage(quizMessage);
+    } catch {
+      // Invalid quiz param, ignore
+    }
+  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="min-h-screen bg-[#f8f6f3] flex flex-col">
@@ -205,5 +259,13 @@ export default function AIBaristaPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function AIBaristaPage() {
+  return (
+    <Suspense fallback={<div className="max-w-4xl mx-auto px-6 py-24 text-center text-[#8c8c8c]">Yükleniyor...</div>}>
+      <AIBaristaContent />
+    </Suspense>
   );
 }

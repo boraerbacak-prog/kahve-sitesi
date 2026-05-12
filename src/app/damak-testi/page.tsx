@@ -160,12 +160,6 @@ export default function KahveniBulPage() {
         <div className="text-center">
           <span className="text-6xl block mb-6 animate-pulse">☕</span>
           <p className="text-[#4a4a4a]">Hazırlanıyor...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
     <div className="min-h-screen bg-[#f8f6f3]">
       {/* Hero */}
       <section className="bg-[#1a1a1a] py-20">
