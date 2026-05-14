@@ -1,13 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
-import SectionAudio from "@/components/SectionAudio";
 
 interface Block {
   id: string; section: string; blockType: string;
   title: string; subtitle: string; content: string;
   imageUrl: string; imageSize: string;
-  audioUrl: string;
   linkUrl: string; linkText: string;
   badgeText: string; sortOrder: number;
   isActive: boolean; styles: string;
@@ -87,7 +85,6 @@ function HeroKahveniBul({ block }: { block: Block }) {
         )}
       </div>
       <FilmReel />
-      <SectionAudio src={block.audioUrl} />
     </div>
   );
 }
