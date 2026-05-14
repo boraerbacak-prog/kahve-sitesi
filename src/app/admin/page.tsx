@@ -10,7 +10,7 @@ export default async function AdminPage() {
   const user = await prisma.user.findUnique({ where: { id: session.user.id } });
   if (user?.role !== "admin") redirect("/");
 
-  const [productCount, orderCount, userCount, subCount, activeSubCount, chatCount, pageCount, blockCount] = await Promise.all([
+  const [productCount, orderCount, userCount, subCount, activeSubCount, chatCount, pageCount, blockCount, subscriberCount] = await Promise.all([
     prisma.product.count(),
     prisma.order.count(),
     prisma.user.count(),
@@ -19,6 +19,7 @@ export default async function AdminPage() {
     prisma.chatThread.count(),
     prisma.customPage.count(),
     prisma.homepageBlock.count(),
+    prisma.subscriber.count(),
   ]);
 
   const recentOrders = await prisma.order.findMany({
@@ -45,6 +46,7 @@ export default async function AdminPage() {
           { label: "Sayfalar", count: pageCount, href: "/admin/sayfalar", color: "indigo" },
           { label: "Barista Rapor", count: "📊", href: "/admin/barista-rapor", color: "orange" },
           { label: "Ana Sayfa", count: blockCount, href: "/admin/homepage", color: "teal" },
+          { label: "E-Posta Aboneleri", count: subscriberCount, href: "/admin/aboneler", color: "rose" },
         ].map((s) => (
           <Link key={s.href} href={s.href} className={`bg-white rounded-xl border border-${s.color}-100 p-5 hover:shadow-md transition`}>
             <p className={`text-xs text-${s.color}-600 uppercase tracking-wide`}>{s.label}</p>
@@ -63,6 +65,7 @@ export default async function AdminPage() {
               { label: "Siparişler", href: "/admin/siparisler", desc: "Görüntüle, yönet" },
               { label: "Abonelikler", href: "/admin/abonelik", desc: "Tüm abonelikler" },
               { label: "Kullanıcılar", href: "/admin/kullanicilar", desc: "Üyeleri yönet" },
+              { label: "E-Posta Aboneleri", href: "/admin/aboneler", desc: `${subscriberCount} abone` },
             ].map((item) => (
               <Link key={item.href} href={item.href} className="border border-amber-100 p-4 rounded-lg hover:border-amber-300 hover:bg-amber-50 transition">
                 <p className="font-semibold text-amber-900 text-sm">{item.label}</p>

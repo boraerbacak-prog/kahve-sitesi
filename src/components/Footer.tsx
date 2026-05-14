@@ -31,12 +31,32 @@ function YoutubeIcon() {
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [subscribing, setSubscribing] = useState(false);
+  const [subError, setSubError] = useState("");
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
-    setSubscribed(true);
-    setEmail("");
+    setSubscribing(true);
+    setSubError("");
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSubscribed(true);
+        setEmail("");
+      } else {
+        setSubError(data.error || "Bir hata oluştu.");
+      }
+    } catch {
+      setSubError("Bir hata oluştu. Lütfen tekrar deneyin.");
+    } finally {
+      setSubscribing(false);
+    }
   };
 
   return (
@@ -62,15 +82,18 @@ export default function Footer() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="E-posta adresiniz"
                     className="flex-1 border border-[#e5e0d8] px-3 py-2 text-xs focus:outline-none focus:border-[#C4724B] bg-white"
+                    disabled={subscribing}
                   />
                   <button
                     type="submit"
-                    className="bg-[#C4724B] hover:bg-[#B0603A] text-white px-3 py-2 text-xs font-medium uppercase tracking-wider transition"
+                    disabled={subscribing || !email.trim()}
+                    className="bg-[#C4724B] hover:bg-[#B0603A] text-white px-3 py-2 text-xs font-medium uppercase tracking-wider transition disabled:opacity-50"
                   >
-                    →
+                    {subscribing ? "..." : "→"}
                   </button>
                 </form>
               )}
+              {subError && <p className="text-xs text-red-500 mt-1">{subError}</p>}
             </div>
           </div>
           <div>
