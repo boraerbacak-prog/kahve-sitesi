@@ -5,7 +5,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartPanel from "@/components/CartPanel";
 import FloatingBarista from "@/components/FloatingBarista";
-import WelcomePopup from "@/components/WelcomePopup";
 import Providers from "@/components/Providers";
 
 const montserrat = Montserrat({
@@ -32,7 +31,6 @@ export default function RootLayout({
           <Header />
           <CartPanel />
           <FloatingBarista />
-          <WelcomePopup />
           <main className="flex-1">{children}</main>
           <Footer />
         </Providers>

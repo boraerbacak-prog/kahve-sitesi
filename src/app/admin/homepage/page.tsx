@@ -7,6 +7,7 @@ interface Block {
   id: string; section: string; blockType: string;
   title: string; subtitle: string; content: string;
   imageUrl: string; imageSize: string;
+  audioUrl: string;
   linkUrl: string; linkText: string;
   badgeText: string; sortOrder: number;
   isActive: boolean; styles: string;
@@ -93,6 +94,13 @@ export default function AdminHomepagePage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ses / Müzik URL</label>
+                  <input type="text" value={editing.audioUrl || ""} onChange={e => setEditing({...editing, audioUrl: e.target.value})}
+                    placeholder="/celsus/ses/muzik.mp3"
+                    className="w-full border border-amber-200 p-2.5 rounded-lg text-sm focus:outline-none focus:border-amber-500" />
+                  <p className="text-xs text-gray-400 mt-1">Kahveni Bul bölümü görünürken çalar</p>
+                </div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Link URL</label>
                   <input type="text" value={editing.linkUrl || ""} onChange={e => setEditing({...editing, linkUrl: e.target.value})}
                     className="w-full border border-amber-200 p-2.5 rounded-lg text-sm focus:outline-none focus:border-amber-500" />
@@ -164,6 +172,10 @@ export default function AdminHomepagePage() {
               <div>
                 <span className="text-gray-400 block">Boyut</span>
                 <span className="text-gray-600 text-xs">{block.imageSize || "—"}</span>
+              </div>
+              <div>
+                <span className="text-gray-400 block">Ses</span>
+                <span className="text-gray-600 text-xs">{block.audioUrl || "—"}</span>
               </div>
               <div>
                 <span className="text-gray-400 block">Link</span>

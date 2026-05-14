@@ -6,6 +6,7 @@ const DEFAULT_AUDIO = "/celsus/ses/Paper_Filter_Mornings.mp3";
 
 export default function SectionAudio({ src }: { src: string }) {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
@@ -18,7 +19,8 @@ export default function SectionAudio({ src }: { src: string }) {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    const el = sectionRef.current;
+    if (!audio || !el) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -32,7 +34,7 @@ export default function SectionAudio({ src }: { src: string }) {
       { threshold: 0.3 }
     );
 
-    observer.observe(audio.parentElement || audio);
+    observer.observe(el);
 
     return () => {
       observer.disconnect();
@@ -54,7 +56,7 @@ export default function SectionAudio({ src }: { src: string }) {
 
   return (
     <>
-      <div className="absolute inset-0 pointer-events-none">
+      <div ref={sectionRef} className="absolute inset-0 pointer-events-none">
         <audio ref={audioRef} src={src || DEFAULT_AUDIO} loop playsInline autoPlay muted preload="auto" />
       </div>
 
