@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const DEFAULT_AUDIO = "/celsus/ses/Paper_Filter_Mornings.mp3";
 
@@ -8,6 +9,9 @@ export default function SectionAudio({ src }: { src: string }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     const seen = sessionStorage.getItem("welcome-seen");
@@ -60,7 +64,7 @@ export default function SectionAudio({ src }: { src: string }) {
         <audio ref={audioRef} src={src || DEFAULT_AUDIO} loop playsInline autoPlay muted preload="auto" />
       </div>
 
-      {showWelcome && (
+      {mounted && showWelcome && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="relative bg-white rounded-2xl max-w-md w-[90%] p-8 shadow-2xl animate-fade-in">
             <button
@@ -81,7 +85,8 @@ export default function SectionAudio({ src }: { src: string }) {
               hazır mısınız?
             </p>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
