@@ -46,7 +46,7 @@ export default function Header() {
   return (
     <header className="bg-white/95 backdrop-blur-sm sticky top-0 z-50 border-b border-[#e5e0d8]">
       {!bannerClosed && (
-        <div className="bg-[#2c1810] text-white/90 text-xs text-center py-1.5 px-4 flex items-center justify-center gap-2">
+        <div className="bg-[#C4724B] text-white text-xs text-center py-1.5 px-4 flex items-center justify-center gap-2">
           <span>🚚 <strong>890₺</strong> üzeri alışverişlerde <strong>ücretsiz kargo</strong></span>
           <button onClick={() => setBannerClosed(true)} className="text-white/40 hover:text-white transition ml-1" aria-label="Kapat">✕</button>
         </div>
