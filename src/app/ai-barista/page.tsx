@@ -16,32 +16,44 @@ interface SubscriptionInfo {
 
 const suggestions = [
   "Bana kahve öner",
+  "Damak Testi Yap",
   "Hangi kahve sütlü içecekler için uygun?",
-  "Kahveni Bul testini yap",
   "Abonelik paketlerini anlat",
   "V60 nasıl demlenir?",
-  "Kurumsal alım yapmak istiyorum",
-  "Siparişim ne zaman gelir?",
+  "Ürünleri Keşfet",
   "Ekipman önerir misin?",
+  "Meyvemsi kahve var mı?",
 ];
 
+function handleBaristaNav(href: string) {
+  if (typeof window !== "undefined" && href.startsWith("/")) {
+    localStorage.setItem("rostello_from_barista", "1");
+  }
+}
+
 function formatContent(content: string) {
-  const parts = content.split(/(\[[^\]]+\]\([^)]+\))/g);
-  return parts.map((part, i) => {
-    const match = part.match(/\[([^\]]+)\]\(([^)]+)\)/);
-    if (match) {
-      return (
-        <a
-          key={i}
-          href={match[2]}
-          className="text-[#E8C4A0] underline hover:text-[#f0dcc0] transition"
-        >
-          {match[1]}
-        </a>
-      );
+  const text = content.replace(/__OPTIONS__:.*$/, "");
+  const boldParts = text.split(/(\*\*[^*]+\*\*)/g);
+  return boldParts.map((part, i) => {
+    const boldMatch = part.match(/^\*\*([^*]+)\*\*$/);
+    if (boldMatch) {
+      return <strong key={i} className="text-[#E8C4A0] font-semibold">{boldMatch[1]}</strong>;
     }
-    return <span key={i}>{part}</span>;
+    const linkParts = part.split(/(\[[^\]]+\]\([^)]+\))/g);
+    return linkParts.map((sub, j) => {
+      const linkMatch = sub.match(/\[([^\]]+)\]\(([^)]+)\)/);
+      if (linkMatch) {
+        return <a key={`${i}-${j}`} href={linkMatch[2]} onClick={() => handleBaristaNav(linkMatch[2])} className="text-[#E8C4A0] underline hover:text-[#f0dcc0] transition">{linkMatch[1]}</a>;
+      }
+      return <span key={`${i}-${j}`}>{sub}</span>;
+    });
   });
+}
+
+function getOptions(content: string): string[] {
+  const m = content.match(/__OPTIONS__:(.+)$/);
+  if (!m) return [];
+  return m[1].split("|").map(s => s.trim()).filter(Boolean);
 }
 
 function AIBaristaContent() {
@@ -53,9 +65,12 @@ function AIBaristaContent() {
   const [actionLoading, setActionLoading] = useState(false);
   const autoSent = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
   }, [messages]);
 
   const handleSend = async (text?: string) => {
@@ -100,7 +115,7 @@ function AIBaristaContent() {
       };
 
       const answerLines = [
-        `- Daha önce Rostello deneyimi: ${labels[answers.q1] || answers.q1}`,
+        `- Daha önce deneyim: ${labels[answers.q1] || answers.q1}`,
         `- Demleme yöntemi: ${labels[answers.q2] || answers.q2}`,
         `- Lezzet profili: ${labels[answers.q3] || answers.q3}`,
         `- Yeni tatlara açıklık: ${labels[answers.q4] || answers.q4}`,
@@ -109,7 +124,7 @@ function AIBaristaContent() {
         answerLines.push(`- Beğenmeme sebebi: ${labels[answers.q5] || answers.q5}`);
       }
 
-      const quizMessage = `Kahve testimden geliyorum! İşte cevaplarım:\n${answerLines.join("\n")}\n\nBana en uygun Rostello kahvelerini önerebilir misin?`;
+      const quizMessage = `Kahve testimden geliyorum! İşte cevaplarım:\n${answerLines.join("\n")}\n\nBana en uygun kahveleri önerebilir misin?`;
       sendMessage(quizMessage);
     } catch {
       // Invalid quiz param, ignore
@@ -172,38 +187,33 @@ function AIBaristaContent() {
   }, [subInfo, actionLoading, sendMessage]);
 
   return (
-    <div className="min-h-screen bg-[#f8f6f3] flex flex-col">
-      <div className="max-w-5xl mx-auto px-6 py-12 flex-1 flex flex-col">
-        <div className="text-center mb-8">
-          <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Dijital Barista</span>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mt-2 mb-2">
-            Rostello ile <span className="text-[#C4724B]">Kahve Keşfi</span>
-          </h1>
-          <p className="text-[#8c8c8c] text-sm max-w-xl mx-auto">
-            Baş Baristanıza istediğiniz soruyu sorun — ürün önerisi, demleme rehberi, abonelik ve daha fazlası.
-          </p>
-        </div>
-
-        <div className="flex-1 bg-white border border-[#e5e0d8] flex flex-col overflow-hidden" style={{ borderRadius: "16px" }}>
-          {/* Chat header */}
-          <div className="px-6 py-4 flex items-center gap-3"
-            style={{ background: "linear-gradient(135deg, #C4724B, #B0603A)" }}>
-            <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/20">
-              <Image src="/celsus/dijital-barista/barista d.png" alt="Barista" width={80} height={80} className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <h2 className="text-white font-semibold text-sm">Rostello Baş Barista</h2>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                <span className="text-white/70 text-xs">Çevrimiçi • Hemen yanıt verir</span>
-              </div>
+    <div className="h-[calc(100dvh-112px)] lg:h-[calc(100dvh-144px)] bg-[#f8f6f3] flex flex-col">
+      <div className="max-w-4xl w-full mx-auto flex-1 flex flex-col overflow-hidden">
+        {/* Chat header */}
+        <div className="px-4 sm:px-6 py-3 flex items-center gap-3 shrink-0"
+          style={{ background: "linear-gradient(135deg, #C4724B, #B0603A)" }}>
+          <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-white/20">
+            <Image src="/celsus/dijital-barista/barista d.png" alt="Barista" width={72} height={72} className="w-full h-full object-cover" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-white font-semibold text-sm truncate">Stello Barista</h2>
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
+              <span className="text-white/70 text-xs truncate">Çevrimiçi</span>
             </div>
           </div>
+        </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#faf8f6]" style={{ maxHeight: "55vh" }}>
-            {messages.map((msg, i) => (
-              <div key={i} className={`flex items-start gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
+        {/* Messages */}
+        <div ref={messagesRef} className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-4 bg-[#faf8f6]">
+          {messages.length === 0 && !loading && (
+            <div className="flex flex-col items-center justify-center h-full text-center text-[#8c8c8c] text-sm py-12">
+              <p className="mb-6">Size nasıl yardımcı olabilirim?</p>
+            </div>
+          )}
+          {messages.map((msg, i) => (
+            <div key={i} className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}>
+              <div className={`flex items-start gap-3 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
                 {msg.role === "assistant" && (
                   <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 mt-1 shadow-sm border border-white/10">
                     <Image src="/celsus/dijital-barista/barista d.png" alt="Barista" width={64} height={64} className="w-full h-full object-cover" />
@@ -227,118 +237,116 @@ function AIBaristaContent() {
                   {formatContent(msg.content)}
                 </div>
               </div>
-            ))}
-            {loading && (
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 shadow-sm border border-white/10">
-                  <Image src="/celsus/dijital-barista/barista d.png" alt="Barista" width={64} height={64} className="w-full h-full object-cover" />
+              {msg.role === "assistant" && getOptions(msg.content).length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-1.5 ml-11">
+                  {getOptions(msg.content).map((opt) => (
+                    <button key={opt} onClick={() => handleSend(opt)} disabled={loading}
+                        className="text-[11px] border border-[#D4A574]/40 bg-white px-2.5 py-1.5 text-[#4a4a4a] hover:border-[#C4724B] hover:text-[#C4724B] hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 hover:scale-[1.03] disabled:opacity-40 rounded-full"
+                    >{opt}</button>
+                  ))}
                 </div>
-                <div className="px-5 py-3" style={{ borderRadius: "4px 20px 20px 20px", background: "linear-gradient(135deg, #1a1a1a, #2c2c2c)", boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-[#C4724B] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <div className="w-2 h-2 bg-[#C4724B] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <div className="w-2 h-2 bg-[#C4724B] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-                  </div>
-                </div>
-              </div>
-            )}
-            <div ref={bottomRef} />
-          </div>
-
-          {/* Suggestions */}
-          <div className="px-6 pb-2 bg-[#faf8f6]">
-            <div className="flex flex-wrap gap-2">
-              {suggestions.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => handleSend(s)}
-                  disabled={loading}
-                  className="text-xs border border-[#D4A574]/30 bg-white px-3 py-1.5 text-[#4a4a4a] hover:border-[#C4724B] hover:text-[#C4724B] hover:bg-[#fdf8f4] transition disabled:opacity-40 rounded-full"
-                >
-                  {s}
-                </button>
-              ))}
+              )}
             </div>
-          </div>
-
-          {/* Subscription Actions */}
-          {subInfo && (
-            <div className="px-6 pb-3 border-t border-[#e5e0d8] pt-3 bg-[#faf8f6]">
-              <div className="flex items-center gap-3 flex-wrap">
-                <span className="text-[10px] tracking-[0.2em] uppercase text-[#8c8c8c] font-medium">
-                  {subInfo.planName} ({subInfo.planPrice}₺/ay):
-                </span>
-                {subInfo.status === "active" && (
-                  <>
-                    <button
-                      onClick={() => handleSubAction("pause")}
-                      disabled={actionLoading}
-                      className="text-xs border border-[#D4A574]/40 text-[#C4724B] px-3 py-1 hover:bg-[#fdf8f4] transition disabled:opacity-40 rounded-full"
-                    >
-                      Duraklat
-                    </button>
-                    <button
-                      onClick={() => handleSubAction("cancel")}
-                      disabled={actionLoading}
-                      className="text-xs border border-red-300 text-red-500 px-3 py-1 hover:bg-red-50 transition disabled:opacity-40 rounded-full"
-                    >
-                      İptal Et
-                    </button>
-                  </>
-                )}
-                {subInfo.status === "paused" && (
-                  <button
-                    onClick={() => handleSubAction("resume")}
-                    disabled={actionLoading}
-                    className="text-xs border border-green-400 text-green-600 px-3 py-1 hover:bg-green-50 transition disabled:opacity-40 rounded-full"
-                  >
-                    Devam Ettir
-                  </button>
-                )}
-                <Link
-                  href="/abonelik/yonetim"
-                  className="text-xs text-[#C4724B] hover:underline ml-auto"
-                >
-                  Detaylı Yönet →
-                </Link>
+          ))}
+          {loading && (
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 shadow-sm border border-white/10">
+                <Image src="/celsus/dijital-barista/barista d.png" alt="Barista" width={64} height={64} className="w-full h-full object-cover" />
+              </div>
+              <div className="px-5 py-3" style={{ borderRadius: "4px 20px 20px 20px", background: "linear-gradient(135deg, #1a1a1a, #2c2c2c)", boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
+                <div className="flex gap-1">
+                  <div className="w-2 h-2 bg-[#C4724B] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                  <div className="w-2 h-2 bg-[#C4724B] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                  <div className="w-2 h-2 bg-[#C4724B] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                </div>
               </div>
             </div>
           )}
+          <div ref={bottomRef} />
+        </div>
 
-          {/* Input */}
-          <div className="border-t border-[#e5e0d8] p-6 bg-white">
-            <div className="flex gap-3">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Kahve tercihlerinizi anlatın..."
-                className="flex-1 border border-[#e5e0d8] px-5 py-3 text-sm focus:outline-none focus:border-[#C4724B] text-[#1a1a1a] bg-white rounded-full"
-                disabled={loading}
-              />
-              <button
-                onClick={() => handleSend()}
-                disabled={loading || !input.trim()}
-                className="text-white px-8 py-3 text-sm font-medium uppercase transition-all duration-500 hover:brightness-110 disabled:opacity-40 rounded-full"
-                style={{
-                  background: "linear-gradient(90deg, #C4724B, #E8C4A0, #C4724B)",
-                  backgroundSize: "200% auto",
-                  animation: "copper-shimmer 3s linear infinite",
-                }}
-              >
-                Gönder
-              </button>
+        {/* Subscription Actions */}
+        {subInfo && (
+          <div className="border-t border-[#e5e0d8] px-4 sm:px-6 py-2.5 bg-white shrink-0">
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="text-[10px] tracking-[0.2em] uppercase text-[#8c8c8c] font-medium">
+                {subInfo.planName} ({subInfo.planPrice}₺/ay):
+              </span>
+              {subInfo.status === "active" && (
+                <>
+                  <button onClick={() => handleSubAction("pause")} disabled={actionLoading}
+                      className="text-xs border border-[#D4A574]/40 text-[#C4724B] px-3 py-1 hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 disabled:opacity-40 rounded-full">
+                    Duraklat
+                  </button>
+                  <button onClick={() => handleSubAction("cancel")} disabled={actionLoading}
+                    className="text-xs border border-red-300 text-red-500 px-3 py-1 hover:bg-red-50 transition disabled:opacity-40 rounded-full">
+                    İptal Et
+                  </button>
+                </>
+              )}
+              {subInfo.status === "paused" && (
+                <button onClick={() => handleSubAction("resume")} disabled={actionLoading}
+                  className="text-xs border border-green-400 text-green-600 px-3 py-1 hover:bg-green-50 transition disabled:opacity-40 rounded-full">
+                  Devam Ettir
+                </button>
+              )}
+              <Link href="/abonelik/yonetim" className="text-xs text-[#C4724B] hover:underline ml-auto">
+                Detaylı Yönet
+              </Link>
             </div>
-            {!session && (
-              <div className="flex items-center justify-center gap-2 mt-3 text-xs text-[#8c8c8c]">
-                <span>Sohbet geçmişi için</span>
-                <Link href="/giris" className="text-[#C4724B] hover:underline">giriş yapın</Link>
-                <span>veya</span>
-                <Link href="/kayit" className="text-[#C4724B] hover:underline">kaydolun</Link>
-              </div>
-            )}
           </div>
+        )}
+
+        {/* Suggestions */}
+        <div className="border-t border-[#e5e0d8] px-4 sm:px-6 py-2.5 bg-[#faf8f6] shrink-0">
+          <div className="flex flex-wrap gap-1.5 max-w-3xl mx-auto">
+            {suggestions.map((s) => (
+              s === "Ürünleri Keşfet" ? (
+                <Link key={s} href="/urunler?from=barista" onClick={() => handleBaristaNav("/urunler")}
+                  className="text-[11px] border border-[#D4A574]/30 bg-white px-2.5 py-1.5 text-[#4a4a4a] hover:border-[#C4724B] hover:text-[#C4724B] hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 hover:scale-[1.03] rounded-full font-medium"
+                >{s}</Link>
+              ) : (
+                <button key={s} onClick={() => handleSend(s)} disabled={loading}
+                  className="text-[11px] border border-[#D4A574]/30 bg-white px-2.5 py-1.5 text-[#4a4a4a] hover:border-[#C4724B] hover:text-[#C4724B] hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 hover:scale-[1.03] disabled:opacity-40 rounded-full"
+                >{s}</button>
+              )
+            ))}
+          </div>
+        </div>
+
+        {/* Input */}
+        <div className="border-t border-[#e5e0d8] px-4 sm:px-6 py-4 bg-white shrink-0">
+          <div className="flex gap-3 max-w-3xl mx-auto">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Kahve tercihlerinizi anlatın..."
+              className="flex-1 border border-[#e5e0d8] px-5 py-3 text-sm focus:outline-none focus:border-[#C4724B] text-[#1a1a1a] bg-white rounded-full"
+              disabled={loading}
+            />
+            <button
+              onClick={() => handleSend()}
+              disabled={loading || !input.trim()}
+              className="text-white px-8 py-3 text-sm font-medium uppercase transition-all duration-500 hover:brightness-110 hover:scale-[1.03] active:scale-95 disabled:opacity-40 rounded-full shrink-0"
+              style={{
+                background: "linear-gradient(90deg, #C4724B, #E8C4A0, #C4724B)",
+                backgroundSize: "200% auto",
+                animation: "copper-shimmer 3s linear infinite",
+              }}
+            >
+              Gönder
+            </button>
+          </div>
+          {!session && (
+            <div className="flex items-center justify-center gap-2 mt-3 text-xs text-[#8c8c8c]">
+              <span>Sohbet geçmişi için</span>
+              <Link href="/giris" className="text-[#C4724B] hover:underline hover:-translate-y-0.5 inline-block transition">giriş yapın</Link>
+              <span>veya</span>
+              <Link href="/kayit" className="text-[#C4724B] hover:underline hover:-translate-y-0.5 inline-block transition">kaydolun</Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -347,8 +355,11 @@ function AIBaristaContent() {
 
 export default function AIBaristaPage() {
   return (
-    <Suspense fallback={<div className="max-w-4xl mx-auto px-6 py-24 text-center text-[#8c8c8c]">Yükleniyor...</div>}>
-      <AIBaristaContent />
-    </Suspense>
+    <>
+      <style>{`footer { display: none !important; }`}</style>
+      <Suspense fallback={<div className="max-w-4xl mx-auto px-6 py-24 text-center text-[#8c8c8c]">Yükleniyor...</div>}>
+        <AIBaristaContent />
+      </Suspense>
+    </>
   );
 }

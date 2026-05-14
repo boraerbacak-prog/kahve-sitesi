@@ -74,12 +74,16 @@ const steps = [
 function matchProducts(products: Product[], answers: Record<string, Answer>): Product[] {
   return products.filter((p) => {
     const roast = p.roastLevel || "";
-    const body = p.body || "";
-    const acidity = p.acidity || "";
-    const notes = (p.flavorNotes || "").toLowerCase();
+    const body = (p.body || "").toLowerCase();
+    const acidity = (p.acidity || "").toLowerCase();
+    let notes: string[] = [];
+    try { notes = JSON.parse(p.flavorNotes || "[]").map((n: string) => n.toLowerCase()); } catch {}
+
+    const hasBody = body.length > 0;
+    const hasAcidity = acidity.length > 0;
 
     if (answers.how === "sutlu") {
-      if (roast !== "medium" && roast !== "dark" && body !== "Full") return false;
+      if (roast === "light") return false;
     }
     if (answers.how === "soguk") {
       if (roast === "light") return false;
@@ -90,25 +94,29 @@ function matchProducts(products: Product[], answers: Record<string, Answer>): Pr
     }
 
     if (answers.flavor === "fruity") {
-      if (acidity !== "High" && roast !== "light") return false;
+      if (hasAcidity && acidity !== "high" && roast !== "light") return false;
+      if (!hasAcidity && roast !== "light") return false;
     }
     if (answers.flavor === "sweet") {
-      if (body !== "Medium" && body !== "Full") {
-        if (!notes.includes("karamel") && !notes.includes("çikolata") && !notes.includes("fındık")) {
+      if (hasBody && body !== "medium" && body !== "full") {
+        if (!notes.some(n => ["karamel","çikolata","fındık","badem"].includes(n))) {
           if (roast === "light") return false;
         }
       }
     }
     if (answers.flavor === "bold") {
-      if (roast !== "dark" && body !== "Full") return false;
+      if (roast !== "dark") {
+        if (hasBody && body !== "full") return false;
+      }
     }
 
     if (answers.equipment === "v60" && roast === "dark") {
-      if (body !== "Medium") return false;
+      if (hasBody && body !== "medium") return false;
     }
     if (answers.equipment === "espresso" && roast === "light") return false;
     if (answers.equipment === "french-press" && roast === "light") return false;
     if (answers.equipment === "moka" && roast === "light") return false;
+    if (answers.equipment === "cezve" && roast === "light") return false;
 
     return true;
   });
@@ -166,24 +174,13 @@ export default function KahveniBulPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f6f3]">
-      {/* Hero */}
-      <section className="bg-[#1a1a1a] py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Keşif</span>
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mt-3 mb-4">Kahveni Bul</h1>
-          <p className="text-white/50 max-w-lg mx-auto text-sm">
-            Birkaç soruyla damak tadına ve ekipmanına en uygun kahveyi keşfet.
-          </p>
-        </div>
-      </section>
-
+    <div className="min-h-screen bg-[#f8f6f3] flex flex-col">
       {/* Quiz */}
-      <section className="max-w-2xl mx-auto px-6 py-16">
+      <section className="flex-1 flex items-start justify-center px-6 pt-10">
         {step < steps.length ? (
-          <div>
+          <div className="w-full max-w-xl">
             {/* Progress bar */}
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-5">
               <div className="flex-1 h-1 bg-[#e5e0d8]">
                 <div className="h-full bg-[#C4724B] transition-all" style={{ width: `${progress}%` }} />
               </div>
@@ -191,26 +188,26 @@ export default function KahveniBulPage() {
             </div>
 
             {/* Question card */}
-            <div className="bg-white border border-[#e5e0d8] p-8 sm:p-12">
-              <div className="text-center mb-8">
-                <span className="text-6xl block mb-4">{current.emoji}</span>
-                <h2 className="text-2xl font-bold text-[#1a1a1a]">{current.question}</h2>
+            <div className="bg-white border border-[#e5e0d8] p-6 sm:p-8">
+              <div className="text-center mb-6">
+                <span className="text-4xl block mb-2">{current.emoji}</span>
+                <h2 className="text-xl font-bold text-[#1a1a1a]">{current.question}</h2>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {current.options.map((opt) => (
                   <button
                     key={opt.value}
                     onClick={() => select(opt.value)}
-                    className="flex items-center gap-4 p-5 border border-[#e5e0d8] text-left hover:border-[#C4724B] hover:bg-[#fdf8f4] transition group"
+                    className="flex items-center gap-3 p-3.5 border border-[#e5e0d8] text-left hover:border-[#C4724B] hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 hover:shadow-sm group"
                   >
-                    <span className="text-3xl">{opt.emoji}</span>
-                    <div>
-                      <p className="text-sm font-semibold text-[#1a1a1a] group-hover:text-[#C4724B] transition">
+                    <span className="text-2xl shrink-0">{opt.emoji}</span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-[#1a1a1a] group-hover:text-[#C4724B] transition leading-tight">
                         {opt.label}
                       </p>
                       {"desc" in opt && opt.desc && (
-                        <p className="text-xs text-[#8c8c8c] mt-0.5">{opt.desc}</p>
+                        <p className="text-xs text-[#8c8c8c] mt-0.5 leading-tight">{opt.desc}</p>
                       )}
                     </div>
                   </button>
@@ -225,79 +222,71 @@ export default function KahveniBulPage() {
               <span className="text-6xl block mb-4">🎉</span>
               <h2 className="text-2xl font-bold text-[#1a1a1a] mb-2">Testin Tamamlandı!</h2>
               <p className="text-[#4a4a4a] text-sm">
-                Sana en uygun {results.length > 0 ? `${results.length} kahve${results.length > 1 ? "yi" : "y"}` : "kahveleri"} bulduk.
+                {results.length > 0
+                  ? `Sana en uygun ${results.length} kahve${results.length > 1 ? "yi" : "y"} bulduk.`
+                  : "Kriterlerine tam uyan bulamadık ama bunlara göz atmanı öneririm:"}
               </p>
             </div>
 
-            {results.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                {results.slice(0, 6).map((p) => {
-                  let notes: string[] = [];
-                  try { notes = JSON.parse(p.flavorNotes || "[]"); } catch { notes = []; }
-                  return (
-                    <Link
-                      key={p.id}
-                      href={`/urunler/${p.slug}`}
-                      className="bg-white border border-[#e5e0d8] p-6 hover:border-[#C4724B] transition group"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <h3 className="font-semibold text-[#1a1a1a] group-hover:text-[#C4724B] transition">
-                          {p.name}
-                        </h3>
-                        <span className="text-sm font-bold text-[#C4724B]">
-                          {p.price.toLocaleString("tr-TR")}₺
-                        </span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              {(results.length > 0 ? results : products).slice(0, 6).map((p) => {
+                let notes: string[] = [];
+                try { notes = JSON.parse(p.flavorNotes || "[]"); } catch { notes = []; }
+                return (
+                  <Link
+                    key={p.id}
+                    href={`/urunler/${p.slug}`}
+                    className="bg-white border border-[#e5e0d8] p-6 hover:border-[#C4724B] transition hover:-translate-y-1 hover:shadow-md group"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="font-semibold text-[#1a1a1a] group-hover:text-[#C4724B] transition">
+                        {p.name}
+                      </h3>
+                      <span className="text-sm font-bold text-[#C4724B]">
+                        {p.price.toLocaleString("tr-TR")}₺
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-[#8c8c8c] mb-2">
+                      <span>{p.origin || p.region || "Menşei bilinmiyor"}</span>
+                      <span>·</span>
+                      <span>{p.roastLevel === "light" ? "Hafif" : p.roastLevel === "medium" ? "Orta" : "Koyu"} Kavrum</span>
+                    </div>
+                    {notes.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {notes.slice(0, 3).map((n: string) => (
+                          <span key={n} className="text-[10px] uppercase tracking-wider text-[#C4724B] border border-[#C4724B]/20 px-2 py-0.5">
+                            {n}
+                          </span>
+                        ))}
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-[#8c8c8c] mb-2">
-                        <span>{p.origin || p.region || "Menşei bilinmiyor"}</span>
-                        <span>·</span>
-                        <span>{p.roastLevel === "light" ? "Hafif" : p.roastLevel === "medium" ? "Orta" : "Koyu"} Kavrum</span>
-                      </div>
-                      {notes.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {notes.slice(0, 3).map((n: string) => (
-                            <span key={n} className="text-[10px] uppercase tracking-wider text-[#C4724B] border border-[#C4724B]/20 px-2 py-0.5">
-                              {n}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="bg-white border border-[#e5e0d8] p-8 sm:p-12 text-center mb-8">
-                <span className="text-5xl block mb-4">🔍</span>
-                <h3 className="text-lg font-semibold text-[#1a1a1a] mb-2">Eşleşen ürün bulamadık</h3>
-                <p className="text-sm text-[#4a4a4a] mb-4">
-                  Kriterlerine uygun kahve bulamadık. Tüm ürünlerimize göz atabilir veya Baş Barista&apos;ya danışabilirsin.
-                </p>
-              </div>
-            )}
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
 
             <div className="flex flex-wrap gap-4 justify-center">
               <button
                 onClick={restart}
-                className="bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition"
+                className="bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition hover:-translate-y-0.5 hover:shadow-lg"
               >
                 Testi Tekrarla
               </button>
               <Link
                 href="/urunler"
-                className="border border-[#1a1a1a] text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition"
+                className="border border-[#1a1a1a] text-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition hover:-translate-y-0.5 hover:shadow-lg"
               >
                 Tüm Ürünler
               </Link>
               <Link
                 href={`/abonelik?equipment=${answers.equipment || ""}&flavor=${answers.flavor || ""}&roast=${answers.roast || ""}`}
-                className="bg-[#C4724B] hover:bg-[#B0603A] text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition"
+                className="bg-[#C4724B] hover:bg-[#B0603A] text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition hover:-translate-y-0.5 hover:shadow-lg"
               >
                 Abone Ol 🎯
               </Link>
               <Link
                 href="/ai-barista"
-                className="border border-[#C4724B] text-[#C4724B] hover:bg-[#C4724B] hover:text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition"
+                className="border border-[#C4724B] text-[#C4724B] hover:bg-[#C4724B] hover:text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition hover:-translate-y-0.5 hover:shadow-lg"
               >
                 Baş Barista ile Konuş
               </Link>

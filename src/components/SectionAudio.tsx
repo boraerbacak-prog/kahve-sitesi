@@ -1,37 +1,32 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function SectionAudio({ src }: { src: string }) {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const startedRef = useRef(false);
-  const interactRef = useRef(false);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
-    if (!src) return;
-
     const audio = audioRef.current;
-    const el = sectionRef.current;
-    if (!audio || !el) return;
+    if (!src || !audio) return;
 
-    const playIfVisible = () => {
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const isVisible = rect.top < window.innerHeight * 0.8 && rect.bottom > 0;
-      if (isVisible) {
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
+    // Just rely on HTML <audio autoPlay muted> for native autoplay.
+    // Check after a short delay whether it actually started.
+    const check = setTimeout(() => {
+      if (audio.paused) {
+        // Native autoplay didn't work → show popup
+        setShowWelcome(true);
+      } else {
+        // Native autoplay worked → unmute after brief delay
+        setTimeout(() => { audio.muted = false; }, 200);
       }
-    };
+    }, 300);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          if (interactRef.current || startedRef.current) {
-            audio.currentTime = 0;
-            audio.play().catch(() => {});
-          }
+          audio.muted = false;
+          if (audio.paused) audio.play().catch(() => {});
         } else {
           audio.pause();
         }
@@ -39,71 +34,58 @@ export default function SectionAudio({ src }: { src: string }) {
       { threshold: 0.3 }
     );
 
-    observer.observe(el);
+    observer.observe(audio.parentElement || audio);
+
     return () => {
+      clearTimeout(check);
       observer.disconnect();
       audio.pause();
     };
   }, [src]);
 
-  useEffect(() => {
-    if (!src || interactRef.current) return;
-
-    const handler = () => {
-      interactRef.current = true;
-      const audio = audioRef.current;
-      const el = sectionRef.current;
-      if (audio && el) {
-        const rect = el.getBoundingClientRect();
-        const isVisible = rect.top < window.innerHeight * 0.8 && rect.bottom > 0;
-        if (isVisible) {
-          startedRef.current = true;
-          audio.currentTime = 0;
-          audio.play().catch(() => {});
-        }
-      }
-      document.removeEventListener("click", handler);
-      document.removeEventListener("scroll", handler);
-      document.removeEventListener("touchstart", handler);
-      document.removeEventListener("keydown", handler);
-    };
-
-    const tryPlay = () => {
-      const audio = audioRef.current;
-      const el = sectionRef.current;
-      if (audio && el) {
-        const rect = el.getBoundingClientRect();
-        const isVisible = rect.top < window.innerHeight * 0.8 && rect.bottom > 0;
-        if (isVisible) {
-          audio.currentTime = 0;
-          audio.play().then(() => {
-            startedRef.current = true;
-            interactRef.current = true;
-          }).catch(() => {
-            document.addEventListener("click", handler);
-            document.addEventListener("scroll", handler);
-            document.addEventListener("touchstart", handler);
-            document.addEventListener("keydown", handler);
-          });
-        }
-      }
-    };
-
-    tryPlay();
-
-    return () => {
-      document.removeEventListener("click", handler);
-      document.removeEventListener("scroll", handler);
-      document.removeEventListener("touchstart", handler);
-      document.removeEventListener("keydown", handler);
-    };
-  }, [src]);
+  const handleDismiss = () => {
+    setShowWelcome(false);
+    const audio = audioRef.current;
+    if (audio) {
+      audio.muted = true;
+      audio.currentTime = 0;
+      audio.play().then(() => {
+        setTimeout(() => { audio.muted = false; }, 200);
+      }).catch(() => {});
+    }
+  };
 
   if (!src) return null;
 
   return (
-    <div ref={sectionRef}>
-      <audio ref={audioRef} src={src} loop />
-    </div>
+    <>
+      <div className="absolute inset-0 pointer-events-none">
+        <audio ref={audioRef} src={src} loop playsInline autoPlay muted preload="auto" />
+      </div>
+
+      {showWelcome && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="relative bg-white rounded-2xl max-w-md w-[90%] p-8 shadow-2xl animate-fade-in">
+            <button
+              onClick={handleDismiss}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-[#8B7355] hover:text-[#C4724B] transition-colors"
+              aria-label="Kapat"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </button>
+
+            <div className="w-12 h-1 bg-gradient-to-r from-[#C4724B] to-[#D4A574] rounded-full mb-6" />
+            <h2 className="text-2xl font-bold text-[#2c1810] mb-3">Hoş Geldiniz</h2>
+            <p className="text-[#6B5B4E] leading-relaxed text-sm">
+              Kahve yolculuğunuza hoş geldiniz. Her yudumda taze kavrumun
+              eşsiz lezzetini keşfedin. Size en uygun kahveyi bulmak için
+              hazır mısınız?
+            </p>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

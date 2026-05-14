@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/lib/cart-context";
 import ProductLightbox from "@/components/ProductLightbox";
@@ -135,6 +136,15 @@ export default function ImzaUrunlerPage() {
         <p className="text-[#4a4a4a] max-w-lg mx-auto">
           Rostello imza ürünleri ve el yapımı ahşap aksesuarlar.
         </p>
+      </div>
+
+      <div className="flex justify-center gap-3 mb-12">
+        <Link href="/urunler" className="px-5 py-2.5 text-xs font-medium tracking-wider uppercase transition bg-[#1a1a1a] text-white hover:bg-[#2a2a2a] hover:-translate-y-0.5">
+          Tüm Kahveler
+        </Link>
+        <Link href="/ekipmanlar" className="px-5 py-2.5 text-xs font-medium tracking-wider uppercase transition border border-[#C4724B] text-[#C4724B] hover:bg-[#C4724B] hover:text-white hover:-translate-y-0.5">
+          Ekipmanlar
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#e5e0d8]">

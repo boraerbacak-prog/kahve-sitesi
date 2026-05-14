@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
+import AddToCartInline from "@/components/AddToCartInline";
 
 function getProductImage(slug: string): string {
   const imageMap: Record<string, string> = {
@@ -45,13 +46,11 @@ export default async function ProductsPage(props: {
   const segmentLabels: Record<string, string> = {
     standart: "Standart Çekirdek",
     specialty: "Specialty",
-    blend: "Blend & Harman",
   };
 
   const segmentDescs: Record<string, string> = {
     standart: "Günlük kullanım için ideal, kaliteli standart çekirdekler.",
     specialty: "Nadir bulunan, üstün kalite notasına sahip özel çekirdekler.",
-    blend: "Usta kavurmacılar tarafından özenle hazırlanmış harmanlar.",
   };
 
   return (
@@ -83,6 +82,18 @@ export default async function ProductsPage(props: {
             {cat.name}
           </Link>
         ))}
+        <Link
+          href="/imza-urunler"
+          className="px-5 py-2.5 text-xs font-medium tracking-wider uppercase transition whitespace-nowrap bg-[#C4724B] text-white hover:bg-[#B0603A] hover:-translate-y-0.5"
+        >
+          İmza Ürünler
+        </Link>
+        <Link
+          href="/ekipmanlar"
+          className="px-5 py-2.5 text-xs font-medium tracking-wider uppercase transition whitespace-nowrap border border-[#C4724B] text-[#C4724B] hover:bg-[#C4724B] hover:text-white hover:-translate-y-0.5"
+        >
+          Ekipmanlar
+        </Link>
       </div>
 
       {Object.entries(grouped).map(([segment, segProducts]) => (
@@ -95,54 +106,63 @@ export default async function ProductsPage(props: {
             {segProducts.map((product) => {
               const notes = product.flavorNotes ? JSON.parse(product.flavorNotes) : [];
               return (
-                <Link
+                <div
                   key={product.id}
-                  href={`/urunler/${product.slug}`}
-                  className="group bg-white p-6 flex flex-col"
+                  className="bg-white p-6 flex flex-col"
                 >
-                  <div className="aspect-[4/5] bg-[#f8f6f3] mb-6 flex items-center justify-center overflow-hidden">
-                    <Image
-                      src={getProductImage(product.slug)}
-                      alt={product.name}
-                      width={400}
-                      height={500}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <span className="text-xs text-[#c8a77b] tracking-wider uppercase">
-                        {product.origin || product.category.name}
-                      </span>
-                      {product.roastLevel && (
-                        <span className="text-[10px] bg-[#f8f6f3] text-[#8c8c8c] px-2 py-1 uppercase tracking-wider">
-                          {product.roastLevel === "light" ? "Hafif" : product.roastLevel === "medium" ? "Orta" : "Koyu"}
+                  <Link href={`/urunler/${product.slug}`} className="group">
+                    <div className="aspect-[4/5] bg-[#f8f6f3] mb-6 flex items-center justify-center overflow-hidden">
+                      <Image
+                        src={getProductImage(product.slug)}
+                        alt={product.name}
+                        width={400}
+                        height={500}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <span className="text-xs text-[#c8a77b] tracking-wider uppercase">
+                          {product.origin || product.category.name}
                         </span>
+                        {product.roastLevel && (
+                          <span className="text-[10px] bg-[#f8f6f3] text-[#8c8c8c] px-2 py-1 uppercase tracking-wider">
+                            {product.roastLevel === "light" ? "Hafif" : product.roastLevel === "medium" ? "Orta" : "Koyu"}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-base font-semibold text-[#1a1a1a] group-hover:text-[#c8a77b] transition">
+                        {product.name}
+                      </h3>
+                      {notes.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {notes.slice(0, 3).map((note: string) => (
+                            <span key={note} className="text-[10px] bg-[#f8f6f3] text-[#6b4c3b] px-2 py-0.5 italic">
+                              {note}
+                            </span>
+                          ))}
+                        </div>
                       )}
                     </div>
-                    <h3 className="text-base font-semibold text-[#1a1a1a] group-hover:text-[#c8a77b] transition">
-                      {product.name}
-                    </h3>
-                    {notes.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-2">
-                        {notes.slice(0, 3).map((note: string) => (
-                          <span key={note} className="text-[10px] bg-[#f8f6f3] text-[#6b4c3b] px-2 py-0.5 italic">
-                            {note}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  </Link>
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#e5e0d8]">
                     <div>
                       <span className="text-lg font-bold text-[#1a1a1a]">{product.price.toLocaleString("tr-TR")} ₺</span>
                       <span className="text-xs text-[#8c8c8c] ml-1">/ kg</span>
                     </div>
-                    <span className="text-xs text-[#1a1a1a] group-hover:text-[#c8a77b] transition font-medium uppercase tracking-wider">
-                      İncele →
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <Link href={`/urunler/${product.slug}`} className="text-xs text-[#1a1a1a] hover:text-[#c8a77b] transition font-medium uppercase tracking-wider">
+                        İncele →
+                      </Link>
+                      <AddToCartInline
+                        id={product.id}
+                        name={product.name}
+                        price={product.price}
+                        image={getProductImage(product.slug)}
+                      />
+                    </div>
                   </div>
-                </Link>
+                </div>
               );
             })}
           </div>

@@ -51,7 +51,7 @@ export default function Header() {
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1 animate-fade-in">
             {menuItems.map((item) => (
               <div
                 key={item.id}
@@ -61,7 +61,7 @@ export default function Header() {
               >
                 <Link
                   href={item.href}
-                  className="px-3 py-2 text-sm font-medium text-[#1a1a1a] hover:text-[#C4724B] transition tracking-wide uppercase rounded hover:bg-[#f8f6f3]"
+                  className="px-3 py-2 text-sm font-medium text-[#1a1a1a] hover:text-[#C4724B] transition tracking-wide uppercase rounded hover:bg-[#f8f6f3] hover:-translate-y-0.5"
                 >
                   {item.label}
                 </Link>
@@ -71,7 +71,7 @@ export default function Header() {
                       <Link
                         key={child.id}
                         href={child.href}
-                        className="block px-5 py-2.5 text-sm text-[#1a1a1a] hover:text-[#C4724B] hover:bg-[#f8f6f3] transition"
+                        className="block px-5 py-2.5 text-sm text-[#1a1a1a] hover:text-[#C4724B] hover:bg-[#f8f6f3] transition hover:-translate-y-0.5"
                       >
                         {child.label}
                       </Link>
@@ -85,7 +85,7 @@ export default function Header() {
           <div className="flex items-center gap-2">
 
             {/* Cart */}
-            <button onClick={openCart} className="p-2 text-[#1a1a1a] hover:text-[#C4724B] transition relative" aria-label="Sepet">
+            <button onClick={openCart} className="p-2 text-[#1a1a1a] hover:text-[#C4724B] transition hover:scale-110 relative" aria-label="Sepet">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
               </svg>
@@ -117,7 +117,7 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/kayit"
-                    className="text-xs font-medium text-white bg-[#C4724B] hover:bg-[#B0603A] px-4 py-2 transition uppercase tracking-wider"
+                    className="text-xs font-medium text-white bg-[#C4724B] hover:bg-[#B0603A] px-4 py-2 transition hover:-translate-y-0.5 hover:shadow-lg uppercase tracking-wider"
                   >
                     Üye Ol
                   </Link>
@@ -147,7 +147,7 @@ export default function Header() {
                 <div key={item.id}>
                   <Link
                     href={item.href}
-                    className="text-sm font-medium text-[#1a1a1a] hover:text-[#C4724B] transition block py-2"
+                    className="text-sm font-medium text-[#1a1a1a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block py-2"
                     onClick={() => setMenuOpen(false)}
                   >
                     {item.label}
@@ -158,7 +158,7 @@ export default function Header() {
                         <Link
                           key={child.id}
                           href={child.href}
-                          className="text-sm text-[#8c8c8c] hover:text-[#C4724B] transition block py-1"
+                          className="text-sm text-[#8c8c8c] hover:text-[#C4724B] transition hover:-translate-y-0.5 block py-1"
                           onClick={() => setMenuOpen(false)}
                         >
                           {child.label}
@@ -179,7 +179,7 @@ export default function Header() {
                 ) : (
                   <div className="flex gap-2">
                     <Link href="/giris" className="flex-1 text-center border border-[#1a1a1a] text-[#1a1a1a] text-sm font-medium py-3 transition" onClick={() => setMenuOpen(false)}>Giriş</Link>
-                    <Link href="/kayit" className="flex-1 text-center bg-[#C4724B] text-white text-sm font-medium py-3 transition" onClick={() => setMenuOpen(false)}>Üye Ol</Link>
+                    <Link href="/kayit" className="flex-1 text-center bg-[#C4724B] text-white text-sm font-medium py-3 transition hover:-translate-y-0.5 hover:shadow-lg" onClick={() => setMenuOpen(false)}>Üye Ol</Link>
                   </div>
                 )}
               </div>

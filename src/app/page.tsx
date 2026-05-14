@@ -62,7 +62,7 @@ function FilmReel() {
 function HeroKahveniBul({ block }: { block: Block }) {
   const s = parseStyles(block.styles);
   return (
-    <div className="relative flex flex-col lg:flex-row items-center justify-between gap-6">
+    <div className="relative flex flex-col lg:flex-row items-center justify-between gap-6 animate-fade-in-up">
       <div className={`relative ${block.imageSize || "w-[420px] h-[420px] lg:w-[540px] lg:h-[540px]"} shrink-0`}>
         <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#C4724B] to-[#D4A574] animate-pulse opacity-15" />
         <div className="relative w-full h-full rounded-full overflow-hidden animate-slow-spin">
@@ -76,8 +76,13 @@ function HeroKahveniBul({ block }: { block: Block }) {
         </p>
         {block.linkUrl && (
           <Link href={block.linkUrl}
-            className={`inline-flex items-center gap-2 bg-[#D4A574] hover:bg-[#C4724B] text-white ${s.buttonSize || "px-8 py-4 text-sm"} font-semibold tracking-wide uppercase transition mt-6`}>
-            {block.linkText}
+            className={`inline-flex items-center gap-2 text-white ${s.buttonSize || "px-8 py-4 text-sm"} font-semibold tracking-wide uppercase transition-all duration-500 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-110 mt-6`}
+            style={{
+              background: "linear-gradient(90deg, #C4724B, #E8C4A0, #C4724B)",
+              backgroundSize: "200% auto",
+              animation: "copper-shimmer 3s linear infinite",
+            }}>
+            Kahveni Keşfet
           </Link>
         )}
       </div>
@@ -91,7 +96,7 @@ function HeroBarista({ block }: { block: Block }) {
   const s = parseStyles(block.styles);
   return (
     <Link href={block.linkUrl || "/ai-barista"}
-      className={`group relative ${s.cardStyle || "bg-white border-2 border-[#D4A574] hover:border-[#C4724B]"} px-10 py-8 transition-all duration-300 w-full hover:-translate-y-1 hover:shadow-xl`}>
+      className={`group relative animate-fade-in-up delay-2 ${s.cardStyle || "bg-white border-2 border-[#D4A574] hover:border-[#C4724B]"} px-10 py-8 transition-all duration-300 w-full hover:-translate-y-1 hover:shadow-xl`}>
       <div className="flex items-center gap-6">
         <div className={`relative ${block.imageSize || "w-20 h-20"} shrink-0`}>
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#D4A574] to-[#C4724B] animate-pulse opacity-30" />
