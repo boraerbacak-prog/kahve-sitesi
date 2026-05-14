@@ -2,25 +2,23 @@
 
 import { useEffect, useRef, useState } from "react";
 
+const DEFAULT_AUDIO = "/celsus/ses/Paper_Filter_Mornings.mp3";
+
 export default function SectionAudio({ src }: { src: string }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!src || !audio) return;
+    const seen = sessionStorage.getItem("welcome-seen");
+    if (!seen) {
+      setShowWelcome(true);
+      sessionStorage.setItem("welcome-seen", "1");
+    }
+  }, []);
 
-    // Just rely on HTML <audio autoPlay muted> for native autoplay.
-    // Check after a short delay whether it actually started.
-    const check = setTimeout(() => {
-      if (audio.paused) {
-        // Native autoplay didn't work → show popup
-        setShowWelcome(true);
-      } else {
-        // Native autoplay worked → unmute after brief delay
-        setTimeout(() => { audio.muted = false; }, 200);
-      }
-    }, 300);
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -37,11 +35,10 @@ export default function SectionAudio({ src }: { src: string }) {
     observer.observe(audio.parentElement || audio);
 
     return () => {
-      clearTimeout(check);
       observer.disconnect();
       audio.pause();
     };
-  }, [src]);
+  }, []);
 
   const handleDismiss = () => {
     setShowWelcome(false);
@@ -55,12 +52,10 @@ export default function SectionAudio({ src }: { src: string }) {
     }
   };
 
-  if (!src) return null;
-
   return (
     <>
       <div className="absolute inset-0 pointer-events-none">
-        <audio ref={audioRef} src={src} loop playsInline autoPlay muted preload="auto" />
+        <audio ref={audioRef} src={src || DEFAULT_AUDIO} loop playsInline autoPlay muted preload="auto" />
       </div>
 
       {showWelcome && (
