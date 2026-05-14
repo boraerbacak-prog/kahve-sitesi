@@ -74,8 +74,7 @@ function HeroKahveniBul({ block }: { block: Block }) {
         <p className={`${s.contentSize || "text-base lg:text-lg"} text-[#4a4a4a] mt-3 leading-relaxed max-w-sm mx-auto lg:mx-0`}>
           {block.content}
         </p>
-        {block.linkUrl && (
-          <Link href={block.linkUrl}
+          <Link href="/damak-testi"
             className={`inline-flex items-center gap-2 text-white ${s.buttonSize || "px-8 py-4 text-sm"} font-semibold tracking-wide uppercase transition-all duration-500 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-110 mt-6`}
             style={{
               background: "linear-gradient(90deg, #C4724B, #E8C4A0, #C4724B)",
@@ -84,7 +83,6 @@ function HeroKahveniBul({ block }: { block: Block }) {
             }}>
             Kahveni Keşfet
           </Link>
-        )}
       </div>
       <FilmReel />
       <SectionAudio src={block.audioUrl} />
