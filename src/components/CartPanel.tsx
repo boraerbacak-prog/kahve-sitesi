@@ -42,7 +42,7 @@ export default function CartPanel() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-medium text-white truncate">{item.name}</h3>
-                      <p className="text-xs text-white/50 mt-0.5">{item.weight > 999 ? "1 kg" : `${item.weight}g`} · {item.grind === "whole" ? "Çekirdek" : "Öğütülmüş"}</p>
+                      <p className="text-xs text-white/50 mt-0.5">{item.weight > 999 ? "1 kg" : `${item.weight}g`} · {item.grind === "whole" ? "Çekirdek" : item.grind === "v60" ? "V60" : item.grind === "french-press" ? "French Press" : item.grind === "moka" ? "Moka Pot" : item.grind === "espresso" ? "Espresso" : item.grind === "cezve" ? "Cezve" : item.grind === "filter" ? "Filtre Mak." : "Çekirdek"}</p>
                       <p className="text-sm text-[#C4724B] mt-1">{formatPrice(item.price)} ₺</p>
                       <div className="flex items-center gap-3 mt-2">
                         <button
