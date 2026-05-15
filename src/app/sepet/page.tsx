@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { formatPrice } from "@/lib/price";
 
 export default function CartPage() {
   const { data: session } = useSession();
@@ -62,9 +63,9 @@ export default function CartPage() {
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-amber-900">{item.product.name}</h3>
-                <p className="text-sm text-amber-600">{item.quantity} x {item.product.price.toFixed(2)} ₺</p>
+                <p className="text-sm text-amber-600">{item.quantity} x {formatPrice(item.product.price)} ₺</p>
               </div>
-              <p className="font-bold text-amber-900">{(item.product.price * item.quantity).toFixed(2)} ₺</p>
+              <p className="font-bold text-amber-900">{formatPrice(item.product.price * item.quantity)} ₺</p>
               <button
                 onClick={() => removeItem(item.id)}
                 className="text-red-500 hover:text-red-700 text-sm"
@@ -77,7 +78,7 @@ export default function CartPage() {
           <div className="bg-white rounded-xl border border-amber-100 p-6 mt-6">
             <div className="flex justify-between text-lg font-bold text-amber-900">
               <span>Toplam</span>
-              <span>{total.toFixed(2)} ₺</span>
+              <span>{formatPrice(total)} ₺</span>
             </div>
             <Link
               href="/odeme"

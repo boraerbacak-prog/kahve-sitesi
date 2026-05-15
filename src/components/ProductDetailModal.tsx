@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useCart } from "@/lib/cart-context";
+import { formatPrice } from "@/lib/price";
 
 export type ProductDetail = {
   id: string;
@@ -91,11 +92,11 @@ export default function ProductDetailModal({ product, onClose }: Props) {
             <div className="mb-6">
               {product.salePrice ? (
                 <div className="flex items-baseline gap-3">
-                  <span className="text-2xl font-bold text-[#1a1a1a]">{product.salePrice} ₺</span>
-                  <span className="text-base text-[#8c8c8c] line-through">{product.price} ₺</span>
+                  <span className="text-2xl font-bold text-[#1a1a1a]">{formatPrice(product.salePrice)} ₺</span>
+                  <span className="text-base text-[#8c8c8c] line-through">{formatPrice(product.price)} ₺</span>
                 </div>
               ) : (
-                <span className="text-2xl font-bold text-[#1a1a1a]">{product.price} ₺</span>
+                <span className="text-2xl font-bold text-[#1a1a1a]">{formatPrice(product.price)} ₺</span>
               )}
             </div>
 
@@ -134,7 +135,7 @@ export default function ProductDetailModal({ product, onClose }: Props) {
 
             {/* Total */}
             <p className="text-xs text-[#8c8c8c] mt-3 text-center">
-              Toplam: {(numericPrice * qty).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₺
+              Toplam: {formatPrice(numericPrice * qty)} ₺
             </p>
           </div>
         </div>

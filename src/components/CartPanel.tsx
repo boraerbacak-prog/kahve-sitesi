@@ -1,6 +1,7 @@
 "use client";
 
 import { useCart } from "@/lib/cart-context";
+import { formatPrice } from "@/lib/price";
 import Link from "next/link";
 
 export default function CartPanel() {
@@ -41,7 +42,7 @@ export default function CartPanel() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-medium text-white truncate">{item.name}</h3>
-                      <p className="text-sm text-[#C4724B] mt-1">{item.price.toFixed(2)} ₺</p>
+                      <p className="text-sm text-[#C4724B] mt-1">{formatPrice(item.price)} ₺</p>
                       <div className="flex items-center gap-3 mt-2">
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -69,7 +70,7 @@ export default function CartPanel() {
             <div className="border-t border-white/10 px-6 py-5">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm font-medium text-white">Toplam</span>
-                <span className="text-lg font-bold text-white">{total.toFixed(2)} ₺</span>
+                <span className="text-lg font-bold text-white">{formatPrice(total)} ₺</span>
               </div>
               <Link
                 href="/sepet"

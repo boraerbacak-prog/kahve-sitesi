@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import AddToCartInline from "@/components/AddToCartInline";
+import { formatPrice } from "@/lib/price";
 
 function getProductImage(slug: string): string {
   const imageMap: Record<string, string> = {
@@ -147,7 +148,7 @@ export default async function ProductsPage(props: {
                   </Link>
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#e5e0d8]">
                     <div>
-                      <span className="text-lg font-bold text-[#1a1a1a]">{product.price.toLocaleString("tr-TR")} ₺</span>
+                      <span className="text-lg font-bold text-[#1a1a1a]">{formatPrice(product.price)} ₺</span>
                       <span className="text-xs text-[#8c8c8c] ml-1">/ kg</span>
                     </div>
                     <div className="flex items-center gap-2">
