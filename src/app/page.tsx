@@ -249,16 +249,15 @@ export default async function Home() {
       </section>
 
       {/* Sadakat Programi Section */}
-      <section className="relative bg-[#2c1810] py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#C4724B]/5 via-transparent to-[#D4A574]/5" />
+      <section className="relative bg-[#f8f6f3] py-32 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#C4724B]/5 blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Sadakat</span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mt-3 mb-4">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1a1a1a] mt-3 mb-4">
               Rostello <span className="text-[#C4724B]">Sadakat Programı</span>
             </h2>
-            <p className="text-[#a39080] max-w-xl mx-auto text-lg">
+            <p className="text-[#666] max-w-xl mx-auto text-lg">
               Her alışverişinde puan kazan, seviye atla, ayrıcalıklı üye olmanın tadını çıkar.
             </p>
           </div>
@@ -273,26 +272,28 @@ export default async function Home() {
                 <div className="w-16 h-16 rounded-full bg-[#C4724B]/10 border border-[#C4724B]/20 flex items-center justify-center mx-auto mb-5 group-hover:bg-[#C4724B]/20 transition">
                   <span className="text-2xl font-bold text-[#C4724B]">{item.step}</span>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                <p className="text-sm text-[#a39080] leading-relaxed">{item.desc}</p>
+                <h3 className="text-xl font-bold text-[#1a1a1a] mb-2">{item.title}</h3>
+                <p className="text-sm text-[#666] leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
 
           {/* Tier Table */}
           <div className="max-w-3xl mx-auto mb-12">
-            <div className="grid grid-cols-3 gap-px bg-[#C4724B]/20 rounded-xl overflow-hidden">
+            <div className="grid grid-cols-3 gap-px bg-[#e5e0d8] rounded-xl overflow-hidden">
               {[
-                { tier: "Bronz", range: "0 - 500 ₺", discount: "%0", ship: "990 ₺ üzeri", color: "from-amber-700/20 to-amber-900/20" },
-                { tier: "Gümüş", range: "500 - 2.000 ₺", discount: "%3", ship: "500 ₺ üzeri", color: "from-gray-400/20 to-gray-500/20" },
-                { tier: "Altın", range: "2.000 ₺ ve üzeri", discount: "%5", ship: "Bedava", color: "from-yellow-600/20 to-yellow-700/20" },
+                { tier: "Bronz", range: "0 - 1.000 ₺", discount: "%0", ship: "990 ₺ üzeri", color: "bg-white" },
+                { tier: "Gümüş", range: "1.000 - 3.000 ₺", discount: "%5", ship: "500 ₺ üzeri", color: "bg-white" },
+                { tier: "Altın", range: "3.000 ₺ ve üzeri", discount: "%10", ship: "Bedava", color: "bg-white" },
               ].map((t) => (
-                <div key={t.tier} className={`bg-gradient-to-b ${t.color} p-6 text-center`}>
-                  <p className="text-lg font-bold text-white mb-3">{t.tier}</p>
-                  <div className="space-y-2 text-sm text-[#a39080]">
-                    <p>Harcama: <span className="text-white font-medium">{t.range}</span></p>
-                    <p>İndirim: <span className="text-green-400 font-semibold">{t.discount}</span></p>
-                    <p>Kargo: <span className="text-white font-medium">{t.ship}</span></p>
+                <div key={t.tier} className={`${t.color} p-6 text-center`}>
+                  <p className={`text-lg font-bold mb-3 ${
+                    t.tier === "Altın" ? "text-yellow-700" : t.tier === "Gümüş" ? "text-gray-500" : "text-amber-700"
+                  }`}>{t.tier}</p>
+                  <div className="space-y-2 text-sm text-[#666]">
+                    <p>Harcama: <span className="text-[#1a1a1a] font-medium">{t.range}</span></p>
+                    <p>İndirim: <span className="text-green-700 font-semibold">{t.discount}</span></p>
+                    <p>Kargo: <span className="text-[#1a1a1a] font-medium">{t.ship}</span></p>
                   </div>
                 </div>
               ))}
