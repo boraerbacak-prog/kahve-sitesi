@@ -37,7 +37,7 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
   return (
     <div className="max-w-7xl mx-auto px-6 py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div className="aspect-[4/5] bg-[#f8f6f3] flex items-center justify-center overflow-hidden border border-[#e5e0d8]">
+        <div className="aspect-[4/5] bg-[#f8f6f3] flex items-center justify-center overflow-hidden border border-[#e5e0d8] relative">
           <Image
             src={getProductImage(product.slug)}
             alt={product.name}
@@ -45,6 +45,15 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
             height={750}
             className="w-full h-full object-contain"
           />
+          {product.stock > 0 ? (
+            <span className="absolute top-3 right-3 text-xs bg-green-600 text-white px-3 py-1 uppercase tracking-wider font-medium">
+              Stokta
+            </span>
+          ) : (
+            <span className="absolute top-3 right-3 text-xs bg-red-600 text-white px-3 py-1 uppercase tracking-wider font-medium">
+              Tükendi
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col">
@@ -72,7 +81,12 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
             {product.compareAt && product.compareAt > product.price && (
               <span className="text-lg text-[#8c8c8c] line-through ml-2">{formatPrice(product.compareAt)} ₺</span>
             )}
-            <p className="text-xs text-[#C4724B] mt-2">Siparişe özel kavrulur</p>
+            <div className="flex items-center gap-3 mt-2">
+              <span className={`text-xs font-medium px-2 py-0.5 ${product.stock > 0 ? "text-green-600 bg-green-50" : "text-red-600 bg-red-50"}`}>
+                {product.stock > 0 ? "Stokta" : "Tükendi"}
+              </span>
+              <span className="text-xs text-[#C4724B]">Siparişe özel kavrulur</span>
+            </div>
           </div>
 
           <AddToCartButton productId={product.id} productName={product.name} productPrice={product.price} productImage={getProductImage(product.slug)} />
