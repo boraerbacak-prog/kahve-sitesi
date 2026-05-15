@@ -8,11 +8,13 @@ export type CartItem = {
   price: number;
   quantity: number;
   image: string;
+  weight: number;
+  grind: string;
 };
 
 type CartContext = {
   items: CartItem[];
-  addItem: (item: Omit<CartItem, "quantity">) => void;
+  addItem: (item: { id: string; name: string; price: number; image: string; weight: number; grind: string }) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, qty: number) => void;
   clearCart: () => void;
@@ -24,6 +26,10 @@ type CartContext = {
 };
 
 const CartCtx = createContext<CartContext | null>(null);
+
+function makeCartId(productId: string, weight: number, grind: string): string {
+  return `${productId}:${weight}:${grind}`;
+}
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -40,13 +46,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("cart", JSON.stringify(items));
   }, [items]);
 
-  const addItem = useCallback((newItem: Omit<CartItem, "quantity">) => {
+  const addItem = useCallback((item: { id: string; name: string; price: number; image: string; weight: number; grind: string }) => {
+    const cartId = makeCartId(item.id, item.weight, item.grind);
+    const unitPrice = item.price * (item.weight / 1000);
+
     setItems(prev => {
-      const existing = prev.find(i => i.id === newItem.id);
+      const existing = prev.find(i => i.id === cartId);
       if (existing) {
-        return prev.map(i => i.id === newItem.id ? { ...i, quantity: i.quantity + 1 } : i);
+        return prev.map(i => i.id === cartId ? { ...i, quantity: i.quantity + 1 } : i);
       }
-      return [...prev, { ...newItem, quantity: 1 }];
+      return [...prev, { id: cartId, name: item.name, price: unitPrice, quantity: 1, image: item.image, weight: item.weight, grind: item.grind }];
     });
     setIsOpen(true);
   }, []);

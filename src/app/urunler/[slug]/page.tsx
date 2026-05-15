@@ -37,7 +37,7 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
   return (
     <div className="max-w-7xl mx-auto px-6 py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div className="aspect-[4/5] bg-[#f8f6f3] flex items-center justify-center overflow-hidden border border-[#e5e0d8] relative">
+        <div className="aspect-[4/5] bg-[#f8f6f3] flex items-center justify-center overflow-hidden border border-[#e5e0d8]">
           <Image
             src={getProductImage(product.slug)}
             alt={product.name}
@@ -45,9 +45,6 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
             height={750}
             className="w-full h-full object-contain"
           />
-          <span className="absolute bottom-3 left-3 bg-white/90 text-[11px] px-3 py-1.5 text-[#4a4a4a] uppercase tracking-wider shadow-sm">
-            Siparişe özel kavrulur
-          </span>
         </div>
 
         <div className="flex flex-col">
@@ -74,9 +71,10 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
             {product.compareAt && product.compareAt > product.price && (
               <span className="text-lg text-[#8c8c8c] line-through ml-2">{formatPrice(product.compareAt)} ₺</span>
             )}
+            <p className="text-xs text-[#C4724B] mt-2">Siparişe özel kavrulur</p>
           </div>
 
-          <AddToCartButton productId={product.id} />
+          <AddToCartButton productId={product.id} productName={product.name} productPrice={product.price} productImage={getProductImage(product.slug)} />
 
           <div className="grid grid-cols-2 gap-3 mt-6">
             {product.origin && (
