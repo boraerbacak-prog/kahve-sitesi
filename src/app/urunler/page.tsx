@@ -126,7 +126,7 @@ export default async function ProductsPage(props: {
                           {product.origin || product.category.name}
                         </span>
                         {product.roastLevel && (
-                          <span className="text-[10px] bg-[#f8f6f3] text-[#8c8c8c] px-2 py-1 uppercase tracking-wider">
+                          <span className="text-xs bg-[#f8f6f3] text-[#8c8c8c] px-2 py-1 uppercase tracking-wider">
                             {product.roastLevel === "light" ? "Hafif" : product.roastLevel === "medium" ? "Orta" : "Koyu"}
                           </span>
                         )}
@@ -137,7 +137,7 @@ export default async function ProductsPage(props: {
                       {notes.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mt-2">
                           {notes.slice(0, 3).map((note: string) => (
-                            <span key={note} className="text-[10px] bg-[#f8f6f3] text-[#6b4c3b] px-2 py-0.5 italic">
+                            <span key={note} className="text-xs bg-[#f8f6f3] text-[#6b4c3b] px-2 py-0.5 italic">
                               {note}
                             </span>
                           ))}
@@ -149,8 +149,8 @@ export default async function ProductsPage(props: {
                     <div>
                       <span className="text-lg font-bold text-[#1a1a1a]">{formatPrice(kgTo250g(product.price))} ₺</span>
                       <span className="text-xs text-[#8c8c8c]">/ 250g</span>
-                      <p className="text-[10px] text-[#8c8c8c]">({formatPrice(product.price)} ₺/kg)</p>
-                      <span className={`text-[10px] font-medium ${product.stock > 0 ? "text-green-600" : "text-red-600"}`}>
+                      <p className="text-xs text-[#8c8c8c]">({formatPrice(product.price)} ₺/kg)</p>
+                      <span className={`text-sm font-semibold ${product.stock > 0 ? "text-green-600" : "text-red-600"}`}>
                         {product.stock > 0 ? "Stokta" : "Tükendi"}
                       </span>
                     </div>

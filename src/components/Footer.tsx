@@ -71,7 +71,7 @@ export default function Footer() {
               En taze özel kahve çekirdekleri, özenle kavrulur.
             </p>
             <div className="mt-5">
-              <h4 className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-2">E-Bülten</h4>
+              <h4 className="text-sm tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-2">E-Bülten</h4>
               {subscribed ? (
                 <p className="text-xs text-[#C4724B] font-medium">Abone olduğunuz için teşekkürler!</p>
               ) : (
@@ -97,7 +97,7 @@ export default function Footer() {
             </div>
           </div>
           <div>
-            <h3 className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">Markamız</h3>
+            <h3 className="text-sm tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">Markamız</h3>
             <div className="flex flex-col gap-2.5">
               <Link href="/hikaye" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Hikayemiz</Link>
               <Link href="/akademi" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Akademi</Link>
@@ -106,7 +106,7 @@ export default function Footer() {
             </div>
           </div>
           <div>
-            <h3 className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">Öğren</h3>
+            <h3 className="text-sm tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">Öğren</h3>
             <div className="flex flex-col gap-2.5">
               <Link href="/demleme" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Demleme Rehberi</Link>
               <Link href="/akademi" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Akademi</Link>
@@ -115,7 +115,7 @@ export default function Footer() {
             </div>
           </div>
           <div>
-            <h3 className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">Kişisel Verilerin Korunması</h3>
+            <h3 className="text-sm tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">Kişisel Verilerin Korunması</h3>
             <div className="flex flex-col gap-2.5">
               <a href="#" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">KVKK ve Gizlilik Politikası</a>
               <a href="#" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Aydınlatma Metni</a>
@@ -124,14 +124,14 @@ export default function Footer() {
             </div>
           </div>
           <div>
-            <h3 className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">İletişim</h3>
+            <h3 className="text-sm tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">İletişim</h3>
             <div className="flex flex-col gap-2.5 text-sm text-[#4a4a4a]">
               <a href="tel:+908504607676" className="hover:text-[#C4724B] transition hover:-translate-y-0.5 block font-semibold">0850 460 76 76</a>
               <a href="mailto:info@rostello.com" className="hover:text-[#C4724B] transition hover:-translate-y-0.5 block">info@rostello.com</a>
-              <span className="text-xs text-[#8c8c8c] mt-1">Hafta İçi 10:00 - 19:00</span>
+              <span className="text-sm text-[#8c8c8c] mt-1">Hafta İçi 10:00 - 19:00</span>
             </div>
             <div className="mt-5">
-              <h4 className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-3">Sosyal Medya</h4>
+              <h4 className="text-sm tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-3">Sosyal Medya</h4>
               <div className="flex gap-3">
                 <a href="https://instagram.com/rostello" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-[#D4A574]/40 flex items-center justify-center text-[#C4724B] hover:bg-[#C4724B] hover:text-white transition hover:-translate-y-0.5" aria-label="Instagram">
                   <InstagramIcon />

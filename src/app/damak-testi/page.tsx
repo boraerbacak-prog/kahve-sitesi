@@ -255,7 +255,7 @@ export default function KahveniBulPage() {
                     {notes.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {notes.slice(0, 3).map((n: string) => (
-                          <span key={n} className="text-[10px] uppercase tracking-wider text-[#C4724B] border border-[#C4724B]/20 px-2 py-0.5">
+                          <span key={n} className="text-xs uppercase tracking-wider text-[#C4724B] border border-[#C4724B]/20 px-2 py-0.5">
                             {n}
                           </span>
                         ))}

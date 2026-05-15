@@ -76,7 +76,7 @@ export default function ProductDetailModal({ product, onClose }: Props) {
           {/* Details */}
           <div className="p-6 md:p-8 flex flex-col">
             {product.cat && (
-              <span className="text-[10px] tracking-[0.2em] uppercase text-[#C4724B] font-medium mb-2">
+              <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium mb-2">
                 {product.cat}
               </span>
             )}

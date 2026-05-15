@@ -162,7 +162,7 @@ export default function ImzaUrunlerPage() {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </button>
-            <span className="text-[10px] tracking-[0.2em] uppercase text-[#C4724B] font-medium mb-1">{item.cat}</span>
+            <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium mb-1">{item.cat}</span>
             <h3 className="text-lg font-bold text-[#1a1a1a] mb-2">{item.title}</h3>
             <p className="text-sm text-[#4a4a4a] leading-relaxed flex-1 line-clamp-2">{item.desc}</p>
             <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#e5e0d8]">

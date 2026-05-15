@@ -173,7 +173,7 @@ export default function EkipmanlarPage() {
           return (
             <div key={item.title} className="bg-white p-8 flex flex-col relative">
               {item.soldOut && (
-                <span className="absolute top-4 right-4 text-[10px] bg-[#1a1a1a] text-white px-3 py-1 uppercase tracking-wider font-medium z-10">
+                <span className="absolute top-4 right-4 text-xs bg-[#1a1a1a] text-white px-3 py-1 uppercase tracking-wider font-medium z-10">
                   Tükendi
                 </span>
               )}

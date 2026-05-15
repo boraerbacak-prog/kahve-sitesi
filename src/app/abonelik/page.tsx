@@ -130,7 +130,7 @@ function AbonelikContent() {
                 className={`bg-white p-8 flex flex-col relative ${plan.name === "Keyif" ? "ring-2 ring-[#C4724B]" : ""}`}
               >
                 {plan.name === "Keyif" && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#C4724B] text-white text-[10px] tracking-wider uppercase px-4 py-1 font-medium">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#C4724B] text-white text-xs tracking-wider uppercase px-4 py-1 font-medium">
                     En Popüler
                   </span>
                 )}

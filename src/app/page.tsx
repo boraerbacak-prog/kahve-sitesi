@@ -52,8 +52,8 @@ function FilmReel() {
         </div>
       </div>
       <div className="text-center mt-3">
-        <p className="text-[10px] tracking-[0.15em] uppercase text-[#C4724B] font-semibold">Taze Kavurum</p>
-        <p className="text-[9px] tracking-[0.1em] uppercase text-[#8c8c8c] font-medium mt-0.5">Üstün Lezzet Deneyimi</p>
+        <p className="text-xs tracking-[0.15em] uppercase text-[#C4724B] font-semibold">Taze Kavurum</p>
+        <p className="text-xs tracking-[0.1em] uppercase text-[#8c8c8c] font-medium mt-0.5">Üstün Lezzet Deneyimi</p>
       </div>
     </div>
   );
@@ -264,7 +264,7 @@ export default async function Home() {
               <Link key={post.title} href="/akademi"
                 className="bg-white border border-[#e5e0d8] p-8 group hover:border-[#C4724B]/30 transition">
                 <div className="w-8 h-px bg-[#D4A574]/40 mb-4" />
-                <span className="text-[10px] tracking-[0.2em] uppercase text-[#C4724B] font-medium">{post.cat}</span>
+                <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">{post.cat}</span>
                 <h3 className="text-lg font-semibold text-[#1a1a1a] mt-2 group-hover:text-[#C4724B] transition">{post.title}</h3>
               </Link>
             ))}

@@ -54,7 +54,7 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
               {product.category.name}
             </span>
             {product.segment && (
-              <span className="text-[10px] bg-[#f8f6f3] text-[#6b4c3b] px-2 py-1 uppercase tracking-wider">
+              <span className="text-xs bg-[#f8f6f3] text-[#6b4c3b] px-2 py-1 uppercase tracking-wider">
                 {product.segment === "specialty" ? "Özel Seçki" : "Standart"}
               </span>
             )}
@@ -74,10 +74,10 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
               <span className="text-lg text-[#8c8c8c] line-through ml-2">{formatPrice(product.compareAt)} ₺</span>
             )}
             <div className="flex items-center gap-3 mt-2">
-              <span className={`text-xs font-medium px-2 py-0.5 ${product.stock > 0 ? "text-green-600 bg-green-50" : "text-red-600 bg-red-50"}`}>
+              <span className={`text-sm font-semibold px-2 py-0.5 ${product.stock > 0 ? "text-green-600 bg-green-50" : "text-red-600 bg-red-50"}`}>
                 {product.stock > 0 ? "Stokta" : "Tükendi"}
               </span>
-              <span className="text-xs text-[#C4724B]">Siparişe özel kavrulur</span>
+              <span className="text-sm text-[#C4724B]">Siparişe özel kavrulur</span>
             </div>
           </div>
 
@@ -90,37 +90,37 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
           <div className="grid grid-cols-2 gap-3 mt-6">
             {product.origin && (
               <div className="p-3 bg-white border border-[#e5e0d8]">
-                <span className="text-[10px] text-[#8c8c8c] uppercase tracking-wider block">Menşei</span>
+                <span className="text-xs text-[#8c8c8c] uppercase tracking-wider block">Menşei</span>
                 <span className="text-sm font-medium text-[#1a1a1a]">{product.origin}</span>
               </div>
             )}
             {product.region && (
               <div className="p-3 bg-white border border-[#e5e0d8]">
-                <span className="text-[10px] text-[#8c8c8c] uppercase tracking-wider block">Bölge</span>
+                <span className="text-xs text-[#8c8c8c] uppercase tracking-wider block">Bölge</span>
                 <span className="text-sm font-medium text-[#1a1a1a]">{product.region}</span>
               </div>
             )}
             {product.altitude && (
               <div className="p-3 bg-white border border-[#e5e0d8]">
-                <span className="text-[10px] text-[#8c8c8c] uppercase tracking-wider block">Rakım</span>
+                <span className="text-xs text-[#8c8c8c] uppercase tracking-wider block">Rakım</span>
                 <span className="text-sm font-medium text-[#1a1a1a]">{product.altitude}</span>
               </div>
             )}
             {product.process && (
               <div className="p-3 bg-white border border-[#e5e0d8]">
-                <span className="text-[10px] text-[#8c8c8c] uppercase tracking-wider block">İşleme</span>
+                <span className="text-xs text-[#8c8c8c] uppercase tracking-wider block">İşleme</span>
                 <span className="text-sm font-medium text-[#1a1a1a]">{product.process}</span>
               </div>
             )}
             {product.variety && (
               <div className="p-3 bg-white border border-[#e5e0d8]">
-                <span className="text-[10px] text-[#8c8c8c] uppercase tracking-wider block">Tür</span>
+                <span className="text-xs text-[#8c8c8c] uppercase tracking-wider block">Tür</span>
                 <span className="text-sm font-medium text-[#1a1a1a]">{product.variety}</span>
               </div>
             )}
             {product.grade && (
               <div className="p-3 bg-white border border-[#e5e0d8]">
-                <span className="text-[10px] text-[#8c8c8c] uppercase tracking-wider block">Sınıf</span>
+                <span className="text-xs text-[#8c8c8c] uppercase tracking-wider block">Sınıf</span>
                 <span className="text-sm font-medium text-[#1a1a1a]">{product.grade}</span>
               </div>
             )}
@@ -130,19 +130,19 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
             <div className="flex gap-3 mt-4">
               {roastLabel && (
                 <div className="flex-1 p-3 bg-white border border-[#e5e0d8] text-center">
-                  <span className="text-[10px] text-[#8c8c8c] uppercase tracking-wider block">Kavrum</span>
+                  <span className="text-xs text-[#8c8c8c] uppercase tracking-wider block">Kavrum</span>
                   <span className="text-sm font-medium text-[#1a1a1a]">{roastLabel}</span>
                 </div>
               )}
               {bodyLabel && (
                 <div className="flex-1 p-3 bg-white border border-[#e5e0d8] text-center">
-                  <span className="text-[10px] text-[#8c8c8c] uppercase tracking-wider block">Gövde</span>
+                  <span className="text-xs text-[#8c8c8c] uppercase tracking-wider block">Gövde</span>
                   <span className="text-sm font-medium text-[#1a1a1a]">{bodyLabel}</span>
                 </div>
               )}
               {acidityLabel && (
                 <div className="flex-1 p-3 bg-white border border-[#e5e0d8] text-center">
-                  <span className="text-[10px] text-[#8c8c8c] uppercase tracking-wider block">Asidite</span>
+                  <span className="text-xs text-[#8c8c8c] uppercase tracking-wider block">Asidite</span>
                   <span className="text-sm font-medium text-[#1a1a1a]">{acidityLabel}</span>
                 </div>
               )}

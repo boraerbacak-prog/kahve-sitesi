@@ -269,7 +269,7 @@ function AIBaristaContent() {
         {subInfo && (
           <div className="border-t border-[#e5e0d8] px-4 sm:px-6 py-2.5 bg-white shrink-0">
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-[10px] tracking-[0.2em] uppercase text-[#8c8c8c] font-medium">
+              <span className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium">
                 {subInfo.planName} ({subInfo.planPrice}₺/ay):
               </span>
               {subInfo.status === "active" && (

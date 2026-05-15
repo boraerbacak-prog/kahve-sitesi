@@ -20,7 +20,7 @@ export default function AddToCartInline({ id, name, price, image }: { id: string
       <div className="flex gap-1">
         {weights.map((w) => (
           <button key={w.value} onClick={() => setWeight(w.value)}
-            className={`text-[10px] px-2.5 py-1.5 font-medium uppercase tracking-wider border transition ${
+            className={`text-xs px-2.5 py-1.5 font-medium uppercase tracking-wider border transition ${
               weight === w.value ? "bg-[#C4724B] text-white border-[#C4724B]" : "bg-white text-[#4a4a4a] border-[#e5e0d8] hover:border-[#C4724B]"
             }`}
           >{w.label}</button>

@@ -325,7 +325,7 @@ export default async function DemlemeDetailPage({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
         {technique.stats?.map((stat) => (
           <div key={stat.label} className="bg-[#f8f6f3] p-4 text-center rounded">
-            <span className="text-[10px] tracking-[0.2em] uppercase text-[#8c8c8c] font-medium block mb-1">
+            <span className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium block mb-1">
               {stat.label}
             </span>
             <span className="text-lg font-bold text-[#1a1a1a]">{stat.value}</span>

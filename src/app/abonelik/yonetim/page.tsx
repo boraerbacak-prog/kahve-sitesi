@@ -211,7 +211,7 @@ export default function YonetimPage() {
 
             <div className="p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div>
-                <p className="text-[10px] tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-1">Profil</p>
+                <p className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-1">Profil</p>
                 <div className="space-y-1 text-sm text-[#4a4a4a]">
                   {sub.equipment && <p>Ekipman: {equipLabel(sub.equipment)}</p>}
                   {sub.grindSetting && <p>Öğütme: {grindLabel(sub.grindSetting)}</p>}
@@ -221,7 +221,7 @@ export default function YonetimPage() {
               </div>
 
               <div>
-                <p className="text-[10px] tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-1">Teslimat</p>
+                <p className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-1">Teslimat</p>
                 <div className="space-y-1 text-sm text-[#4a4a4a]">
                   <p>Başlangıç: {new Date(sub.startDate).toLocaleDateString("tr-TR")}</p>
                   <p>Sonraki: {nextDelivery}</p>
@@ -232,7 +232,7 @@ export default function YonetimPage() {
               </div>
 
               <div className="flex flex-col gap-2 items-start">
-                <p className="text-[10px] tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-1">İşlemler</p>
+                <p className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-1">İşlemler</p>
                 {sub.status === "active" && (
                   <>
                     <button
@@ -271,7 +271,7 @@ export default function YonetimPage() {
 
             {sub.deliveries.length > 0 && (
               <div className="border-t border-[#e5e0d8] p-6 sm:p-8">
-                <p className="text-[10px] tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">Teslimat Geçmişi</p>
+                <p className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">Teslimat Geçmişi</p>
                 <div className="space-y-3">
                   {sub.deliveries.map((del) => (
                     <div key={del.id} className="flex items-center justify-between gap-4 p-3 bg-[#f8f6f3]">
