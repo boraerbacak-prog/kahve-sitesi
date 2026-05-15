@@ -21,6 +21,7 @@ model User {
   reviews       Review[]
   chatThreads   ChatThread[]
   subscriptions UserSubscription[]
+  loyalty      UserLoyalty?
 }
 
 model Category {
@@ -269,6 +270,68 @@ model StockNotification {
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   notified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model LoyaltySettings {
+  id    String @id @default("global")
+
+  pointsPerLira  Float @default(1)
+  pointsToLira   Float @default(0.05)
+  minRedeemPoints Int  @default(100)
+  maxDiscountPct  Float @default(50)
+
+  bronzeMin    Float @default(0)
+  bronzeMax    Float @default(500)
+  silverMin    Float @default(500)
+  silverMax    Float @default(2000)
+  goldMin      Float @default(2000)
+  goldMax      Float @default(999999)
+
+  bronzeShippingThreshold Float @default(990)
+  silverShippingThreshold Float @default(500)
+  goldShippingThreshold   Float @default(0)
+
+  bronzeDiscountPct Float @default(0)
+  silverDiscountPct Float @default(3)
+  goldDiscountPct   Float @default(5)
+
+  welcomePoints      Int   @default(500)
+  welcomeDiscountPct Float @default(10)
+  birthdayPoints     Int   @default(300)
+  referralPoints     Int   @default(100)
+  referralFriendPct  Float @default(10)
+
+  subscriptionDiscountPct Float @default(5)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserLoyalty {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  points     Int      @default(0)
+  totalSpent Float    @default(0)
+  tier       String   @default("bronze")
+  birthDate  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions LoyaltyTransaction[]
+}
+
+model LoyaltyTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  loyaltyId String
+  loyalty   UserLoyalty @relation(fields: [loyaltyId], references: [id], onDelete: Cascade)
+  amount    Int
+  type      String    // earn, redeem, welcome, birthday, referral, admin
+  reference String?
+  note      String?
   createdAt DateTime @default(now())
 }
 
