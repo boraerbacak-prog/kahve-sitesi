@@ -138,13 +138,16 @@ export default function ImzaUrunlerPage() {
         </p>
       </div>
 
-      <div className="flex justify-center gap-3 mb-12">
-        <Link href="/urunler" className="px-5 py-2.5 text-xs font-medium tracking-wider uppercase transition bg-[#1a1a1a] text-white hover:bg-[#2a2a2a] hover:-translate-y-0.5">
-          Tüm Kahveler
+      <div className="flex gap-10 mb-12 overflow-x-auto pb-2 border-b border-[#e5e0d8]">
+        <Link href="/urunler" className="pb-3 text-sm font-bold tracking-[0.15em] uppercase transition whitespace-nowrap text-[#8c8c8c] border-b-[3px] border-transparent hover:text-[#C4724B] hover:border-[#C4724B]">
+          Kahveler
         </Link>
-        <Link href="/ekipmanlar" className="px-5 py-2.5 text-xs font-medium tracking-wider uppercase transition border border-[#C4724B] text-[#C4724B] hover:bg-[#C4724B] hover:text-white hover:-translate-y-0.5">
+        <Link href="/ekipmanlar" className="pb-3 text-sm font-bold tracking-[0.15em] uppercase transition whitespace-nowrap text-[#8c8c8c] border-b-[3px] border-transparent hover:text-[#C4724B] hover:border-[#C4724B]">
           Ekipmanlar
         </Link>
+        <span className="pb-3 text-sm font-bold tracking-[0.15em] uppercase whitespace-nowrap text-[#C4724B] border-b-[3px] border-[#C4724B]">
+          İmza Ürünler
+        </span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#e5e0d8]">
