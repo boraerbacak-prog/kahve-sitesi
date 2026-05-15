@@ -37,19 +37,19 @@ export default async function ProductsPage(props: { searchParams?: Promise<{ kat
   return (
     <div className="max-w-7xl mx-auto px-6 py-16">
       {/* Section Tabs */}
-      <div className="flex gap-3 mb-8 overflow-x-auto pb-2">
-        <span className="px-5 py-2.5 text-xs font-medium tracking-wider uppercase whitespace-nowrap bg-[#1a1a1a] text-white">
+      <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+        <span className="px-6 py-2.5 text-xs font-semibold tracking-wider uppercase whitespace-nowrap rounded-full bg-[#1a1a1a] text-white">
           Kahveler
         </span>
         <Link
           href="/ekipmanlar"
-          className="px-5 py-2.5 text-xs font-medium tracking-wider uppercase transition whitespace-nowrap border border-[#C4724B] text-[#C4724B] hover:bg-[#C4724B] hover:text-white hover:-translate-y-0.5"
+          className="px-6 py-2.5 text-xs font-semibold tracking-wider uppercase transition whitespace-nowrap rounded-full border border-[#C4724B] text-[#C4724B] hover:bg-[#C4724B] hover:text-white"
         >
           Ekipmanlar
         </Link>
         <Link
           href="/imza-urunler"
-          className="px-5 py-2.5 text-xs font-medium tracking-wider uppercase transition whitespace-nowrap bg-[#C4724B] text-white hover:bg-[#B0603A] hover:-translate-y-0.5"
+          className="px-6 py-2.5 text-xs font-semibold tracking-wider uppercase transition whitespace-nowrap rounded-full bg-[#C4724B] text-white hover:bg-[#B0603A]"
         >
           İmza Ürünler
         </Link>
@@ -59,8 +59,8 @@ export default async function ProductsPage(props: { searchParams?: Promise<{ kat
       <div className="flex gap-2 mb-12 overflow-x-auto pb-2">
         <Link
           href="/urunler"
-          className={`px-3 py-1.5 text-xs font-medium tracking-wider uppercase transition whitespace-nowrap ${
-            !kat ? "bg-[#1a1a1a] text-white" : "bg-white text-[#1a1a1a] border border-[#e5e0d8] hover:border-[#1a1a1a]"
+          className={`px-4 py-1.5 text-xs font-medium tracking-wider uppercase transition whitespace-nowrap rounded-full ${
+            !kat ? "bg-[#C4724B] text-white shadow-sm" : "bg-[#f8f6f3] text-[#4a4a4a] border border-[#e5e0d8] hover:border-[#C4724B] hover:text-[#C4724B]"
           }`}
         >
           Tümü
@@ -69,10 +69,10 @@ export default async function ProductsPage(props: { searchParams?: Promise<{ kat
           <Link
             key={cat.id}
             href={`/urunler?kat=${cat.slug}`}
-            className={`px-3 py-1.5 text-xs font-medium tracking-wider uppercase transition whitespace-nowrap ${
+            className={`px-4 py-1.5 text-xs font-medium tracking-wider uppercase transition whitespace-nowrap rounded-full ${
               kat === cat.slug
-                ? "bg-[#1a1a1a] text-white"
-                : "bg-white text-[#1a1a1a] border border-[#e5e0d8] hover:border-[#1a1a1a]"
+                ? "bg-[#C4724B] text-white shadow-sm"
+                : "bg-[#f8f6f3] text-[#4a4a4a] border border-[#e5e0d8] hover:border-[#C4724B] hover:text-[#C4724B]"
             }`}
           >
             {cat.name}
