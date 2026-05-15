@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import AddToCartButton from "./AddToCartButton";
+import OutOfStockNotifier from "@/components/OutOfStockNotifier";
 import { formatPrice, kgTo250g } from "@/lib/price";
 
 function getProductImage(slug: string): string {
@@ -37,7 +38,7 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
   return (
     <div className="max-w-7xl mx-auto px-6 py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div className="aspect-[4/5] bg-[#f8f6f3] flex items-center justify-center overflow-hidden border border-[#e5e0d8] relative">
+        <div className="aspect-[4/5] bg-[#f8f6f3] flex items-center justify-center overflow-hidden border border-[#e5e0d8]">
           <Image
             src={getProductImage(product.slug)}
             alt={product.name}
@@ -45,15 +46,6 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
             height={750}
             className="w-full h-full object-contain"
           />
-          {product.stock > 0 ? (
-            <span className="absolute top-3 right-3 text-xs bg-green-600 text-white px-3 py-1 uppercase tracking-wider font-medium">
-              Stokta
-            </span>
-          ) : (
-            <span className="absolute top-3 right-3 text-xs bg-red-600 text-white px-3 py-1 uppercase tracking-wider font-medium">
-              Tükendi
-            </span>
-          )}
         </div>
 
         <div className="flex flex-col">
@@ -89,7 +81,11 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
             </div>
           </div>
 
-          <AddToCartButton productId={product.id} productName={product.name} productPrice={product.price} productImage={getProductImage(product.slug)} />
+          {product.stock > 0 ? (
+            <AddToCartButton productId={product.id} productName={product.name} productPrice={product.price} productImage={getProductImage(product.slug)} />
+          ) : (
+            <OutOfStockNotifier productName={product.name} />
+          )}
 
           <div className="grid grid-cols-2 gap-3 mt-6">
             {product.origin && (

@@ -111,7 +111,7 @@ export default async function ProductsPage(props: {
                   className="bg-white p-6 flex flex-col"
                 >
                   <Link href={`/urunler/${product.slug}`} className="group">
-                    <div className="aspect-[4/5] bg-[#f8f6f3] mb-6 flex items-center justify-center overflow-hidden relative">
+                    <div className="aspect-[4/5] bg-[#f8f6f3] mb-6 flex items-center justify-center overflow-hidden">
                       <Image
                         src={getProductImage(product.slug)}
                         alt={product.name}
@@ -119,15 +119,6 @@ export default async function ProductsPage(props: {
                         height={500}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
-                      {product.stock > 0 ? (
-                        <span className="absolute top-2 right-2 text-[10px] bg-green-600 text-white px-2 py-0.5 uppercase tracking-wider font-medium">
-                          Stokta
-                        </span>
-                      ) : (
-                        <span className="absolute top-2 right-2 text-[10px] bg-red-600 text-white px-2 py-0.5 uppercase tracking-wider font-medium">
-                          Tükendi
-                        </span>
-                      )}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-start justify-between gap-2 mb-2">
@@ -159,6 +150,9 @@ export default async function ProductsPage(props: {
                       <span className="text-lg font-bold text-[#1a1a1a]">{formatPrice(kgTo250g(product.price))} ₺</span>
                       <span className="text-xs text-[#8c8c8c]">/ 250g</span>
                       <p className="text-[10px] text-[#8c8c8c]">({formatPrice(product.price)} ₺/kg)</p>
+                      <span className={`text-[10px] font-medium ${product.stock > 0 ? "text-green-600" : "text-red-600"}`}>
+                        {product.stock > 0 ? "Stokta" : "Tükendi"}
+                      </span>
                     </div>
                     <Link href={`/urunler/${product.slug}`} className="text-xs font-medium text-[#C4724B] hover:text-[#B0603A] transition uppercase tracking-wider hover:-translate-y-0.5">
                       İncele →
