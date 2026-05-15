@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
-import { formatPrice } from "@/lib/price";
+import { formatPrice, kgTo250g } from "@/lib/price";
 
 function getProductImage(slug: string): string {
   const imageMap: Record<string, string> = {
@@ -147,9 +147,9 @@ export default async function ProductsPage(props: {
                   </Link>
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#e5e0d8]">
                     <div>
-                      <span className="text-lg font-bold text-[#1a1a1a]">{formatPrice(product.price)} ₺</span>
-                      <span className="text-xs text-[#8c8c8c] ml-1">/ kg</span>
-                      <p className="text-[10px] text-[#C4724B] mt-0.5">Siparişe özel kavrulur</p>
+                      <span className="text-lg font-bold text-[#1a1a1a]">{formatPrice(kgTo250g(product.price))} ₺</span>
+                      <span className="text-xs text-[#8c8c8c]">/ 250g</span>
+                      <p className="text-[10px] text-[#8c8c8c]">({formatPrice(product.price)} ₺/kg)</p>
                     </div>
                     <Link href={`/urunler/${product.slug}`} className="text-xs font-medium text-[#C4724B] hover:text-[#B0603A] transition uppercase tracking-wider hover:-translate-y-0.5">
                       İncele →

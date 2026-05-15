@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import AddToCartButton from "./AddToCartButton";
-import { formatPrice } from "@/lib/price";
+import { formatPrice, kgTo250g } from "@/lib/price";
 
 function getProductImage(slug: string): string {
   const imageMap: Record<string, string> = {
@@ -65,9 +65,10 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
 
           <div className="mt-6 p-6 bg-[#f8f6f3] border border-[#e5e0d8]">
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold text-[#1a1a1a]">{formatPrice(product.price)} ₺</span>
-              <span className="text-sm text-[#8c8c8c]">/ kg</span>
+              <span className="text-3xl font-bold text-[#1a1a1a]">{formatPrice(kgTo250g(product.price))} ₺</span>
+              <span className="text-sm text-[#8c8c8c]">/ 250g</span>
             </div>
+            <p className="text-sm text-[#8c8c8c] mt-1">{formatPrice(product.price)} ₺/kg</p>
             {product.compareAt && product.compareAt > product.price && (
               <span className="text-lg text-[#8c8c8c] line-through ml-2">{formatPrice(product.compareAt)} ₺</span>
             )}

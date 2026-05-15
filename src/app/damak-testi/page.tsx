@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { formatPrice } from "@/lib/price";
+import { formatPrice, kgTo250g } from "@/lib/price";
 
 interface Product {
   id: string;
@@ -244,7 +244,7 @@ export default function KahveniBulPage() {
                         {p.name}
                       </h3>
                       <span className="text-sm font-bold text-[#C4724B]">
-                        {formatPrice(p.price)}₺
+                        {formatPrice(kgTo250g(p.price))}₺
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-[#8c8c8c] mb-2">
