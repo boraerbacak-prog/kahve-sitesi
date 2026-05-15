@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import DeleteButton from "./DeleteButton";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export default async function AdminStockNotificationsPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
+
       <Link href="/admin" className="text-sm text-amber-600 hover:underline mb-4 inline-block">← Admin Panel</Link>
       <h1 className="text-3xl font-bold text-amber-900 mb-2">Stok Bildirim Talepleri</h1>
       <p className="text-sm text-gray-500 mb-6">Toplam {notifications.length} talep</p>
@@ -66,9 +68,7 @@ export default async function AdminStockNotificationsPage() {
                 </td>
                 <td className="px-4 py-3">
                   <form action={async () => { "use server"; await deleteAction(n.id); }}>
-                    <button className="text-xs text-red-500 hover:underline" onClick={async (e) => { if (!confirm("Emin misiniz?")) e.preventDefault(); }}>
-                      Sil
-                    </button>
+                    <DeleteButton />
                   </form>
                 </td>
               </tr>
