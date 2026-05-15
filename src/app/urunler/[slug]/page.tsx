@@ -37,14 +37,17 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
   return (
     <div className="max-w-7xl mx-auto px-6 py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div className="aspect-[4/5] bg-[#f8f6f3] flex items-center justify-center overflow-hidden border border-[#e5e0d8]">
+        <div className="aspect-[4/5] bg-[#f8f6f3] flex items-center justify-center overflow-hidden border border-[#e5e0d8] relative">
           <Image
             src={getProductImage(product.slug)}
             alt={product.name}
             width={600}
             height={750}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
+          <span className="absolute bottom-3 left-3 bg-white/90 text-[11px] px-3 py-1.5 text-[#4a4a4a] uppercase tracking-wider shadow-sm">
+            Siparişe özel kavrulur
+          </span>
         </div>
 
         <div className="flex flex-col">

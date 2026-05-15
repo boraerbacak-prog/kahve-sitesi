@@ -112,7 +112,7 @@ export default async function ProductsPage(props: {
                   className="bg-white p-6 flex flex-col"
                 >
                   <Link href={`/urunler/${product.slug}`} className="group">
-                    <div className="aspect-[4/5] bg-[#f8f6f3] mb-6 flex items-center justify-center overflow-hidden">
+                    <div className="aspect-[4/5] bg-[#f8f6f3] mb-6 flex items-center justify-center overflow-hidden relative">
                       <Image
                         src={getProductImage(product.slug)}
                         alt={product.name}
@@ -120,6 +120,9 @@ export default async function ProductsPage(props: {
                         height={500}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
+                      <span className="absolute bottom-2 left-2 bg-white/90 text-[10px] px-2 py-1 text-[#4a4a4a] uppercase tracking-wider shadow-sm">
+                        Siparişe özel kavrulur
+                      </span>
                     </div>
                     <div className="flex-1">
                       <div className="flex items-start justify-between gap-2 mb-2">
