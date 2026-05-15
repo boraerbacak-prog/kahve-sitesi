@@ -85,8 +85,8 @@ export default function StoryPage() {
               <h4 className="text-sm font-semibold tracking-wider uppercase mb-4 text-[#c8a77b]">Alışveriş</h4>
               <div className="flex flex-col gap-3">
                 <Link href="/urunler" className="text-sm text-white/60 hover:text-white transition">Tüm Kahveler</Link>
-                <Link href="/urunler#filtre-kahve" className="text-sm text-white/60 hover:text-white transition">Filtre Kahve</Link>
-                <Link href="/urunler#espresso" className="text-sm text-white/60 hover:text-white transition">Espresso</Link>
+                <Link href="/urunler?kat=filtre-kahve" className="text-sm text-white/60 hover:text-white transition">Filtre Kahve</Link>
+                <Link href="/urunler?kat=espresso" className="text-sm text-white/60 hover:text-white transition">Espresso</Link>
               </div>
             </div>
             <div>

@@ -18,35 +18,26 @@ function getProductImage(slug: string): string {
   return `/products/${key}.png`;
 }
 
-const categoryOrder = ["Espresso", "Filtre Kahve", "Sporcu Kahvesi", "Türk Kahvesi"];
+export default async function ProductsPage(props: { searchParams?: Promise<{ kat?: string }> }) {
+  const searchParams = await props.searchParams;
+  const kat = searchParams?.kat;
 
-function catSlug(name: string): string {
-  const map: Record<string, string> = {
-    "Espresso": "espresso",
-    "Filtre Kahve": "filtre-kahve",
-    "Sporcu Kahvesi": "sporcu-kahvesi",
-    "Türk Kahvesi": "turk-kahvesi",
-  };
-  return map[name] || name.toLowerCase().replace(/ /g, "-");
-}
+  const categories = await prisma.category.findMany({ orderBy: [{ name: "asc" }] });
 
-export default async function ProductsPage() {
+  // Custom order: Espresso first, then rest
+  const catOrder = ["Espresso", "Filtre Kahve", "Sporcu Kahvesi", "Türk Kahvesi"];
+  const sortedCats = catOrder.map(name => categories.find(c => c.name === name)).filter(Boolean);
+
   const products = await prisma.product.findMany({
-    where: { published: true },
+    where: { published: true, ...(kat ? { category: { slug: kat } } : {}) },
     include: { category: true },
     orderBy: { name: "asc" },
   });
 
-  const grouped: Record<string, typeof products> = {};
-  for (const p of products) {
-    const key = p.category.name;
-    if (!grouped[key]) grouped[key] = [];
-    grouped[key].push(p);
-  }
-
   return (
     <div className="max-w-7xl mx-auto px-6 py-16">
-      <div className="flex gap-3 mb-16 overflow-x-auto pb-2">
+      {/* Section Tabs */}
+      <div className="flex gap-3 mb-8 overflow-x-auto pb-2">
         <span className="px-5 py-2.5 text-xs font-medium tracking-wider uppercase whitespace-nowrap bg-[#1a1a1a] text-white">
           Kahveler
         </span>
@@ -64,70 +55,87 @@ export default async function ProductsPage() {
         </Link>
       </div>
 
-      {categoryOrder.map((catName) => {
-        const catProducts = grouped[catName];
-        if (!catProducts || catProducts.length === 0) return null;
-        return (
-          <div key={catName} id={catSlug(catName)} className="mb-16">
-            <h2 className="text-2xl font-bold text-[#1a1a1a] mb-8">{catName}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-[#e5e0d8]">
-              {catProducts.map((product) => {
-                const notes = product.flavorNotes ? JSON.parse(product.flavorNotes) : [];
-                return (
-                  <div key={product.id} className="bg-white p-6 flex flex-col">
-                    <Link href={`/urunler/${product.slug}`} className="group">
-                      <div className="aspect-[4/5] bg-[#f8f6f3] mb-6 flex items-center justify-center overflow-hidden">
-                        <Image
-                          src={getProductImage(product.slug)}
-                          alt={product.name}
-                          width={400}
-                          height={500}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <span className="text-xs text-[#c8a77b] tracking-wider uppercase">
-                            {product.origin || product.category.name}
-                          </span>
-                          {product.roastLevel && (
-                            <span className="text-xs bg-[#f8f6f3] text-[#8c8c8c] px-2 py-1 uppercase tracking-wider">
-                              {product.roastLevel === "light" ? "Hafif" : product.roastLevel === "medium" ? "Orta" : "Koyu"}
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="text-base font-semibold text-[#1a1a1a] group-hover:text-[#c8a77b] transition">
-                          {product.name}
-                        </h3>
-                        {notes.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mt-2">
-                            {notes.slice(0, 3).map((note: string) => (
-                              <span key={note} className="text-xs bg-[#f8f6f3] text-[#6b4c3b] px-2 py-0.5 italic">{note}</span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </Link>
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#e5e0d8]">
-                      <div>
-                        <span className="text-lg font-bold text-[#1a1a1a]">{formatPrice(kgTo250g(product.price))} ₺</span>
-                        <span className="text-xs text-[#8c8c8c]">/ 250g</span>
-                        <p className="text-xs text-[#8c8c8c]">({formatPrice(product.price)} ₺/kg)</p>
-                        <span className={`text-sm font-semibold ${product.stock > 0 ? "text-green-600" : "text-red-600"}`}>
-                          {product.stock > 0 ? "Stokta" : "Tükendi"}
-                        </span>
-                      </div>
-                      <Link href={`/urunler/${product.slug}`} className="text-xs font-medium text-[#C4724B] hover:text-[#B0603A] transition uppercase tracking-wider hover:-translate-y-0.5">
-                        İncele →
-                      </Link>
-                    </div>
+      {/* Category Filter Buttons */}
+      <div className="flex gap-2 mb-12 overflow-x-auto pb-2">
+        <Link
+          href="/urunler"
+          className={`px-3 py-1.5 text-xs font-medium tracking-wider uppercase transition whitespace-nowrap ${
+            !kat ? "bg-[#1a1a1a] text-white" : "bg-white text-[#1a1a1a] border border-[#e5e0d8] hover:border-[#1a1a1a]"
+          }`}
+        >
+          Tümü
+        </Link>
+        {sortedCats.map((cat) => (
+          <Link
+            key={cat.id}
+            href={`/urunler?kat=${cat.slug}`}
+            className={`px-3 py-1.5 text-xs font-medium tracking-wider uppercase transition whitespace-nowrap ${
+              kat === cat.slug
+                ? "bg-[#1a1a1a] text-white"
+                : "bg-white text-[#1a1a1a] border border-[#e5e0d8] hover:border-[#1a1a1a]"
+            }`}
+          >
+            {cat.name}
+          </Link>
+        ))}
+      </div>
+
+      {/* Product Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-[#e5e0d8]">
+        {products.map((product) => {
+          const notes = product.flavorNotes ? JSON.parse(product.flavorNotes) : [];
+          return (
+            <div key={product.id} className="bg-white p-6 flex flex-col">
+              <Link href={`/urunler/${product.slug}`} className="group">
+                <div className="aspect-[4/5] bg-[#f8f6f3] mb-6 flex items-center justify-center overflow-hidden">
+                  <Image
+                    src={getProductImage(product.slug)}
+                    alt={product.name}
+                    width={400}
+                    height={500}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <span className="text-xs text-[#c8a77b] tracking-wider uppercase">
+                      {product.origin || product.category.name}
+                    </span>
+                    {product.roastLevel && (
+                      <span className="text-xs bg-[#f8f6f3] text-[#8c8c8c] px-2 py-1 uppercase tracking-wider">
+                        {product.roastLevel === "light" ? "Hafif" : product.roastLevel === "medium" ? "Orta" : "Koyu"}
+                      </span>
+                    )}
                   </div>
-                );
-              })}
+                  <h3 className="text-base font-semibold text-[#1a1a1a] group-hover:text-[#c8a77b] transition">
+                    {product.name}
+                  </h3>
+                  {notes.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {notes.slice(0, 3).map((note: string) => (
+                        <span key={note} className="text-xs bg-[#f8f6f3] text-[#6b4c3b] px-2 py-0.5 italic">{note}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Link>
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-[#e5e0d8]">
+                <div>
+                  <span className="text-lg font-bold text-[#1a1a1a]">{formatPrice(kgTo250g(product.price))} ₺</span>
+                  <span className="text-xs text-[#8c8c8c]">/ 250g</span>
+                  <p className="text-xs text-[#8c8c8c]">({formatPrice(product.price)} ₺/kg)</p>
+                  <span className={`text-sm font-semibold ${product.stock > 0 ? "text-green-600" : "text-red-600"}`}>
+                    {product.stock > 0 ? "Stokta" : "Tükendi"}
+                  </span>
+                </div>
+                <Link href={`/urunler/${product.slug}`} className="text-xs font-medium text-[#C4724B] hover:text-[#B0603A] transition uppercase tracking-wider hover:-translate-y-0.5">
+                  İncele →
+                </Link>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
 
       {products.length === 0 && (
         <div className="text-center py-24 text-[#8c8c8c]">
