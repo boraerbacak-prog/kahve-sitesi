@@ -148,12 +148,8 @@ export default function EkipmanlarPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-24">
-      <div className="text-center mb-16">
-        <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Ekipman</span>
-        <h1 className="text-4xl sm:text-5xl font-bold text-[#1a1a1a] mt-3 mb-4">Ekipmanlar</h1>
-        <p className="text-[#4a4a4a] max-w-lg mx-auto">
-          Mükemmel kahve için ihtiyacınız olan her şey.
-        </p>
+      <div className="mb-16">
+        <h1 className="text-4xl sm:text-5xl font-bold text-[#1a1a1a]">Ekipmanlar</h1>
       </div>
 
       <div className="flex gap-10 mb-12 overflow-x-auto pb-2 border-b border-[#e5e0d8]">
