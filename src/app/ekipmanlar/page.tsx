@@ -148,22 +148,6 @@ export default function EkipmanlarPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-24">
-      <div className="mb-16">
-        <h1 className="text-4xl sm:text-5xl font-bold text-[#1a1a1a]">Ekipmanlar</h1>
-      </div>
-
-      <div className="flex gap-10 mb-12 overflow-x-auto pb-2 border-b border-[#e5e0d8]">
-        <Link href="/urunler" className="pb-3 text-sm font-bold tracking-[0.15em] uppercase transition whitespace-nowrap text-[#8c8c8c] border-b-[3px] border-transparent hover:text-[#C4724B] hover:border-[#C4724B]">
-          Kahveler
-        </Link>
-        <span className="pb-3 text-sm font-bold tracking-[0.15em] uppercase whitespace-nowrap text-[#C4724B] border-b-[3px] border-[#C4724B]">
-          Ekipmanlar
-        </span>
-        <Link href="/imza-urunler" className="pb-3 text-sm font-bold tracking-[0.15em] uppercase transition whitespace-nowrap text-[#8c8c8c] border-b-[3px] border-transparent hover:text-[#C4724B] hover:border-[#C4724B]">
-          İmza Ürünler
-        </Link>
-      </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#e5e0d8]">
         {equipment.map((item) => {
           const displayPrice = item.salePrice || item.price;
