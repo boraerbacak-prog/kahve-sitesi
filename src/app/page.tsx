@@ -248,6 +248,71 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Sadakat Programi Section */}
+      <section className="relative bg-[#2c1810] py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#C4724B]/5 via-transparent to-[#D4A574]/5" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#C4724B]/5 blur-3xl" />
+        <div className="relative max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Sadakat</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mt-3 mb-4">
+              Rostello <span className="text-[#C4724B]">Sadakat Programı</span>
+            </h2>
+            <p className="text-[#a39080] max-w-xl mx-auto text-lg">
+              Her alışverişinde puan kazan, seviye atla, ayrıcalıklı üye olmanın tadını çıkar.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-16">
+            {[
+              { step: "01", title: "Kazan", desc: "Her 1₺'lik alışverişinde puan kazan. Hoş geldin olarak sana 500 puan hediye!" },
+              { step: "02", title: "Yüksel", desc: "Bronz'dan başla, Gümüş'e, sonra Altın'a yüksel. Her seviyede indirim ve ayrıcalıklar seni bekliyor." },
+              { step: "03", title: "Ödül", desc: "Puanlarını indirim olarak kullan, seviyene özel fırsatları yakala, doğum gününde sürpriz hediyeler al." },
+            ].map((item) => (
+              <div key={item.step} className="text-center group">
+                <div className="w-16 h-16 rounded-full bg-[#C4724B]/10 border border-[#C4724B]/20 flex items-center justify-center mx-auto mb-5 group-hover:bg-[#C4724B]/20 transition">
+                  <span className="text-2xl font-bold text-[#C4724B]">{item.step}</span>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-[#a39080] leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Tier Table */}
+          <div className="max-w-3xl mx-auto mb-12">
+            <div className="grid grid-cols-3 gap-px bg-[#C4724B]/20 rounded-xl overflow-hidden">
+              {[
+                { tier: "Bronz", range: "0 - 500 ₺", discount: "%0", ship: "990 ₺ üzeri", color: "from-amber-700/20 to-amber-900/20" },
+                { tier: "Gümüş", range: "500 - 2.000 ₺", discount: "%3", ship: "500 ₺ üzeri", color: "from-gray-400/20 to-gray-500/20" },
+                { tier: "Altın", range: "2.000 ₺ ve üzeri", discount: "%5", ship: "Bedava", color: "from-yellow-600/20 to-yellow-700/20" },
+              ].map((t) => (
+                <div key={t.tier} className={`bg-gradient-to-b ${t.color} p-6 text-center`}>
+                  <p className="text-lg font-bold text-white mb-3">{t.tier}</p>
+                  <div className="space-y-2 text-sm text-[#a39080]">
+                    <p>Harcama: <span className="text-white font-medium">{t.range}</span></p>
+                    <p>İndirim: <span className="text-green-400 font-semibold">{t.discount}</span></p>
+                    <p>Kargo: <span className="text-white font-medium">{t.ship}</span></p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link href="/kayit"
+              className="inline-flex items-center gap-2 text-white px-10 py-5 text-sm font-semibold tracking-wide uppercase transition-all duration-500 hover:brightness-110"
+              style={{
+                background: "linear-gradient(90deg, #C4724B, #E8C4A0, #C4724B)",
+                backgroundSize: "200% auto",
+                animation: "copper-shimmer 3s linear infinite",
+              }}>
+              Hemen Katıl, 500 Puan Kazan →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Akademi Section */}
       <section className="bg-[#f8f6f3] border-t border-[#e5e0d8] py-32">
         <div className="max-w-7xl mx-auto px-6">

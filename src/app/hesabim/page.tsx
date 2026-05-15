@@ -27,6 +27,13 @@ interface Subscription {
   plan: { name: string; price: number; packageCount: number; packageSize: number };
 }
 
+interface LoyaltyData {
+  points: number;
+  tier: string;
+  totalSpent: number;
+  tierDiscountPct: number;
+}
+
 const statusLabels: Record<string, string> = {
   pending: "Bekliyor",
   confirmed: "Onaylandı",
@@ -46,9 +53,10 @@ const statusColors: Record<string, string> = {
 export default function HesabimPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [tab, setTab] = useState<"orders" | "subscriptions" | "profile">("orders");
+  const [tab, setTab] = useState<"orders" | "subscriptions" | "profile" | "loyalty">("orders");
   const [orders, setOrders] = useState<Order[]>([]);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [loyalty, setLoyalty] = useState<LoyaltyData | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/giris");
@@ -57,6 +65,7 @@ export default function HesabimPage() {
   useEffect(() => {
     fetch("/api/siparislerim").then(r => r.json()).then(d => { if (d.orders) setOrders(d.orders); });
     fetch("/api/abonelik/my").then(r => r.json()).then(d => { if (d.subscriptions) setSubscriptions(d.subscriptions); });
+    fetch("/api/sadakat/puan").then(r => r.json()).then(d => { if (d.points !== undefined) setLoyalty(d); }).catch(() => {});
   }, []);
 
   if (status === "loading") {
@@ -88,14 +97,15 @@ export default function HesabimPage() {
         </div>
       </div>
 
-      <div className="flex gap-4 mb-8 border-b border-[#e5e0d8] pb-4">
+      <div className="flex gap-4 mb-8 border-b border-[#e5e0d8] pb-4 overflow-x-auto">
         {[
           { key: "orders", label: "Siparişlerim", count: orders.length },
           { key: "subscriptions", label: "Aboneliklerim", count: subscriptions.length },
+          { key: "loyalty", label: "⭐ Sadakat" },
           { key: "profile", label: "Profil" },
         ].map((t) => (
           <button key={t.key} onClick={() => setTab(t.key as typeof tab)}
-            className={`text-sm font-medium pb-4 -mb-4 border-b-2 transition ${
+            className={`text-sm font-medium pb-4 -mb-4 border-b-2 transition whitespace-nowrap ${
               tab === t.key ? "border-[#C4724B] text-[#C4724B]" : "border-transparent text-[#8c8c8c] hover:text-[#1a1a1a]"
             }`}>
             {t.label}{t.count !== undefined ? ` (${t.count})` : ""}
@@ -173,6 +183,46 @@ export default function HesabimPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === "loyalty" && (
+        <div>
+          {loyalty ? (
+            <div className="space-y-4">
+              <div className="bg-white border border-[#e5e0d8] p-6 sm:p-8">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="text-center">
+                    <p className="text-xs text-amber-600 uppercase tracking-wide">Seviyen</p>
+                    <p className={`text-2xl font-bold mt-1 capitalize ${
+                      loyalty.tier === "gold" ? "text-yellow-600" : loyalty.tier === "silver" ? "text-gray-500" : "text-amber-700"
+                    }`}>{loyalty.tier}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-amber-600 uppercase tracking-wide">Puanın</p>
+                    <p className="text-2xl font-bold text-amber-900 mt-1">{loyalty.points}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-amber-600 uppercase tracking-wide">Toplam Harcama</p>
+                    <p className="text-2xl font-bold text-amber-900 mt-1">{loyalty.totalSpent.toLocaleString("tr-TR")} ₺</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-amber-600 uppercase tracking-wide">İndirim</p>
+                    <p className="text-2xl font-bold text-green-700 mt-1">%{loyalty.tierDiscountPct}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="text-center">
+                <Link href="/sadakat" className="text-[#C4724B] hover:text-[#B0603A] text-sm font-medium">Tüm detaylar →</Link>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <span className="text-5xl block mb-4">⭐</span>
+              <p className="text-[#4a4a4a] mb-4">Henüz puan bilgin bulunmuyor. Alışveriş yapmaya başla!</p>
+              <Link href="/urunler" className="text-[#C4724B] hover:text-[#B0603A] text-sm font-medium">Alışverişe Başla →</Link>
             </div>
           )}
         </div>

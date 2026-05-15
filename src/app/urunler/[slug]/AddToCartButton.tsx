@@ -69,6 +69,7 @@ export default function AddToCartButton({ productId, productName, productPrice, 
           Sepete Ekle
         </button>
       </div>
+      <p className="text-xs text-[#C4724B]">⭐ +{Math.round(unitPrice)} puan kazan</p>
     </div>
   );
 }

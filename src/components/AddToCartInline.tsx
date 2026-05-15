@@ -14,6 +14,7 @@ export default function AddToCartInline({ id, name, price, image }: { id: string
   const [weight, setWeight] = useState(250);
 
   const unitPrice = price * (weight / 1000);
+  const earnPoints = Math.round(unitPrice);
 
   return (
     <div className="flex flex-col gap-2">
@@ -35,6 +36,7 @@ export default function AddToCartInline({ id, name, price, image }: { id: string
           Sepete Ekle
         </button>
       </div>
+      <p className="text-[10px] text-[#C4724B]">⭐ +{earnPoints} puan kazan</p>
     </div>
   );
 }

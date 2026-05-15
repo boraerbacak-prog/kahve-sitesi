@@ -60,6 +60,9 @@ export default function Header() {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1 animate-fade-in">
+            <Link href="/sadakat" className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[#C4724B] hover:text-[#B0603A] transition tracking-wide uppercase rounded hover:bg-[#f8f6f3]">
+              <span className="text-xs">⭐</span> Sadakat
+            </Link>
             {menuItems.map((item) => (
               <div
                 key={item.id}
@@ -151,6 +154,9 @@ export default function Header() {
           <div className="lg:hidden pb-6 border-t border-[#e5e0d8] pt-6">
             <div className="flex flex-col gap-3">
 
+              <Link href="/sadakat" className="text-sm font-medium text-[#C4724B] hover:text-[#B0603A] transition block py-2 mb-1" onClick={() => setMenuOpen(false)}>
+                ⭐ Sadakat Programı
+              </Link>
               {menuItems.map((item) => (
                 <div key={item.id}>
                   <Link

@@ -112,6 +112,7 @@ export default function Footer() {
               <Link href="/akademi" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Akademi</Link>
               <Link href="/ai-barista" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Dijital Barista</Link>
               <Link href="/abonelik" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Abonelik</Link>
+              <Link href="/sadakat" className="text-sm text-[#C4724B] hover:text-[#B0603A] transition hover:-translate-y-0.5 block font-medium">⭐ Sadakat Programı</Link>
             </div>
           </div>
           <div>
