@@ -206,7 +206,6 @@ export default function SadakatAyarlarPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <Link href="/admin/sadakat" className="text-sm text-amber-600 hover:underline mb-1 inline-block">← Sadakat Paneli</Link>
           <h1 className="text-3xl font-bold text-amber-900">Ayarlar & Altın Oranı</h1>
         </div>
         <div className="flex items-center gap-3">

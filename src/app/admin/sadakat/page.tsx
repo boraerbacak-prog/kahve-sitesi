@@ -32,9 +32,14 @@ export default async function SadakatPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-amber-900">Sadakat Sistemi</h1>
-        <Link href="/admin/sadakat/ayarlar" className="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition">
-          Ayarlar & Altın Oranı
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/admin/sadakat/rapor" className="bg-white border border-amber-200 hover:bg-amber-50 text-amber-700 px-4 py-2.5 rounded-lg text-sm font-medium transition">
+            Raporlar
+          </Link>
+          <Link href="/admin/sadakat/ayarlar" className="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition">
+            Ayarlar & Altın Oranı
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
