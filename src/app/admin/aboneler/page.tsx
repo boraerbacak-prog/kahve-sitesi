@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
+import { ConfirmDelete } from "../ConfirmButton";
+
 export const dynamic = "force-dynamic";
 
 async function toggleAction(id: string, action: "toggle" | "delete"): Promise<void> {
@@ -70,9 +72,7 @@ export default async function AdminSubscribersPage() {
                       </button>
                     </form>
                     <form action={async () => { "use server"; await toggleAction(s.id, "delete"); }}>
-                      <button className="text-xs text-red-500 hover:underline" onClick={async (e) => { if (!confirm("Emin misiniz?")) e.preventDefault(); }}>
-                        Sil
-                      </button>
+                      <ConfirmDelete>Sil</ConfirmDelete>
                     </form>
                   </div>
                 </td>
