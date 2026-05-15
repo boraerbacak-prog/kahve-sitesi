@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
-import AddToCartInline from "@/components/AddToCartInline";
 import { formatPrice } from "@/lib/price";
 
 function getProductImage(slug: string): string {
@@ -152,17 +151,9 @@ export default async function ProductsPage(props: {
                       <span className="text-xs text-[#8c8c8c] ml-1">/ kg</span>
                       <p className="text-[10px] text-[#C4724B] mt-0.5">Siparişe özel kavrulur</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Link href={`/urunler/${product.slug}`} className="text-xs text-[#1a1a1a] hover:text-[#c8a77b] transition font-medium uppercase tracking-wider">
-                        İncele →
-                      </Link>
-                      <AddToCartInline
-                        id={product.id}
-                        name={product.name}
-                        price={product.price}
-                        image={getProductImage(product.slug)}
-                      />
-                    </div>
+                    <Link href={`/urunler/${product.slug}`} className="text-xs font-medium text-[#C4724B] hover:text-[#B0603A] transition uppercase tracking-wider hover:-translate-y-0.5">
+                      İncele →
+                    </Link>
                   </div>
                 </div>
               );
