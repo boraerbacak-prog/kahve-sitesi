@@ -84,7 +84,7 @@ export default async function ProductPage(props: { params: Promise<{ slug: strin
           {product.stock > 0 ? (
             <AddToCartButton productId={product.id} productName={product.name} productPrice={product.price} productImage={getProductImage(product.slug)} />
           ) : (
-            <OutOfStockNotifier productName={product.name} />
+            <OutOfStockNotifier productId={product.id} productName={product.name} />
           )}
 
           <div className="grid grid-cols-2 gap-3 mt-6">

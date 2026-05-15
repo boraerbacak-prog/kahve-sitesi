@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function OutOfStockNotifier({ productName }: { productName: string }) {
+export default function OutOfStockNotifier({ productId, productName }: { productId: string; productName: string }) {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
 
@@ -11,10 +11,10 @@ export default function OutOfStockNotifier({ productName }: { productName: strin
     e.preventDefault();
     if (!email.trim()) return;
     try {
-      await fetch("/api/newsletter/subscribe", {
+      await fetch("/api/stok-bildirim", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), name: `Bildirim: ${productName}`, source: "stok-bildirim" }),
+        body: JSON.stringify({ email: email.trim(), productId, productName }),
       });
       setSent(true);
     } catch {}

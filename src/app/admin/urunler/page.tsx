@@ -33,6 +33,15 @@ export default function AdminUrunlerPage() {
     setProducts(prev => prev.map(p => p.id === id ? { ...p, published } : p));
   };
 
+  const toggleStock = async (id: string, stock: number) => {
+    const newStock = stock > 0 ? 0 : 999;
+    await fetch("/api/admin/products", {
+      method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, stock: newStock }),
+    });
+    setProducts(prev => prev.map(p => p.id === id ? { ...p, stock: newStock } : p));
+  };
+
   const remove = async (id: string) => {
     if (!confirm("Bu ürünü silmek istediğinize emin misiniz?")) return;
     await fetch("/api/admin/products", {
@@ -86,7 +95,11 @@ export default function AdminUrunlerPage() {
                 </td>
                 <td className="p-4 text-gray-600">{p.category.name}</td>
                 <td className="p-4 font-semibold text-gray-900">{p.price.toLocaleString("tr-TR")}₺</td>
-                <td className="p-4 text-gray-600">{p.stock}</td>
+                <td className="p-4">
+                  <button onClick={() => toggleStock(p.id, p.stock)}
+                    className={`text-xs font-semibold px-2 py-1 rounded transition ${p.stock > 0 ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-red-100 text-red-700 hover:bg-red-200"}`}
+                  >{p.stock > 0 ? "Stokta" : "Tükendi"}</button>
+                </td>
                 <td className="p-4">
                   <button onClick={() => togglePublish(p.id, !p.published)}
                     className={`text-xs font-semibold px-2 py-1 rounded transition ${p.published ? "bg-green-100 text-green-700 hover:bg-green-200" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}
