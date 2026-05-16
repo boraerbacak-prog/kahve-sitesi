@@ -108,10 +108,10 @@ export default function CartPage() {
       {items.length > 0 && (
         <div className="bg-white rounded-xl border border-amber-100 p-4 mb-6">
           <p className="text-xs text-amber-700">
-            🚚 <strong>{(990 - total) > 0 ? `${(990 - total).toFixed(0)} ₺` : "Tebrikler!"}</strong> kalan üründe kargo ücretsiz
-          </p>
-          <div className="w-full h-1.5 bg-amber-100 rounded-full mt-2 overflow-hidden">
-            <div className="h-full bg-[#C4724B] rounded-full transition-all" style={{ width: `${Math.min((total / 990) * 100, 100)}%` }} />
+              🚚 <strong>{(1000 - total) > 0 ? `${(1000 - total).toFixed(0)} ₺` : "Tebrikler!"}</strong> kalan üründe kargo ücretsiz
+            </div>
+            <div className="w-full h-1.5 bg-amber-100 rounded-full mt-2 overflow-hidden">
+              <div className="h-full bg-[#C4724B] rounded-full transition-all" style={{ width: `${Math.min((total / 1000) * 100, 100)}%` }} />
           </div>
         </div>
       )}

@@ -74,7 +74,7 @@ export default async function SadakatPage() {
             </div>
             <div className="text-sm text-gray-600 space-y-1">
               <p>İndirim: <strong>%{t.pct}</strong></p>
-              <p>Kargo eşiği: <strong>{t.ship === 0 ? "Bedava" : `${t.ship} ₺`}</strong></p>
+              <p>Kargo eşiği: <strong>{t.ship === 0 ? "Ücretsiz" : `${t.ship} ₺`}</strong></p>
             </div>
           </div>
         ))}

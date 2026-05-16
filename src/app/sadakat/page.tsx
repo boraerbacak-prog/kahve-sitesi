@@ -135,9 +135,9 @@ export default async function SadakatPage() {
           <h2 className="text-xl font-bold text-amber-900 text-center mb-8">Seviye Avantajları</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
-              { tier: "Bronz", color: "amber", range: `0 - ${settings.bronzeMax.toLocaleString("tr-TR")} ₺`, discount: "%0", ship: `${settings.bronzeShippingThreshold} ₺ üzeri`, puan: "×1 kazanç" },
-              { tier: "Gümüş", color: "gray", range: `${settings.silverMin.toLocaleString("tr-TR")} - ${settings.silverMax.toLocaleString("tr-TR")} ₺`, discount: `%${settings.silverDiscountPct}`, ship: settings.silverShippingThreshold > 0 ? `${settings.silverShippingThreshold} ₺ üzeri` : "Bedava", puan: "×1.2 kazanç" },
-              { tier: "Altın", color: "yellow", range: `${settings.goldMin.toLocaleString("tr-TR")} ₺+`, discount: `%${settings.goldDiscountPct}`, ship: settings.goldShippingThreshold === 0 ? "Bedava" : `${settings.goldShippingThreshold} ₺ üzeri`, puan: "×1.5 kazanç" },
+              { tier: "Bronz", color: "amber", range: `0 - ${settings.bronzeMax.toLocaleString("tr-TR")} ₺`, discount: `%${settings.bronzeDiscountPct}`, ship: `${settings.bronzeShippingThreshold.toLocaleString("tr-TR")} ₺ üzeri`, puan: "×1 kazanç" },
+              { tier: "Gümüş", color: "gray", range: `${settings.silverMin.toLocaleString("tr-TR")} - ${settings.silverMax.toLocaleString("tr-TR")} ₺`, discount: `%${settings.silverDiscountPct}`, ship: settings.silverShippingThreshold > 0 ? `${settings.silverShippingThreshold} ₺ üzeri` : "Ücretsiz", puan: "×1.2 kazanç" },
+              { tier: "Altın", color: "yellow", range: `${settings.goldMin.toLocaleString("tr-TR")} ₺+`, discount: `%${settings.goldDiscountPct}`, ship: settings.goldShippingThreshold === 0 ? "Ücretsiz" : `${settings.goldShippingThreshold} ₺ üzeri`, puan: "×1.5 kazanç" },
             ].map((t) => (
               <div key={t.tier} className={`border border-${t.color}-100 rounded-xl p-6 text-center`}>
                 <p className={`text-lg font-bold capitalize ${

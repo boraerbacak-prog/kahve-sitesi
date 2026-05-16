@@ -282,9 +282,9 @@ export default async function Home() {
           <div className="max-w-3xl mx-auto mb-12">
             <div className="grid grid-cols-3 gap-px bg-[#e5e0d8] rounded-xl overflow-hidden">
               {[
-                { tier: "Bronz", range: "0 - 1.000 ₺", discount: "%0", ship: "990 ₺ üzeri", color: "bg-white" },
-                { tier: "Gümüş", range: "1.000 - 3.000 ₺", discount: "%5", ship: "500 ₺ üzeri", color: "bg-white" },
-                { tier: "Altın", range: "3.000 ₺ ve üzeri", discount: "%10", ship: "Bedava", color: "bg-white" },
+                { tier: "Bronz", range: "0 - 1.000 ₺", discount: "%3", ship: "1.000 ₺ üzeri", color: "bg-white" },
+                { tier: "Gümüş", range: "1.000 - 3.000 ₺", discount: "%5", ship: "Ücretsiz", color: "bg-white" },
+                { tier: "Altın", range: "3.000 ₺ ve üzeri", discount: "%10", ship: "Ücretsiz", color: "bg-white" },
               ].map((t) => (
                 <div key={t.tier} className={`${t.color} p-6 text-center`}>
                   <p className={`text-lg font-bold mb-3 ${

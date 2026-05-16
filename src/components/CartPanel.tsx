@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
-const FREE_SHIPPING_THRESHOLD = 990;
+const FREE_SHIPPING_THRESHOLD = 1000;
 
 export default function CartPanel() {
   const { items, total, count, isOpen, closeCart, removeItem, updateQuantity } = useCart();

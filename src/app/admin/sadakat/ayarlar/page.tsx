@@ -149,7 +149,7 @@ export default function SadakatAyarlarPage() {
       "Seviye,Harcama Aralığı,İndirim %,Kargo Eşiği (₺)",
       `Bronz,${settings.bronzeMin}-${settings.bronzeMax} ₺,${settings.bronzeDiscountPct},${settings.bronzeShippingThreshold}`,
       `Gümüş,${settings.silverMin}-${settings.silverMax} ₺,${settings.silverDiscountPct},${settings.silverShippingThreshold}`,
-      `Altın,${settings.goldMin}+ ₺,${settings.goldDiscountPct},${settings.goldShippingThreshold === 0 ? "Bedava" : settings.goldShippingThreshold}`,
+      `Altın,${settings.goldMin}+ ₺,${settings.goldDiscountPct},${settings.goldShippingThreshold === 0 ? "Ücretsiz" : settings.goldShippingThreshold}`,
     ];
 
     const allRows = [...rows, ...tierRows];
@@ -176,7 +176,7 @@ export default function SadakatAyarlarPage() {
       "Seviye\tHarcama Aralığı\tİndirim %\tKargo Eşiği",
       `Bronz\t${settings.bronzeMin}-${settings.bronzeMax} ₺\t%${settings.bronzeDiscountPct}\t${settings.bronzeShippingThreshold} ₺`,
       `Gümüş\t${settings.silverMin}-${settings.silverMax} ₺\t%${settings.silverDiscountPct}\t${settings.silverShippingThreshold} ₺`,
-      `Altın\t${settings.goldMin}+ ₺\t%${settings.goldDiscountPct}\t${settings.goldShippingThreshold === 0 ? "Bedava" : settings.goldShippingThreshold} ₺`,
+      `Altın\t${settings.goldMin}+ ₺\t%${settings.goldDiscountPct}\t${settings.goldShippingThreshold === 0 ? "Ücretsiz" : settings.goldShippingThreshold} ₺`,
     ].join("\n");
 
     navigator.clipboard.writeText(lines).then(() => {
@@ -279,7 +279,7 @@ export default function SadakatAyarlarPage() {
                 let kargo = "—";
                 if (amt >= settings.bronzeShippingThreshold) {
                   if (settings.goldShippingThreshold === 0) {
-                    kargo = "Altın'a bedava";
+                    kargo = "Altın'a ücretsiz";
                   } else if (amt >= settings.goldShippingThreshold) {
                     kargo = "✓ Ücretsiz";
                   } else {
@@ -336,7 +336,7 @@ export default function SadakatAyarlarPage() {
                     {t.min.toLocaleString("tr-TR")} - {t.max >= 999999 ? "∞" : t.max.toLocaleString("tr-TR")} ₺
                   </td>
                   <td className="py-3 px-4 text-right font-mono text-amber-700">%{t.pct}</td>
-                  <td className="py-3 px-4 text-right text-gray-700">{t.ship === 0 ? "Bedava" : `${t.ship} ₺`}</td>
+                  <td className="py-3 px-4 text-right text-gray-700">{t.ship === 0 ? "Ücretsiz" : `${t.ship} ₺`}</td>
                   <td className="py-3 px-4 text-right font-mono text-amber-700">×{t.mult}</td>
                 </tr>
               ))}
