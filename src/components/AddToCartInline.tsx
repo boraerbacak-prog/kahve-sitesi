@@ -14,7 +14,7 @@ export default function AddToCartInline({ id, name, price, image }: { id: string
   const [weight, setWeight] = useState(250);
 
   const unitPrice = price * (weight / 1000);
-  const earnPoints = Math.round(unitPrice);
+  const earnPoints = (unitPrice * 0.05).toFixed(2);
 
   return (
     <div className="flex flex-col gap-2">
@@ -22,21 +22,21 @@ export default function AddToCartInline({ id, name, price, image }: { id: string
         {weights.map((w) => (
           <button key={w.value} onClick={() => setWeight(w.value)}
             className={`text-xs px-2.5 py-1.5 font-medium uppercase tracking-wider border transition ${
-              weight === w.value ? "bg-[#C4724B] text-white border-[#C4724B]" : "bg-white text-[#4a4a4a] border-[#e5e0d8] hover:border-[#C4724B]"
+              weight === w.value ? "bg-primary text-white border-primary" : "bg-white text-body border-border hover:border-primary"
             }`}
           >{w.label}</button>
         ))}
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-xs text-[#4a4a4a]">{unitPrice.toLocaleString("tr-TR")} ₺</span>
+        <span className="text-xs text-body">{unitPrice.toLocaleString("tr-TR")} ₺</span>
         <button
           onClick={() => addItem({ id, name, price, image, weight, grind: "whole" })}
-          className="text-xs font-medium bg-[#C4724B] hover:bg-[#B0603A] text-white px-4 py-1.5 transition uppercase tracking-wider"
+          className="text-xs font-medium bg-primary hover:bg-primary-hover text-white px-4 py-1.5 transition uppercase tracking-wider"
         >
           Sepete Ekle
         </button>
       </div>
-      <p className="text-[10px] text-[#C4724B]">⭐ +{earnPoints} puan kazan</p>
+      <p className="text-[10px] text-primary">+{earnPoints} TL kredi kazan</p>
     </div>
   );
 }

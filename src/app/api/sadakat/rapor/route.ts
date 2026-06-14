@@ -16,9 +16,11 @@ export async function GET(req: Request) {
   const page = parseInt(searchParams.get("page") || "1");
   const limit = parseInt(searchParams.get("limit") || "50");
   const format = searchParams.get("format") || "json";
+  const userId = searchParams.get("userId") || "";
 
   const where: Record<string, unknown> = {};
 
+  if (userId) where.userId = userId;
   if (type) where.type = type;
 
   if (from || to) {
@@ -85,7 +87,7 @@ export async function GET(req: Request) {
     return new NextResponse(csv, {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="rostello-sadakat-raporu-${new Date().toISOString().slice(0, 10)}.csv"`,
+        "Content-Disposition": `attachment; filename="rostello-cekirdek-kredi-raporu-${new Date().toISOString().slice(0, 10)}.csv"`,
       },
     });
   }

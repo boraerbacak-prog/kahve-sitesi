@@ -68,6 +68,9 @@ export default function YonetimPage() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [cancelSubId, setCancelSubId] = useState<string | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
+  const [cancelError, setCancelError] = useState("");
 
   useEffect(() => {
     if (!session) {
@@ -83,17 +86,29 @@ export default function YonetimPage() {
       .catch(() => setLoading(false));
   }, [session]);
 
-  const handleCancel = async (subId: string) => {
-    if (!confirm("Aboneliğinizi iptal etmek istediğinize emin misiniz?")) return;
-    setActionLoading(subId);
-    await fetch("/api/abonelik/cancel", {
+  const handleCancel = async () => {
+    if (!cancelSubId) return;
+    if (!cancelReason.trim()) {
+      setCancelError("İptal nedeninizi yazmalısınız.");
+      return;
+    }
+    setActionLoading(cancelSubId);
+    const res = await fetch("/api/abonelik/cancel", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ subscriptionId: subId }),
+      body: JSON.stringify({ subscriptionId: cancelSubId, reason: cancelReason.trim() }),
     });
+    if (!res.ok) {
+      setCancelError("İptal sırasında bir hata oluştu.");
+      setActionLoading(null);
+      return;
+    }
     setSubscriptions((prev) =>
-      prev.map((s) => (s.id === subId ? { ...s, status: "cancelled" } : s))
+      prev.map((s) => (s.id === cancelSubId ? { ...s, status: "cancelled" } : s))
     );
+    setCancelSubId(null);
+    setCancelReason("");
+    setCancelError("");
     setActionLoading(null);
   };
 
@@ -131,11 +146,11 @@ export default function YonetimPage() {
   if (!session) {
     return (
       <div className="max-w-xl mx-auto px-6 py-24 text-center">
-        <h1 className="text-2xl font-bold text-[#1a1a1a] mb-4">Abonelik Yönetimi</h1>
-        <p className="text-[#4a4a4a] mb-8">Aboneliğinizi yönetmek için giriş yapmalısınız.</p>
+        <h1 className="text-2xl font-bold text-heading mb-4">Abonelik Yönetimi</h1>
+        <p className="text-body mb-8">Aboneliğinizi yönetmek için giriş yapmalısınız.</p>
         <button
           onClick={() => signIn()}
-          className="bg-[#1a1a1a] hover:bg-[#333] text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition"
+          className="bg-heading hover:bg-[#333] text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition"
         >
           Giriş Yap
         </button>
@@ -155,13 +170,13 @@ export default function YonetimPage() {
     return (
       <div className="max-w-xl mx-auto px-6 py-24 text-center">
         <span className="text-6xl block mb-6">📦</span>
-        <h1 className="text-2xl font-bold text-[#1a1a1a] mb-4">Aktif Aboneliğiniz Yok</h1>
-        <p className="text-[#4a4a4a] mb-8">
+        <h1 className="text-2xl font-bold text-heading mb-4">Aktif Aboneliğiniz Yok</h1>
+        <p className="text-body mb-8">
           Henüz bir aboneliğiniz bulunmuyor. Taze kahveleri kaçırmayın!
         </p>
         <Link
           href="/abonelik"
-          className="bg-[#C4724B] hover:bg-[#B0603A] text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition inline-block"
+          className="bg-primary hover:bg-primary-hover text-white px-8 py-4 text-sm font-medium tracking-wide uppercase transition inline-block"
         >
           Abonelik Paketlerini İncele
         </Link>
@@ -173,12 +188,12 @@ export default function YonetimPage() {
     <div className="max-w-4xl mx-auto px-6 py-24">
       <div className="flex items-center justify-between mb-10">
         <div>
-          <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium">Yönetim</span>
-          <h1 className="text-3xl font-bold text-[#1a1a1a] mt-2">Aboneliklerim</h1>
+          <span className="text-xs tracking-[0.2em] uppercase text-primary font-medium">Yönetim</span>
+          <h1 className="text-3xl font-bold text-heading mt-2">Aboneliklerim</h1>
         </div>
         <Link
           href="/abonelik"
-          className="text-sm text-[#C4724B] hover:text-[#B0603A] transition"
+          className="text-sm text-primary hover:text-primary-hover transition"
         >
           + Yeni Abonelik
         </Link>
@@ -192,14 +207,14 @@ export default function YonetimPage() {
         const latestDelivery = sub.deliveries[0];
 
         return (
-          <div key={sub.id} className="bg-white border border-[#e5e0d8] mb-6">
-            <div className="p-6 sm:p-8 border-b border-[#e5e0d8]">
+          <div key={sub.id} className="bg-white border border-border mb-6">
+            <div className="p-6 sm:p-8 border-b border-border">
               <div className="flex items-start justify-between flex-wrap gap-4">
                 <div>
-                  <h2 className="text-xl font-bold text-[#1a1a1a]">
+                  <h2 className="text-xl font-bold text-heading">
                     {sub.plan.name}
                   </h2>
-                  <p className="text-sm text-[#4a4a4a] mt-1">
+                  <p className="text-sm text-body mt-1">
                     {sub.plan.packageCount} paket ({sub.plan.packageSize}g) · {sub.plan.price} ₺/ay
                   </p>
                 </div>
@@ -211,8 +226,8 @@ export default function YonetimPage() {
 
             <div className="p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div>
-                <p className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-1">Profil</p>
-                <div className="space-y-1 text-sm text-[#4a4a4a]">
+                <p className="text-xs tracking-[0.2em] uppercase text-muted font-medium mb-1">Profil</p>
+                <div className="space-y-1 text-sm text-body">
                   {sub.equipment && <p>Ekipman: {equipLabel(sub.equipment)}</p>}
                   {sub.grindSetting && <p>Öğütme: {grindLabel(sub.grindSetting)}</p>}
                   {sub.flavorProfile && <p>Lezzet: {flavorLabel(sub.flavorProfile)}</p>}
@@ -221,8 +236,8 @@ export default function YonetimPage() {
               </div>
 
               <div>
-                <p className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-1">Teslimat</p>
-                <div className="space-y-1 text-sm text-[#4a4a4a]">
+                <p className="text-xs tracking-[0.2em] uppercase text-muted font-medium mb-1">Teslimat</p>
+                <div className="space-y-1 text-sm text-body">
                   <p>Başlangıç: {new Date(sub.startDate).toLocaleDateString("tr-TR")}</p>
                   <p>Sonraki: {nextDelivery}</p>
                   {latestDelivery && (
@@ -232,7 +247,7 @@ export default function YonetimPage() {
               </div>
 
               <div className="flex flex-col gap-2 items-start">
-                <p className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-1">İşlemler</p>
+                <p className="text-xs tracking-[0.2em] uppercase text-muted font-medium mb-1">İşlemler</p>
                 {sub.status === "active" && (
                   <>
                     <button
@@ -243,8 +258,7 @@ export default function YonetimPage() {
                       Duraklat
                     </button>
                     <button
-                      onClick={() => handleCancel(sub.id)}
-                      disabled={actionLoading === sub.id}
+                      onClick={() => setCancelSubId(sub.id)}
                       className="text-sm text-red-600 hover:text-red-700 transition"
                     >
                       İptal Et
@@ -262,7 +276,7 @@ export default function YonetimPage() {
                 )}
                 <Link
                   href="/ai-barista"
-                  className="text-sm text-[#C4724B] hover:text-[#B0603A] transition"
+                  className="text-sm text-primary hover:text-primary-hover transition"
                 >
                   AI Barista ile Yönet
                 </Link>
@@ -270,11 +284,11 @@ export default function YonetimPage() {
             </div>
 
             {sub.deliveries.length > 0 && (
-              <div className="border-t border-[#e5e0d8] p-6 sm:p-8">
-                <p className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">Teslimat Geçmişi</p>
+              <div className="border-t border-border p-6 sm:p-8">
+                <p className="text-xs tracking-[0.2em] uppercase text-muted font-medium mb-4">Teslimat Geçmişi</p>
                 <div className="space-y-3">
                   {sub.deliveries.map((del) => (
-                    <div key={del.id} className="flex items-center justify-between gap-4 p-3 bg-[#f8f6f3]">
+                    <div key={del.id} className="flex items-center justify-between gap-4 p-3 bg-page-hover">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <span className={`w-2 h-2 rounded-full ${
@@ -282,9 +296,9 @@ export default function YonetimPage() {
                             del.status === "shipped" ? "bg-blue-500" :
                             del.status === "roasting" ? "bg-yellow-500" : "bg-gray-400"
                           }`} />
-                          <span className="text-sm font-medium text-[#1a1a1a]">{deliveryStatusLabels[del.status] || del.status}</span>
+                          <span className="text-sm font-medium text-heading">{deliveryStatusLabels[del.status] || del.status}</span>
                         </div>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs text-[#8c8c8c]">
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs text-muted">
                           <span>{new Date(del.createdAt).toLocaleDateString("tr-TR")}</span>
                           {del.roastDate && <span>Kavrum: {new Date(del.roastDate).toLocaleDateString("tr-TR")}</span>}
                           {del.items.length > 0 && (
@@ -324,6 +338,37 @@ export default function YonetimPage() {
           </div>
         );
       })}
+      {cancelSubId && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" onClick={() => { setCancelSubId(null); setCancelReason(""); setCancelError(""); }}>
+          <div className="bg-white p-8 max-w-md w-full mx-4" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-heading mb-2">Aboneliği İptal Et</h3>
+            <p className="text-sm text-body mb-4">Aboneliğinizi neden iptal etmek istiyorsunuz?</p>
+            <textarea
+              value={cancelReason}
+              onChange={e => { setCancelReason(e.target.value); setCancelError(""); }}
+              rows={4}
+              className="w-full border border-border px-4 py-3 text-sm bg-white focus:outline-none focus:border-primary transition resize-none"
+              placeholder="İptal nedeninizi yazın..."
+            />
+            {cancelError && <p className="text-xs text-red-600 mt-1">{cancelError}</p>}
+            <div className="flex gap-3 mt-5 justify-end">
+              <button
+                onClick={() => { setCancelSubId(null); setCancelReason(""); setCancelError(""); }}
+                className="px-5 py-2.5 text-sm text-body border border-border hover:text-heading transition"
+              >
+                Vazgeç
+              </button>
+              <button
+                onClick={handleCancel}
+                disabled={actionLoading === cancelSubId}
+                className="px-5 py-2.5 text-sm text-white bg-red-600 hover:bg-red-700 transition disabled:opacity-50"
+              >
+                {actionLoading === cancelSubId ? "İptal Ediliyor..." : "İptal Talebini Gönder"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -343,7 +388,7 @@ function grindLabel(v: string): string {
 }
 
 function flavorLabel(v: string): string {
-  const m: Record<string, string> = { fruity: "Meyvemsi", sweet: "Tatlı/Dengeli", bold: "Dolgun/Sert" };
+  const m: Record<string, string> = { fruity: "Meyvemsi", sweet: "Dengeli", bold: "Çikolata" };
   return m[v] || v;
 }
 

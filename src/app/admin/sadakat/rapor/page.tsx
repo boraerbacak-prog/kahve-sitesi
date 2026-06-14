@@ -64,8 +64,6 @@ export default function RaporPage() {
   const typeLabels: Record<string, string> = {
     earn: "Kazanma",
     redeem: "Kullanma",
-    welcome: "Hoş Geldin",
-    birthday: "Doğum Günü",
     referral: "Referans",
     admin: "Admin",
   };
@@ -73,8 +71,6 @@ export default function RaporPage() {
   const typeColors: Record<string, string> = {
     earn: "text-green-700 bg-green-100",
     redeem: "text-red-700 bg-red-100",
-    welcome: "text-blue-700 bg-blue-100",
-    birthday: "text-purple-700 bg-purple-100",
     referral: "text-orange-700 bg-orange-100",
     admin: "text-gray-700 bg-gray-100",
   };
@@ -86,7 +82,7 @@ export default function RaporPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-amber-900">Sadakat Raporları</h1>
+        <h1 className="text-3xl font-bold text-amber-900">Çekirdek Kredi Raporları</h1>
         <button onClick={exportCSV} className="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-2">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
           CSV İndir
@@ -118,30 +114,28 @@ export default function RaporPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div>
             <label className="block text-xs text-gray-500 mb-1">Kullanıcı Ara</label>
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="İsim veya e-posta..." className="w-full border border-[#e5e0d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-400" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="İsim veya e-posta..." className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-400" />
           </div>
           <div>
             <label className="block text-xs text-gray-500 mb-1">İşlem Türü</label>
-            <select value={type} onChange={(e) => setType(e.target.value)} className="w-full border border-[#e5e0d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-400">
+            <select value={type} onChange={(e) => setType(e.target.value)} className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-400">
               <option value="">Tümü</option>
               <option value="earn">Kazanma</option>
               <option value="redeem">Kullanma</option>
-              <option value="welcome">Hoş Geldin</option>
-              <option value="birthday">Doğum Günü</option>
               <option value="referral">Referans</option>
               <option value="admin">Admin</option>
             </select>
           </div>
           <div>
             <label className="block text-xs text-gray-500 mb-1">Başlangıç</label>
-            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-full border border-[#e5e0d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-400" />
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-400" />
           </div>
           <div>
             <label className="block text-xs text-gray-500 mb-1">Bitiş</label>
-            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-full border border-[#e5e0d8] rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-400" />
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-full border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-400" />
           </div>
         </div>
-        <button onClick={() => fetchData(1)} className="mt-3 bg-[#C4724B] hover:bg-[#B0603A] text-white px-4 py-2 rounded text-sm transition">
+        <button onClick={() => fetchData(1)} className="mt-3 bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded text-sm transition">
           Filtrele
         </button>
       </div>

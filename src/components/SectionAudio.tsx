@@ -69,7 +69,7 @@ export default function SectionAudio({ src }: { src: string }) {
           <div className="relative bg-white rounded-2xl max-w-md w-[90%] p-8 shadow-2xl animate-fade-in">
             <button
               onClick={handleDismiss}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-[#8B7355] hover:text-[#C4724B] transition-colors"
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-[#8B7355] hover:text-primary transition-colors"
               aria-label="Kapat"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -77,7 +77,7 @@ export default function SectionAudio({ src }: { src: string }) {
               </svg>
             </button>
 
-            <div className="w-12 h-1 bg-gradient-to-r from-[#C4724B] to-[#D4A574] rounded-full mb-6" />
+            <div className="w-12 h-1 bg-gradient-to-r from-primary to-primary-light rounded-full mb-6" />
             <h2 className="text-2xl font-bold text-[#2c1810] mb-3">Hoş Geldiniz</h2>
             <p className="text-[#6B5B4E] leading-relaxed text-sm">
               Kahve yolculuğunuza hoş geldiniz. Her yudumda taze kavrumun

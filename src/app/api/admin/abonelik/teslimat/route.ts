@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendEmail, deliveryShippedEmail } from "@/lib/email";
+import { deliveryShippedEmail } from "@/lib/email";
 
 export async function GET() {
   const deliveries = await prisma.subscriptionDelivery.findMany({
@@ -33,11 +33,7 @@ export async function PUT(req: Request) {
 
   if (status === "shipped") {
     const sub = delivery.subscription;
-    sendEmail({
-      to: sub.user.email,
-      subject: `${sub.plan.name} Paketin Yolda! 🚚`,
-      html: deliveryShippedEmail(sub.user.name || "Kahvesever", sub.plan.name, trackingUrl || undefined),
-    });
+    deliveryShippedEmail(sub.user.email, delivery.id);
   }
 
   return NextResponse.json({ delivery });

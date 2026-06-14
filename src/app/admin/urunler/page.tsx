@@ -2,17 +2,22 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import AdminProductFormModal from "@/components/AdminProductFormModal";
 
 interface Product {
   id: string; name: string; slug: string; price: number; compareAt: number | null;
   stock: number; published: boolean; featured: boolean; origin: string | null;
-  roastLevel: string | null; weight: number | null;
+  roastLevel: string | null; weight: number | null; description: string;
+  process: string | null; region: string | null; altitude: string | null;
+  variety: string | null; grade: string | null; body: string | null;
+  acidity: string | null; segment: string | null; flavorNotes: string | null;
+  roastedAt: string | null; isBestSeller: boolean; isNewArrival: boolean;
+  status: string; estimatedRoastAt: string | null; seasonNote: string | null;
+  greenBeanKg: number | null;
   category: { id: string; name: string };
 }
 
 export default function AdminUrunlerPage() {
-  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Partial<Product> | null>(null);
@@ -35,9 +40,10 @@ export default function AdminUrunlerPage() {
 
   const toggleStock = async (id: string, stock: number) => {
     const newStock = stock > 0 ? 0 : 999;
+    const note = prompt(stock > 0 ? "Stok kapatma sebebi:" : "Stok açma sebebi:");
     await fetch("/api/admin/products", {
       method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, stock: newStock }),
+      body: JSON.stringify({ id, stock: newStock, stockNote: note }),
     });
     setProducts(prev => prev.map(p => p.id === id ? { ...p, stock: newStock } : p));
   };
@@ -60,19 +66,36 @@ export default function AdminUrunlerPage() {
       <Link href="/admin" className="text-sm text-amber-600 hover:underline mb-4 inline-block">← Admin Panel</Link>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-amber-900">Ürünler ({products.length})</h1>
-        <button onClick={() => setEditing({ name: "", slug: "", price: 0, stock: 0, published: false })}
-          className="bg-amber-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-amber-500 transition"
-        >+ Yeni Ürün</button>
+        <div className="flex gap-2">
+          <label className="bg-white border border-amber-200 text-amber-700 px-4 py-2 rounded-lg text-sm hover:bg-amber-50 cursor-pointer transition">
+            CSV İçe
+            <input type="file" accept=".csv" className="hidden" onChange={async e => {
+              const file = e.target.files?.[0]; if (!file) return;
+              const form = new FormData(); form.append("file", file);
+              const res = await fetch("/api/admin/products-import", { method: "POST", body: form });
+              const data = await res.json();
+              alert(data.success ? `${data.imported} ürün içe aktarıldı` : `Hata: ${data.error}`);
+              load();
+            }} />
+          </label>
+          <a href="/api/admin/products-export"
+            className="bg-white border border-amber-200 text-amber-700 px-4 py-2 rounded-lg text-sm hover:bg-amber-50 transition"
+          >CSV</a>
+          <button onClick={() => setEditing({ name: "", slug: "", price: 0, stock: 0, published: false })}
+            className="bg-amber-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-amber-500 transition"
+          >+ Yeni Ürün</button>
+        </div>
       </div>
 
       <input type="text" placeholder="Ürün ara..." value={search} onChange={e => setSearch(e.target.value)}
         className="w-full border border-amber-200 p-3 rounded-lg mb-6 text-sm focus:outline-none focus:border-amber-500" />
 
       {editing && (
-        <ProductFormModal
+        <AdminProductFormModal
           product={editing} categories={categories}
           onClose={() => setEditing(null)}
           onSave={() => { load(); setEditing(null); }}
+          onDelete={() => { load(); setEditing(null); }}
         />
       )}
 
@@ -116,99 +139,6 @@ export default function AdminUrunlerPage() {
             {filtered.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-gray-400">Ürün bulunamadı</td></tr>}
           </tbody>
         </table>
-      </div>
-    </div>
-  );
-}
-
-function ProductFormModal({ product, categories, onClose, onSave }: {
-  product: Partial<Product>; categories: { id: string; name: string }[];
-  onClose: () => void; onSave: () => void;
-}) {
-  const [form, setForm] = useState({ ...product, categoryId: product.category?.id || "" });
-  const [saving, setSaving] = useState(false);
-
-  const save = async () => {
-    setSaving(true);
-    const isNew = !form.id;
-    await fetch("/api/admin/products", {
-      method: isNew ? "POST" : "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setSaving(false);
-    onSave();
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-12 pb-12 overflow-y-auto" onClick={onClose}>
-      <div className="bg-white rounded-xl p-6 w-full max-w-2xl mx-4" onClick={e => e.stopPropagation()}>
-        <h2 className="text-xl font-bold text-amber-900 mb-4">{form.id ? "Ürünü Düzenle" : "Yeni Ürün"}</h2>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div className="col-span-2">
-            <label className="block text-gray-700 mb-1">Ürün Adı</label>
-            <input type="text" value={form.name || ""} onChange={e => setForm({...form, name: e.target.value})}
-              className="w-full border border-amber-200 p-2.5 rounded focus:outline-none focus:border-amber-500" />
-          </div>
-          <div>
-            <label className="block text-gray-700 mb-1">Slug</label>
-            <input type="text" value={form.slug || ""} onChange={e => setForm({...form, slug: e.target.value})}
-              className="w-full border border-amber-200 p-2.5 rounded focus:outline-none focus:border-amber-500" />
-          </div>
-          <div>
-            <label className="block text-gray-700 mb-1">Kategori</label>
-            <select value={form.categoryId || ""} onChange={e => setForm({...form, categoryId: e.target.value})}
-              className="w-full border border-amber-200 p-2.5 rounded">
-              <option value="">Seçin</option>
-              {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-gray-700 mb-1">Fiyat (₺)</label>
-            <input type="number" value={form.price || 0} onChange={e => setForm({...form, price: parseFloat(e.target.value)})}
-              className="w-full border border-amber-200 p-2.5 rounded focus:outline-none focus:border-amber-500" />
-          </div>
-          <div>
-            <label className="block text-gray-700 mb-1">İndirimli Fiyat</label>
-            <input type="number" value={form.compareAt || ""} onChange={e => setForm({...form, compareAt: e.target.value ? parseFloat(e.target.value) : null})}
-              className="w-full border border-amber-200 p-2.5 rounded focus:outline-none focus:border-amber-500" />
-          </div>
-          <div>
-            <label className="block text-gray-700 mb-1">Stok</label>
-            <input type="number" value={form.stock || 0} onChange={e => setForm({...form, stock: parseInt(e.target.value)})}
-              className="w-full border border-amber-200 p-2.5 rounded focus:outline-none focus:border-amber-500" />
-          </div>
-          <div>
-            <label className="block text-gray-700 mb-1">Ağırlık (g)</label>
-            <input type="number" value={form.weight || ""} onChange={e => setForm({...form, weight: e.target.value ? parseInt(e.target.value) : null})}
-              className="w-full border border-amber-200 p-2.5 rounded" />
-          </div>
-          <div>
-            <label className="block text-gray-700 mb-1">Menşei</label>
-            <input type="text" value={form.origin || ""} onChange={e => setForm({...form, origin: e.target.value})}
-              className="w-full border border-amber-200 p-2.5 rounded" />
-          </div>
-          <div>
-            <label className="block text-gray-700 mb-1">Kavrum</label>
-            <select value={form.roastLevel || ""} onChange={e => setForm({...form, roastLevel: e.target.value})}
-              className="w-full border border-amber-200 p-2.5 rounded">
-              <option value="">Seçin</option>
-              <option value="light">Hafif</option>
-              <option value="medium">Orta</option>
-              <option value="dark">Koyu</option>
-            </select>
-          </div>
-          <div className="col-span-2 flex items-center gap-6 pt-2">
-            <label className="flex items-center gap-2"><input type="checkbox" checked={form.published || false} onChange={e => setForm({...form, published: e.target.checked})} /> Yayında</label>
-            <label className="flex items-center gap-2"><input type="checkbox" checked={form.featured || false} onChange={e => setForm({...form, featured: e.target.checked})} /> Öne Çıkan</label>
-          </div>
-        </div>
-        <div className="flex gap-3 mt-6 justify-end">
-          <button onClick={onClose} className="px-4 py-2 border border-amber-200 rounded-lg text-sm">İptal</button>
-          <button onClick={save} disabled={saving}
-            className="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm hover:bg-amber-500 disabled:opacity-50"
-          >{saving ? "Kaydediliyor..." : form.id ? "Güncelle" : "Oluştur"}</button>
-        </div>
       </div>
     </div>
   );

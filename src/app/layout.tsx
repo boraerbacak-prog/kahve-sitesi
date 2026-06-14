@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import CartPanel from "@/components/CartPanel";
 import FloatingBarista from "@/components/FloatingBarista";
 import Providers from "@/components/Providers";
+import ThemeProvider from "@/components/ThemeProvider";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -26,13 +27,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" className={`${montserrat.variable}`}>
-      <body className="min-h-screen flex flex-col bg-[#f8f6f3] text-[#1a1a1a]">
+      <body className="min-h-screen flex flex-col bg-[var(--color-page)] text-[var(--color-heading)]">
         <Providers>
+          <ThemeProvider>
           <Header />
           <CartPanel />
           <FloatingBarista />
           <main className="flex-1">{children}</main>
           <Footer />
+          </ThemeProvider>
         </Providers>
       </body>
     </html>

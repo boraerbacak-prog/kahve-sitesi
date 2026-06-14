@@ -3,28 +3,17 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 const DEFAULT_SETTINGS = {
-  pointsPerLira: 1,
-  pointsToLira: 0.05,
-  minRedeemPoints: 100,
-  maxDiscountPct: 50,
-  bronzeMin: 0,
-  bronzeMax: 1000,
-  silverMin: 1000,
-  silverMax: 3000,
-  goldMin: 3000,
-  goldMax: 999999,
-  bronzeDiscountPct: 3,
-  silverDiscountPct: 5,
-  goldDiscountPct: 10,
-  bronzeShippingThreshold: 1000,
-  silverShippingThreshold: 0,
-  goldShippingThreshold: 0,
-  welcomePoints: 500,
-  welcomeDiscountPct: 10,
-  birthdayPoints: 300,
-  referralPoints: 100,
-  referralFriendPct: 10,
+  earnRatePct: 5.0,
+  pendingDays: 14,
+  monthlyCapKurus: 150000,
+  freeShippingThresholdKurus: 100000,
+  shippingCostKurus: 15000,
+
+  referralRewardKurus: 10000,
+  referralFriendDiscountPct: 10,
   subscriptionDiscountPct: 5,
+  dailyRoastCapacity: 50,
+  greenBeanThreshold: 20,
 };
 
 async function getSettings() {

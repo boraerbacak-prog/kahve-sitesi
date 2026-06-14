@@ -24,7 +24,7 @@ export default async function CustomPage({ params }: { params: Promise<{ slug: s
     <div className="max-w-4xl mx-auto px-6 py-16">
       <h1 className="text-4xl font-bold text-amber-900 mb-8">{page.title}</h1>
       <div
-        className="prose prose-amber prose-headings:text-amber-900 prose-a:text-[#C4724B] max-w-none leading-relaxed"
+        className="prose prose-amber prose-headings:text-amber-900 prose-a:text-primary max-w-none leading-relaxed"
         dangerouslySetInnerHTML={{ __html: page.content }}
       />
     </div>

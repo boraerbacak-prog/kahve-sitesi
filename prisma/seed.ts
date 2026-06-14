@@ -351,12 +351,11 @@ async function main() {
   await prisma.menuItem.deleteMany();
 
   const menuItems = [
-    { label: "Dijital Barista", href: "/ai-barista", sortOrder: 1 },
-    { label: "Kahveler", href: "/urunler", sortOrder: 2 },
-    { label: "Abonelik", href: "/abonelik", sortOrder: 3 },
-    { label: "Demleme", href: "/demleme", sortOrder: 4 },
-    { label: "Akademi", href: "/blog", sortOrder: 5 },
-    { label: "B2B", href: "/b2b", sortOrder: 6 },
+    { label: "Dükkan", href: "#", sortOrder: 1 },
+    { label: "İZ", href: "#", sortOrder: 2 },
+    { label: "Zanaat", href: "#", sortOrder: 3 },
+    { label: "Kurumsal", href: "#", sortOrder: 4 },
+    { label: "Hikâyemiz", href: "/hikaye", sortOrder: 5 },
   ];
 
   const created: Record<string, string> = {};
@@ -366,9 +365,15 @@ async function main() {
   }
 
   const subs = [
-    { label: "Tüm Kahveler", href: "/urunler", parentLabel: "Kahveler", sortOrder: 1 },
-    { label: "İmza Ürünler", href: "/imza-urunler", parentLabel: "Kahveler", sortOrder: 2 },
-    { label: "Ekipmanlar", href: "/ekipmanlar", parentLabel: "Kahveler", sortOrder: 3 },
+    { label: "Kahveler", href: "/urunler", parentLabel: "Dükkan", sortOrder: 1 },
+    { label: "Ekipmanlar", href: "/ekipmanlar", parentLabel: "Dükkan", sortOrder: 2 },
+    { label: "İmza Ürünler", href: "/imza-urunler", parentLabel: "Dükkan", sortOrder: 3 },
+    { label: "Kavrum Takvimi", href: "/kavrum-takvimi", parentLabel: "İZ", sortOrder: 1 },
+    { label: "Kahvemi Bul", href: "/ai-barista", parentLabel: "İZ", sortOrder: 2 },
+    { label: "Tahmisane", href: "/kavurma-dukkani", parentLabel: "Zanaat", sortOrder: 1 },
+    { label: "Demleme Rehberi", href: "/demleme", parentLabel: "Deneyim", sortOrder: 2 },
+    { label: "Kurumsal Satış", href: "/b2b", parentLabel: "Kurumsal", sortOrder: 1 },
+    { label: "Akademi", href: "/blog", parentLabel: "Kurumsal", sortOrder: 2 },
   ];
 
   for (const sub of subs) {

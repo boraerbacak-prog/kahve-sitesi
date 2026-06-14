@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getStripe, hasStripeKeys } from "@/lib/stripe";
-import { sendEmail, subscriptionConfirmEmail } from "@/lib/email";
+import { subscriptionConfirmEmail, adminSubscriptionNotification } from "@/lib/email";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -71,10 +71,12 @@ export async function POST(req: Request) {
       },
     });
 
-    sendEmail({
-      to: session.user.email!,
-      subject: "Rostello Aboneliğin Başladı! ☕",
-      html: subscriptionConfirmEmail(session.user.name || "Kahvesever", plan.name, plan.price),
+    subscriptionConfirmEmail(session.user.email!, plan.name);
+    adminSubscriptionNotification({
+      type: "yeni",
+      userName: session.user.name || "İsimsiz",
+      userEmail: session.user.email!,
+      planName: plan.name,
     });
 
     return NextResponse.json({ subscription: userSub, delivery });

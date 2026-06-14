@@ -10,8 +10,8 @@ export async function POST(req: Request) {
 
   const { productId, quantity } = await req.json();
 
-  const existing = await prisma.cartItem.findUnique({
-    where: { userId_productId: { userId: session.user.id, productId } },
+  const existing = await prisma.cartItem.findFirst({
+    where: { userId: session.user.id, productId, weight: 250, grind: "whole" },
   });
 
   if (existing) {
@@ -36,7 +36,7 @@ export async function GET() {
 
   const items = await prisma.cartItem.findMany({
     where: { userId: session.user.id },
-    include: { product: true },
+    include: { product: { include: { category: true } } },
   });
 
   return NextResponse.json({ items });

@@ -26,12 +26,35 @@ export default async function AdminStockNotificationsPage() {
     orderBy: { createdAt: "desc" },
   });
 
+  const headers = ["E-posta", "Ürün", "Stok Durumu", "Bildirim", "Tarih"];
+  const rows = notifications.map(n => [
+    n.email, n.product.name,
+    n.product.stock > 0 ? "Stokta" : "Tükendi",
+    n.notified ? "Bildirildi" : "Bekliyor",
+    new Date(n.createdAt).toLocaleDateString("tr-TR"),
+  ]);
+  const thead = headers.map(h =>
+    `<th style="background:#C4724B;color:#fff;padding:8px 12px;font-weight:600;text-align:left;border:1px solid #ddd;white-space:nowrap">${h}</th>`
+  ).join("");
+  const tbody = rows.map(r =>
+    "<tr>" + r.map(c =>
+      `<td style="padding:6px 12px;border:1px solid #ddd">${String(c??"").replace(/&/g,"&amp;").replace(/</g,"&lt;")}</td>`
+    ).join("") + "</tr>"
+  ).join("");
+  const xlsHtml = `<!DOCTYPE html><meta charset="utf-8"><body><h2 style="font-family:Arial;color:#333">Stok Bildirim Talepleri</h2><table style="border-collapse:collapse;font-family:Arial;font-size:13px">${thead}${tbody}</table></body></html>`;
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-
-      <Link href="/admin" className="text-sm text-amber-600 hover:underline mb-4 inline-block">← Admin Panel</Link>
-      <h1 className="text-3xl font-bold text-amber-900 mb-2">Stok Bildirim Talepleri</h1>
-      <p className="text-sm text-gray-500 mb-6">Toplam {notifications.length} talep</p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <Link href="/admin" className="text-sm text-amber-600 hover:underline mb-1 inline-block">← Admin Panel</Link>
+          <h1 className="text-3xl font-bold text-amber-900">Stok Bildirim Talepleri</h1>
+          <p className="text-sm text-gray-500 mt-1">Toplam {notifications.length} talep · {notifications.filter(n => !n.notified).length} bekleyen</p>
+        </div>
+        <a href={`data:application/vnd.ms-excel;charset=utf-8,${encodeURIComponent(xlsHtml)}`}
+          download={`stok-bildirim-${new Date().toISOString().slice(0,10)}.xls`}
+          className="text-xs bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-500 transition">Excel İndir</a>
+      </div>
 
       <div className="bg-white rounded-xl border border-amber-100 overflow-hidden">
         <table className="w-full text-sm">

@@ -36,14 +36,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("cart");
-    if (stored) {
-      try { setItems(JSON.parse(stored)); } catch {}
-    }
+    try {
+      const stored = localStorage.getItem("cart");
+      if (stored) {
+        setItems(JSON.parse(stored));
+      }
+    } catch {}
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(items));
+    try {
+      localStorage.setItem("cart", JSON.stringify(items));
+    } catch {}
   }, [items]);
 
   const addItem = useCallback((item: { id: string; name: string; price: number; image: string; weight: number; grind: string }) => {

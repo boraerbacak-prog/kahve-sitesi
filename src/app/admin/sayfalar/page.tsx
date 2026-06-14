@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { esc, htmlExcel, downloadXls, trDate } from "@/lib/excel";
 
 interface Page {
   id: string; title: string; slug: string; content: string; published: boolean; template: string;
@@ -41,6 +42,15 @@ export default function AdminSayfalarPage() {
     if (res.ok) setPages(prev => prev.filter(p => p.id !== id));
   };
 
+  const exportExcel = () => {
+    const headers = ["Başlık", "Slug", "Şablon", "Yayın Durumu", "Güncelleme"];
+    const rows = pages.map(p => [
+      esc(p.title), esc(p.slug), esc(p.template),
+      p.published ? "Yayında" : "Taslak", trDate(p.updatedAt),
+    ]);
+    downloadXls(`sayfalar-${new Date().toISOString().slice(0,10)}.xls`, htmlExcel("Sayfalar", headers, rows));
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <Link href="/admin" className="text-sm text-amber-600 hover:underline mb-4 inline-block">← Admin Panel</Link>
@@ -49,6 +59,7 @@ export default function AdminSayfalarPage() {
         <button onClick={() => setEditing({ title: "", slug: "", content: "", template: "default", published: false })}
           className="bg-amber-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-amber-500 transition"
         >+ Yeni Sayfa</button>
+        <button onClick={exportExcel} className="text-xs bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-500 transition">Excel</button>
       </div>
 
       {editing && (

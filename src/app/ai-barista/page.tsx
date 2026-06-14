@@ -37,13 +37,13 @@ function formatContent(content: string) {
   return boldParts.map((part, i) => {
     const boldMatch = part.match(/^\*\*([^*]+)\*\*$/);
     if (boldMatch) {
-      return <strong key={i} className="text-[#E8C4A0] font-semibold">{boldMatch[1]}</strong>;
+      return <strong key={i} className="text-primary-glow font-semibold">{boldMatch[1]}</strong>;
     }
     const linkParts = part.split(/(\[[^\]]+\]\([^)]+\))/g);
     return linkParts.map((sub, j) => {
       const linkMatch = sub.match(/\[([^\]]+)\]\(([^)]+)\)/);
       if (linkMatch) {
-        return <a key={`${i}-${j}`} href={linkMatch[2]} onClick={() => handleBaristaNav(linkMatch[2])} className="text-[#E8C4A0] underline hover:text-[#f0dcc0] transition">{linkMatch[1]}</a>;
+        return <a key={`${i}-${j}`} href={linkMatch[2]} onClick={() => handleBaristaNav(linkMatch[2])} className="text-primary-glow underline hover:text-primary-glow transition">{linkMatch[1]}</a>;
       }
       return <span key={`${i}-${j}`}>{sub}</span>;
     });
@@ -132,6 +132,25 @@ function AIBaristaContent() {
   }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    if (autoSent.current || loading || messages.length > 1) return;
+    const source = searchParams?.get("source");
+    if (source !== "kahve-kesfet") return;
+    try {
+      const stored = localStorage.getItem("kahve-test-answers");
+      if (!stored) return;
+      autoSent.current = true;
+      localStorage.removeItem("kahve-test-answers");
+      const answers = JSON.parse(stored);
+      const map: Record<string, string> = {
+        ekipman: "Ekipman", sutlu: "Süt/Sade", lezzet: "Lezzet Profili", fincan: "Günlük Fincan",
+      };
+      const lines = Object.entries(answers).map(([k, v]) => `- ${map[k] || k}: ${v}`);
+      const msg = `Kahveni Keşfet testimden geliyorum! Cevaplarım:\n${lines.join("\n")}\n\nBana en uygun kahveyi önerebilir misin?`;
+      sendMessage(msg);
+    } catch {}
+  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     if (!session?.user) return;
     fetch("/api/abonelik/my")
       .then((r) => r.json())
@@ -187,11 +206,11 @@ function AIBaristaContent() {
   }, [subInfo, actionLoading, sendMessage]);
 
   return (
-    <div className="h-[calc(100dvh-112px)] lg:h-[calc(100dvh-144px)] bg-[#f8f6f3] flex flex-col">
+    <div className="h-[calc(100dvh-112px)] lg:h-[calc(100dvh-144px)] bg-page-hover flex flex-col">
       <div className="max-w-4xl w-full mx-auto flex-1 flex flex-col overflow-hidden">
         {/* Chat header */}
         <div className="px-4 sm:px-6 py-3 flex items-center gap-3 shrink-0"
-          style={{ background: "linear-gradient(135deg, #C4724B, #B0603A)" }}>
+          style={{ background: "linear-gradient(135deg, var(--color-primary), var(--color-primary-hover))" }}>
           <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-white/20">
             <Image src="/celsus/dijital-barista/barista d.png" alt="Barista" width={72} height={72} className="w-full h-full object-cover" />
           </div>
@@ -205,9 +224,9 @@ function AIBaristaContent() {
         </div>
 
         {/* Messages */}
-        <div ref={messagesRef} className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-4 bg-[#faf8f6]">
+        <div ref={messagesRef} className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-4 bg-page-hover">
           {messages.length === 0 && !loading && (
-            <div className="flex flex-col items-center justify-center h-full text-center text-[#8c8c8c] text-sm py-12">
+            <div className="flex flex-col items-center justify-center h-full text-center text-muted text-sm py-12">
               <p className="mb-6">Size nasıl yardımcı olabilirim?</p>
             </div>
           )}
@@ -220,14 +239,14 @@ function AIBaristaContent() {
                   </div>
                 )}
                 <div
-                  className="text-sm leading-relaxed whitespace-pre-wrap [&_a]:text-[#E8C4A0] [&_a]:underline [&_strong]:font-semibold [&_strong]:text-[#E8C4A0] px-5 py-3"
+                  className="text-sm leading-relaxed whitespace-pre-wrap [&_a]:text-primary-glow [&_a]:underline [&_strong]:font-semibold [&_strong]:text-primary-glow px-5 py-3"
                   style={{
                     maxWidth: "75%",
                     borderRadius: msg.role === "user" ? "20px 4px 20px 20px" : "4px 20px 20px 20px",
                     background: msg.role === "user"
-                      ? "#fff"
-                      : "linear-gradient(135deg, #1a1a1a, #2c2c2c)",
-                    color: msg.role === "user" ? "#1a1a1a" : "#fff",
+                      ? "var(--color-card)"
+                      : "linear-gradient(135deg, var(--color-heading), #2c2c2c)",
+                    color: msg.role === "user" ? "var(--color-heading)" : "var(--color-card)",
                     boxShadow: msg.role === "user"
                       ? "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)"
                       : "0 2px 8px rgba(0,0,0,0.15)",
@@ -241,7 +260,7 @@ function AIBaristaContent() {
                 <div className="flex flex-wrap gap-1.5 mt-1.5 ml-11">
                   {getOptions(msg.content).map((opt) => (
                     <button key={opt} onClick={() => handleSend(opt)} disabled={loading}
-                        className="text-[11px] border border-[#D4A574]/40 bg-white px-2.5 py-1.5 text-[#4a4a4a] hover:border-[#C4724B] hover:text-[#C4724B] hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 hover:scale-[1.03] disabled:opacity-40 rounded-full"
+                        className="text-[11px] border border-primary-light/40 bg-white px-2.5 py-1.5 text-body hover:border-primary hover:text-primary hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 hover:scale-[1.03] disabled:opacity-40 rounded-full"
                     >{opt}</button>
                   ))}
                 </div>
@@ -253,11 +272,11 @@ function AIBaristaContent() {
               <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 shadow-sm border border-white/10">
                 <Image src="/celsus/dijital-barista/barista d.png" alt="Barista" width={64} height={64} className="w-full h-full object-cover" />
               </div>
-              <div className="px-5 py-3" style={{ borderRadius: "4px 20px 20px 20px", background: "linear-gradient(135deg, #1a1a1a, #2c2c2c)", boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
+              <div className="px-5 py-3" style={{ borderRadius: "4px 20px 20px 20px", background: "linear-gradient(135deg, var(--color-heading), #2c2c2c)", boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-[#C4724B] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                  <div className="w-2 h-2 bg-[#C4724B] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                  <div className="w-2 h-2 bg-[#C4724B] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                 </div>
               </div>
             </div>
@@ -267,15 +286,15 @@ function AIBaristaContent() {
 
         {/* Subscription Actions */}
         {subInfo && (
-          <div className="border-t border-[#e5e0d8] px-4 sm:px-6 py-2.5 bg-white shrink-0">
+          <div className="border-t border-border px-4 sm:px-6 py-2.5 bg-white shrink-0">
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium">
+              <span className="text-xs tracking-[0.2em] uppercase text-muted font-medium">
                 {subInfo.planName} ({subInfo.planPrice}₺/ay):
               </span>
               {subInfo.status === "active" && (
                 <>
                   <button onClick={() => handleSubAction("pause")} disabled={actionLoading}
-                      className="text-xs border border-[#D4A574]/40 text-[#C4724B] px-3 py-1 hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 disabled:opacity-40 rounded-full">
+                      className="text-xs border border-primary-light/40 text-primary px-3 py-1 hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 disabled:opacity-40 rounded-full">
                     Duraklat
                   </button>
                   <button onClick={() => handleSubAction("cancel")} disabled={actionLoading}
@@ -290,7 +309,7 @@ function AIBaristaContent() {
                   Devam Ettir
                 </button>
               )}
-              <Link href="/abonelik/yonetim" className="text-xs text-[#C4724B] hover:underline ml-auto">
+              <Link href="/abonelik/yonetim" className="text-xs text-primary hover:underline ml-auto">
                 Detaylı Yönet
               </Link>
             </div>
@@ -298,16 +317,16 @@ function AIBaristaContent() {
         )}
 
         {/* Suggestions */}
-        <div className="border-t border-[#e5e0d8] px-4 sm:px-6 py-2.5 bg-[#faf8f6] shrink-0">
+        <div className="border-t border-border px-4 sm:px-6 py-2.5 bg-page-hover shrink-0">
           <div className="flex flex-wrap gap-1.5 max-w-3xl mx-auto">
             {suggestions.map((s) => (
               s === "Ürünleri Keşfet" ? (
                 <Link key={s} href="/urunler?from=barista" onClick={() => handleBaristaNav("/urunler")}
-                  className="text-[11px] border border-[#D4A574]/30 bg-white px-2.5 py-1.5 text-[#4a4a4a] hover:border-[#C4724B] hover:text-[#C4724B] hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 hover:scale-[1.03] rounded-full font-medium"
+                  className="text-[11px] border border-primary-light/30 bg-white px-2.5 py-1.5 text-body hover:border-primary hover:text-primary hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 hover:scale-[1.03] rounded-full font-medium"
                 >{s}</Link>
               ) : (
                 <button key={s} onClick={() => handleSend(s)} disabled={loading}
-                  className="text-[11px] border border-[#D4A574]/30 bg-white px-2.5 py-1.5 text-[#4a4a4a] hover:border-[#C4724B] hover:text-[#C4724B] hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 hover:scale-[1.03] disabled:opacity-40 rounded-full"
+                  className="text-[11px] border border-primary-light/30 bg-white px-2.5 py-1.5 text-body hover:border-primary hover:text-primary hover:bg-[#fdf8f4] transition hover:-translate-y-0.5 hover:scale-[1.03] disabled:opacity-40 rounded-full"
                 >{s}</button>
               )
             ))}
@@ -315,7 +334,7 @@ function AIBaristaContent() {
         </div>
 
         {/* Input */}
-        <div className="border-t border-[#e5e0d8] px-4 sm:px-6 py-4 bg-white shrink-0">
+        <div className="border-t border-border px-4 sm:px-6 py-4 bg-white shrink-0">
           <div className="flex gap-3 max-w-3xl mx-auto">
             <input
               type="text"
@@ -323,7 +342,7 @@ function AIBaristaContent() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Kahve tercihlerinizi anlatın..."
-              className="flex-1 border border-[#e5e0d8] px-5 py-3 text-sm focus:outline-none focus:border-[#C4724B] text-[#1a1a1a] bg-white rounded-full"
+              className="flex-1 border border-border px-5 py-3 text-sm focus:outline-none focus:border-primary text-heading bg-white rounded-full"
               disabled={loading}
             />
             <button
@@ -331,7 +350,7 @@ function AIBaristaContent() {
               disabled={loading || !input.trim()}
               className="text-white px-8 py-3 text-sm font-medium uppercase transition-all duration-500 hover:brightness-110 hover:scale-[1.03] active:scale-95 disabled:opacity-40 rounded-full shrink-0"
               style={{
-                background: "linear-gradient(90deg, #C4724B, #E8C4A0, #C4724B)",
+                background: "linear-gradient(90deg, var(--color-primary), var(--color-primary-glow), var(--color-primary))",
                 backgroundSize: "200% auto",
                 animation: "copper-shimmer 3s linear infinite",
               }}
@@ -340,11 +359,11 @@ function AIBaristaContent() {
             </button>
           </div>
           {!session && (
-            <div className="flex items-center justify-center gap-2 mt-3 text-xs text-[#8c8c8c]">
+            <div className="flex items-center justify-center gap-2 mt-3 text-xs text-muted">
               <span>Sohbet geçmişi için</span>
-              <Link href="/giris" className="text-[#C4724B] hover:underline hover:-translate-y-0.5 inline-block transition">giriş yapın</Link>
+              <Link href="/giris" className="text-primary hover:underline hover:-translate-y-0.5 inline-block transition">giriş yapın</Link>
               <span>veya</span>
-              <Link href="/kayit" className="text-[#C4724B] hover:underline hover:-translate-y-0.5 inline-block transition">kaydolun</Link>
+              <Link href="/kayit" className="text-primary hover:underline hover:-translate-y-0.5 inline-block transition">kaydolun</Link>
             </div>
           )}
         </div>
@@ -357,7 +376,7 @@ export default function AIBaristaPage() {
   return (
     <>
       <style>{`footer { display: none !important; }`}</style>
-      <Suspense fallback={<div className="max-w-4xl mx-auto px-6 py-24 text-center text-[#8c8c8c]">Yükleniyor...</div>}>
+      <Suspense fallback={<div className="max-w-4xl mx-auto px-6 py-24 text-center text-muted">Yükleniyor...</div>}>
         <AIBaristaContent />
       </Suspense>
     </>

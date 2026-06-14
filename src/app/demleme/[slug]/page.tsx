@@ -307,7 +307,7 @@ export default async function DemlemeDetailPage({
     <div className="max-w-4xl mx-auto px-6 py-24">
       <Link
         href="/demleme"
-        className="inline-flex items-center gap-1 text-sm text-[#C4724B] hover:text-[#B0603A] transition mb-8"
+        className="inline-flex items-center gap-1 text-sm text-primary hover:text-primary-hover transition mb-8"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -317,29 +317,29 @@ export default async function DemlemeDetailPage({
 
       <div className="flex flex-col md:flex-row gap-10 mb-12">
         <div className="flex-1">
-          <h1 className="text-4xl sm:text-5xl font-bold text-[#1a1a1a] mb-6">{technique.title}</h1>
-          <p className="text-[#4a4a4a] leading-relaxed">{technique.description}</p>
+          <h1 className="text-4xl sm:text-5xl font-bold text-heading mb-6">{technique.title}</h1>
+          <p className="text-body leading-relaxed">{technique.description}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
         {technique.stats?.map((stat) => (
-          <div key={stat.label} className="bg-[#f8f6f3] p-4 text-center rounded">
-            <span className="text-xs tracking-[0.2em] uppercase text-[#8c8c8c] font-medium block mb-1">
+          <div key={stat.label} className="bg-page-hover p-4 text-center rounded">
+            <span className="text-xs tracking-[0.2em] uppercase text-muted font-medium block mb-1">
               {stat.label}
             </span>
-            <span className="text-lg font-bold text-[#1a1a1a]">{stat.value}</span>
+            <span className="text-lg font-bold text-heading">{stat.value}</span>
           </div>
         ))}
       </div>
 
       <div className="mb-12">
-        <h2 className="text-sm tracking-[0.2em] uppercase text-[#C4724B] font-medium mb-4">Malzemeler</h2>
+        <h2 className="text-sm tracking-[0.2em] uppercase text-primary font-medium mb-4">Malzemeler</h2>
         <div className="flex flex-wrap gap-2">
           {technique.materials?.map((material) => (
             <span
               key={material}
-              className="px-3 py-1.5 bg-[#f8f6f3] text-sm text-[#4a4a4a] rounded"
+              className="px-3 py-1.5 bg-page-hover text-sm text-body rounded"
             >
               {material}
             </span>
@@ -349,18 +349,18 @@ export default async function DemlemeDetailPage({
 
       {technique.extraSections?.map((section) => (
         <div key={section.title} className="mb-8">
-          <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">{section.title}</h2>
-          <p className="text-[#4a4a4a] leading-relaxed">{section.content}</p>
+          <h2 className="text-xl font-bold text-heading mb-3">{section.title}</h2>
+          <p className="text-body leading-relaxed">{section.content}</p>
         </div>
       ))}
 
       {technique.tips && (
         <div className="mb-12">
-          <h2 className="text-sm tracking-[0.2em] uppercase text-[#C4724B] font-medium mb-4">Bunlara Dikkat!</h2>
+          <h2 className="text-sm tracking-[0.2em] uppercase text-primary font-medium mb-4">Bunlara Dikkat!</h2>
           <ul className="space-y-2">
             {technique.tips.map((tip, i) => (
-              <li key={i} className="flex gap-2 text-sm text-[#4a4a4a] leading-relaxed">
-                <span className="text-[#C4724B] shrink-0 mt-0.5">•</span>
+              <li key={i} className="flex gap-2 text-sm text-body leading-relaxed">
+                <span className="text-primary shrink-0 mt-0.5">•</span>
                 {tip}
               </li>
             ))}
@@ -370,16 +370,16 @@ export default async function DemlemeDetailPage({
 
       {technique.steps && (
         <div>
-          <h2 className="text-sm tracking-[0.2em] uppercase text-[#C4724B] font-medium mb-6">Adımlar</h2>
+          <h2 className="text-sm tracking-[0.2em] uppercase text-primary font-medium mb-6">Adımlar</h2>
         <div className="space-y-6">
           {technique.steps.map((stepGroup, i) => (
             <div key={i} className="flex gap-6">
-              <span className="text-lg font-bold text-[#C4724B] shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-[#f8f6f3]">
+              <span className="text-lg font-bold text-primary shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-page-hover">
                 {i + 1}
               </span>
               <div className="space-y-3 flex-1">
                 {stepGroup.map((step, j) => (
-                  <p key={j} className="text-sm text-[#4a4a4a] leading-relaxed">{step}</p>
+                  <p key={j} className="text-sm text-body leading-relaxed">{step}</p>
                 ))}
               </div>
             </div>
@@ -389,8 +389,8 @@ export default async function DemlemeDetailPage({
       )}
 
       {technique.note && (
-        <div className="mt-8 p-4 bg-[#f8f6f3] rounded text-sm text-[#4a4a4a] leading-relaxed">
-          <span className="font-medium text-[#1a1a1a]">Not: </span>
+        <div className="mt-8 p-4 bg-page-hover rounded text-sm text-body leading-relaxed">
+          <span className="font-medium text-heading">Not: </span>
           {technique.note}
         </div>
       )}

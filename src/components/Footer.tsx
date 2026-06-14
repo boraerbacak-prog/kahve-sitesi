@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+interface MenuItemType { id: string; label: string; href: string; children?: MenuItemType[]; }
 
 function InstagramIcon() {
   return (
@@ -33,6 +35,13 @@ export default function Footer() {
   const [subscribed, setSubscribed] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
   const [subError, setSubError] = useState("");
+  const [footerMenus, setFooterMenus] = useState<MenuItemType[]>([]);
+
+  useEffect(() => {
+    fetch("/api/public/menus?group=footer").then(r => r.json()).then(d => {
+      if (d.items) setFooterMenus(d.items);
+    });
+  }, []);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,35 +69,24 @@ export default function Footer() {
   };
 
   return (
-    <footer className="border-t border-[#e5e0d8] bg-white mt-auto">
+    <footer className="border-t border-border bg-white mt-auto relative z-10">
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 pb-12 border-b border-[#e5e0d8]">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 pb-12 border-b border-border">
           <div className="col-span-2 md:col-span-1">
             <div className="relative w-28 lg:w-44" style={{ aspectRatio: "1380/752" }}>
               <Image src="/logo.png" alt="Rostello" fill className="object-contain object-left" />
             </div>
-            <p className="text-sm text-[#8c8c8c] mt-3 leading-relaxed max-w-xs">
+            <p className="text-sm text-body/70 mt-3 leading-relaxed max-w-xs">
               En taze özel kahve çekirdekleri, özenle kavrulur.
             </p>
             <div className="mt-5">
-              <h4 className="text-sm tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-2">E-Bülten</h4>
+              <h4 className="text-sm tracking-[0.2em] uppercase text-body/60 font-medium mb-2">E-Bülten</h4>
               {subscribed ? (
-                <p className="text-xs text-[#C4724B] font-medium">Abone olduğunuz için teşekkürler!</p>
+                <p className="text-xs text-primary font-medium">Abone olduğunuz için teşekkürler!</p>
               ) : (
                 <form onSubmit={handleSubscribe} className="flex">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="E-posta adresiniz"
-                    className="flex-1 border border-[#e5e0d8] px-3 py-2 text-xs focus:outline-none focus:border-[#C4724B] bg-white"
-                    disabled={subscribing}
-                  />
-                  <button
-                    type="submit"
-                    disabled={subscribing || !email.trim()}
-                    className="bg-[#C4724B] hover:bg-[#B0603A] text-white px-3 py-2 text-xs font-medium uppercase tracking-wider transition disabled:opacity-50"
-                  >
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-posta adresiniz" className="flex-1 border border-border px-3 py-2 text-xs focus:outline-none focus:border-primary bg-white" disabled={subscribing} />
+                  <button type="submit" disabled={subscribing || !email.trim()} className="bg-primary hover:bg-primary-hover text-white px-3 py-2 text-xs font-medium uppercase tracking-wider transition disabled:opacity-50">
                     {subscribing ? "..." : "→"}
                   </button>
                 </form>
@@ -96,66 +94,42 @@ export default function Footer() {
               {subError && <p className="text-xs text-red-500 mt-1">{subError}</p>}
             </div>
           </div>
-          <div>
-            <h3 className="text-sm tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">Markamız</h3>
-            <div className="flex flex-col gap-2.5">
-              <Link href="/hikaye" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Hikayemiz</Link>
-              <Link href="/akademi" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Akademi</Link>
-              <Link href="/b2b" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Kurumsal</Link>
-              <Link href="/magazalar" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Mağazalar</Link>
+
+          {footerMenus.map(menu => (
+            <div key={menu.id}>
+              <h3 className="text-sm tracking-[0.2em] uppercase text-body/60 font-medium mb-4">{menu.label}</h3>
+              <div className="flex flex-col gap-2.5">
+                {(menu.children || []).map(child => (
+                  <Link key={child.id} href={child.href} className="text-sm text-body/60 hover:text-primary transition hover:-translate-y-0.5 block">{child.label}</Link>
+                ))}
+              </div>
             </div>
-          </div>
+          ))}
+
           <div>
-            <h3 className="text-sm tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">Öğren</h3>
-            <div className="flex flex-col gap-2.5">
-              <Link href="/demleme" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Demleme Rehberi</Link>
-              <Link href="/akademi" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Akademi</Link>
-              <Link href="/ai-barista" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Dijital Barista</Link>
-              <Link href="/abonelik" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Abonelik</Link>
-              <Link href="/sadakat" className="text-sm text-[#C4724B] hover:text-[#B0603A] transition hover:-translate-y-0.5 block font-medium">⭐ Sadakat Programı</Link>
-            </div>
-          </div>
-          <div>
-            <h3 className="text-sm tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">Kişisel Verilerin Korunması</h3>
-            <div className="flex flex-col gap-2.5">
-              <a href="#" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">KVKK ve Gizlilik Politikası</a>
-              <a href="#" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Aydınlatma Metni</a>
-              <a href="#" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">Çerez Politikası</a>
-              <a href="#" className="text-sm text-[#4a4a4a] hover:text-[#C4724B] transition hover:-translate-y-0.5 block">KVKK Başvuru Formu</a>
-            </div>
-          </div>
-          <div>
-            <h3 className="text-sm tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-4">İletişim</h3>
-            <div className="flex flex-col gap-2.5 text-sm text-[#4a4a4a]">
-              <a href="tel:+908504607676" className="hover:text-[#C4724B] transition hover:-translate-y-0.5 block font-semibold">0850 460 76 76</a>
-              <a href="mailto:info@rostello.com" className="hover:text-[#C4724B] transition hover:-translate-y-0.5 block">info@rostello.com</a>
-              <span className="text-sm text-[#8c8c8c] mt-1">Hafta İçi 10:00 - 19:00</span>
+            <h3 className="text-sm tracking-[0.2em] uppercase text-body/60 font-medium mb-4">İletişim</h3>
+            <div className="flex flex-col gap-2.5 text-sm text-body/60">
+              <a href="tel:+908504607676" className="hover:text-primary transition hover:-translate-y-0.5 block font-semibold text-body">0850 460 76 76</a>
+              <a href="mailto:info@rostello.com" className="hover:text-primary transition hover:-translate-y-0.5 block">info@rostello.com</a>
+              <span className="text-sm text-body/50 mt-1">Hafta İçi 10:00 - 19:00</span>
             </div>
             <div className="mt-5">
-              <h4 className="text-sm tracking-[0.2em] uppercase text-[#8c8c8c] font-medium mb-3">Sosyal Medya</h4>
+              <h4 className="text-sm tracking-[0.2em] uppercase text-body/60 font-medium mb-3">Sosyal Medya</h4>
               <div className="flex gap-3">
-                <a href="https://instagram.com/rostello" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-[#D4A574]/40 flex items-center justify-center text-[#C4724B] hover:bg-[#C4724B] hover:text-white transition hover:-translate-y-0.5" aria-label="Instagram">
-                  <InstagramIcon />
-                </a>
-                <a href="https://x.com/rostello" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-[#D4A574]/40 flex items-center justify-center text-[#C4724B] hover:bg-[#C4724B] hover:text-white transition hover:-translate-y-0.5" aria-label="X">
-                  <XIcon />
-                </a>
-                <a href="https://facebook.com/rostello" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-[#D4A574]/40 flex items-center justify-center text-[#C4724B] hover:bg-[#C4724B] hover:text-white transition hover:-translate-y-0.5" aria-label="Facebook">
-                  <FacebookIcon />
-                </a>
-                <a href="https://youtube.com/@rostello" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-[#D4A574]/40 flex items-center justify-center text-[#C4724B] hover:bg-[#C4724B] hover:text-white transition hover:-translate-y-0.5" aria-label="YouTube">
-                  <YoutubeIcon />
-                </a>
+                <a href="https://instagram.com/rostello" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-body/50 hover:bg-primary hover:text-white hover:border-primary transition hover:-translate-y-0.5" aria-label="Instagram"><InstagramIcon /></a>
+                <a href="https://x.com/rostello" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-body/50 hover:bg-primary hover:text-white hover:border-primary transition hover:-translate-y-0.5" aria-label="X"><XIcon /></a>
+                <a href="https://facebook.com/rostello" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-body/50 hover:bg-primary hover:text-white hover:border-primary transition hover:-translate-y-0.5" aria-label="Facebook"><FacebookIcon /></a>
+                <a href="https://youtube.com/@rostello" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-body/50 hover:bg-primary hover:text-white hover:border-primary transition hover:-translate-y-0.5" aria-label="YouTube"><YoutubeIcon /></a>
               </div>
             </div>
           </div>
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6">
-          <p className="text-xs text-[#8c8c8c]">&copy; {new Date().getFullYear()} Rostello. Tüm hakları saklıdır.</p>
+          <p className="text-xs text-body/50">&copy; {new Date().getFullYear()} Rostello. Tüm hakları saklıdır.</p>
           <div className="flex items-center gap-4">
-            <Link href="/hikaye" className="text-xs text-[#8c8c8c] hover:text-[#C4724B] transition">Hakkımızda</Link>
-            <Link href="/sss" className="text-xs text-[#8c8c8c] hover:text-[#C4724B] transition">S.S.S.</Link>
-            <Link href="/iletisim" className="text-xs text-[#8c8c8c] hover:text-[#C4724B] transition">İletişim</Link>
+            <Link href="/hikaye" className="text-xs text-body/50 hover:text-primary transition">Hakkımızda</Link>
+            <Link href="/sss" className="text-xs text-body/50 hover:text-primary transition">S.S.S.</Link>
+            <Link href="/iletisim" className="text-xs text-body/50 hover:text-primary transition">İletişim</Link>
           </div>
         </div>
       </div>

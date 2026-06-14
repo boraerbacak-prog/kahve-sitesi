@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { esc, htmlExcel, downloadXls, trDate } from "@/lib/excel";
 
 interface MenuItem {
-  id: string; label: string; href: string; parentId: string | null; sortOrder: number; isVisible: boolean; icon: string | null;
+  id: string; label: string; href: string; parentId: string | null; sortOrder: number; isVisible: boolean; icon: string | null; group: string;
   children?: MenuItem[];
 }
 
@@ -12,9 +13,9 @@ export default function AdminMenulerPage() {
   const [items, setItems] = useState<MenuItem[]>([]);
   const [editing, setEditing] = useState<Partial<MenuItem> | null>(null);
 
-  const load = () => fetch("/api/admin/menus").then(r => r.json()).then(d => { if (d.items) setItems(d.items); });
-
-  useEffect(() => { load(); }, []);
+  const [group, setGroup] = useState("header");
+  const load = () => fetch(`/api/admin/menus?group=${group}`).then(r => r.json()).then(d => { if (d.items) setItems(d.items); });
+  useEffect(() => { load(); }, [group]);
 
   const save = async () => {
     if (!editing) return;
@@ -33,14 +34,33 @@ export default function AdminMenulerPage() {
     load();
   };
 
+  const exportExcel = () => {
+    const headers = ["Etiket", "Link", "Grup", "Sıra", "Görünür", "Üst Öğe"];
+    const rows = items.map(item => [
+      esc(item.label), esc(item.href), esc(item.group),
+      String(item.sortOrder), item.isVisible ? "Evet" : "Hayır",
+      esc(items.find(p => p.id === item.parentId)?.label || ""),
+    ]);
+    downloadXls(`menuler-${new Date().toISOString().slice(0,10)}.xls`, htmlExcel("Menü Yönetimi", headers, rows));
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <Link href="/admin" className="text-sm text-amber-600 hover:underline mb-4 inline-block">← Admin Panel</Link>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-amber-900">Menü Yönetimi</h1>
-        <button onClick={() => setEditing({ label: "", href: "", isVisible: true })}
+      <h1 className="text-3xl font-bold text-amber-900 mb-4">Menü Yönetimi</h1>
+
+      <div className="flex items-center gap-3 mb-6">
+        <div className="flex bg-amber-100 rounded-lg p-1">
+          {["header", "footer", "main"].map(g => (
+            <button key={g} onClick={() => setGroup(g)}
+              className={`px-4 py-1.5 text-sm rounded-md transition ${group === g ? "bg-white text-amber-900 font-medium shadow-sm" : "text-amber-700 hover:text-amber-900"}`}
+            >{g === "header" ? "Header" : g === "footer" ? "Footer" : "Ana"}</button>
+          ))}
+        </div>
+        <button onClick={() => setEditing({ label: "", href: "", isVisible: true, group })}
           className="bg-amber-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-amber-500"
         >+ Yeni Menü Öğesi</button>
+        <button onClick={exportExcel} className="text-xs bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-500 transition">Excel</button>
       </div>
 
       {editing && (
@@ -60,11 +80,12 @@ export default function AdminMenulerPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Üst Menü</label>
-                  <select value={editing.parentId || ""} onChange={e => setEditing({...editing, parentId: e.target.value || null})}
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Grup</label>
+                  <select value={editing.group || group} onChange={e => setEditing({...editing, group: e.target.value})}
                     className="w-full border border-amber-200 p-2.5 rounded-lg text-sm">
-                    <option value="">Ana Menü</option>
-                    {items.filter(i => !i.parentId).map(i => <option key={i.id} value={i.id}>{i.label}</option>)}
+                    <option value="header">Header</option>
+                    <option value="footer">Footer</option>
+                    <option value="main">Ana</option>
                   </select>
                 </div>
                 <div>

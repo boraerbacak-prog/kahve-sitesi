@@ -23,13 +23,13 @@ export default function AdminTemaPage() {
   };
 
   const defaults = {
-    primary_color: "#C4724B",
-    secondary_color: "#1a1a1a",
-    accent_color: "#B0603A",
+    primary_color: "var(--color-primary)",
+    secondary_color: "var(--color-heading)",
+    accent_color: "var(--color-primary-hover)",
     bg_color: "#f8f6f3",
-    text_color: "#1a1a1a",
+    text_color: "var(--color-heading)",
     text_muted: "#8c8c8c",
-    border_color: "#e5e0d8",
+    border_color: "var(--color-border)",
     font_heading: "Geist",
     font_body: "Geist",
     site_title: "Rostello - Özel Kahve",
@@ -53,13 +53,13 @@ export default function AdminTemaPage() {
           <h2 className="text-lg font-bold text-amber-900 mb-3">Renkler</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {[
-              ["primary_color", "Ana Renk", "#C4724B"],
-              ["secondary_color", "İkincil Renk", "#1a1a1a"],
-              ["accent_color", "Vurgu Rengi", "#B0603A"],
+              ["primary_color", "Ana Renk", "var(--color-primary)"],
+              ["secondary_color", "İkincil Renk", "var(--color-heading)"],
+              ["accent_color", "Vurgu Rengi", "var(--color-primary-hover)"],
               ["bg_color", "Arka Plan", "#f8f6f3"],
-              ["text_color", "Yazı Rengi", "#1a1a1a"],
+              ["text_color", "Yazı Rengi", "var(--color-heading)"],
               ["text_muted", "Soluk Yazı", "#8c8c8c"],
-              ["border_color", "Kenarlık", "#e5e0d8"],
+              ["border_color", "Kenarlık", "var(--color-border)"],
               ["header_bg", "Header Arka Plan", "white"],
             ].map(([key, label]) => (
               <div key={key}>

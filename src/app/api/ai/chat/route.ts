@@ -71,9 +71,9 @@ const brewingMethods: Record<string, { name: string; desc: string }> = {
 };
 
 const subscriptions = [
-  { name: "Başlangıç", price: "199", desc: "Ayda 1 paket (250g), her ay farklı çekirdek, ücretsiz kargo" },
-  { name: "Keyif", price: "379", desc: "Ayda 2 paket (250g x2), en popüler, özel indirim" },
-  { name: "Gurme", price: "549", desc: "Ayda 3 paket (250g x3), specialty seçkiler, öncelikli destek" },
+  { name: "Başlangıç", price: "", desc: "1 paket (250g), hafif tüketenler için ideal" },
+  { name: "Keyif", price: "", desc: "2 paket (250g x2), en popüler seçenek" },
+  { name: "Gurme", price: "", desc: "3 paket (250g x3), specialty seçkiler dahil" },
 ];
 
 function pick<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -113,11 +113,14 @@ function generateKahveRecommendation(answers: string[], products: any[]): string
       if (r === "light") return false;
     }
 
-    if (flavorPref.includes("meyven") || flavorPref.includes("çiçek") || flavorPref.includes("hafif") || flavorPref.includes("parlak") || flavorPref.includes("asidite")) {
+    if (flavorPref.includes("meyvemsi") || flavorPref.includes("meyven") || flavorPref.includes("çiçek") || flavorPref.includes("hafif") || flavorPref.includes("parlak") || flavorPref.includes("asidite")) {
       if (a !== "High" && r !== "light") return false;
     }
-    if (flavorPref.includes("çikolata") || flavorPref.includes("dolgun") || flavorPref.includes("sert") || flavorPref.includes("tatlı") || flavorPref.includes("karamel")) {
+    if (flavorPref.includes("çikolata") || flavorPref.includes("dolgun") || flavorPref.includes("sert") || flavorPref.includes("yoğun")) {
       if (r !== "dark" && b !== "Full") return false;
+    }
+    if (flavorPref.includes("dengeli") || flavorPref.includes("tatlı") || flavorPref.includes("karamel")) {
+      if (r === "light" && a !== "Low") return false;
     }
 
     return true;
@@ -147,13 +150,13 @@ function generateKahveRecommendation(answers: string[], products: any[]): string
   }
 
   const freqMsg = (() => {
-    if (freqPref.includes("1") || freqPref.includes("bir")) return "\n\nGünde 1 fincan için **Başlangıç** abonelik paketimiz ideal.";
-    if (freqPref.includes("2") || freqPref.includes("3") || freqPref.includes("iki") || freqPref.includes("üç")) return "\n\nGünde 2-3 fincan için **Keyif** abonelik paketimiz tam size göre!";
-    if (freqPref.includes("4") || freqPref.includes("5") || freqPref.includes("fazla") || freqPref.includes("çok") || freqPref.includes("fincan")) return "\n\nGünde 3+ fincan için **Gurme** abonelik paketimizi öneririm.";
+    if (freqPref.includes("1") || freqPref.includes("bir")) return "\n\n**Başlangıç** paketimizi öneririm: ayda 1 paket (250g), hafif ve düzenli tüketenler için ideal.";
+    if (freqPref.includes("2") || freqPref.includes("3") || freqPref.includes("iki") || freqPref.includes("üç")) return "\n\n**Keyif** paketi tam size göre: ayda 2 paket (250g x2), en popüler seçeneğimiz!";
+    if (freqPref.includes("4") || freqPref.includes("5") || freqPref.includes("fazla") || freqPref.includes("çok") || freqPref.includes("fincan")) return "\n\n**Gurme** paketimizi öneririm: ayda 3 paket (250g x3), specialty seçkiler dahil.";
     return "\n\nAbonelik paketlerimizle tanışmak ister misiniz? [Abonelik]({url}/abonelik)".replace("{url}", SITE_URL);
   })();
 
-  return `**Sana en uygun kahveyi buldum!** 🎯\n\n**Ana Öneri:** ${fn(top1)}\n→ Neden bu: ${top1.roastLevel === "light" ? "Hafif ve aromatik" : top1.roastLevel === "dark" ? "Dolgun ve yoğun" : "Dengeli ve herkese uygun"} bir profil. ${equipment.includes("v60") ? "V60 ile parlak asiditeleri harika açılıyor." : equipment.includes("french") || equipment.includes("press") ? "French Press ile yağlı gövdeli bir fincan vaat ediyor." : "Ekipmanınızla mükemmel uyum sağlar."}\n→ Öğütme: **${grind}**\n→ Ürün: [${top1.name}]({url}/urunler/${top1.slug})${freqMsg}\n\n${top2 ? `**Alternatif:** ${fn(top2)}\n→ Ürün: [${top2.name}]({url}/urunler/${top2.slug})\n` : ""}\n**Demleme İpucu:** ☕\n• Su sıcaklığı: 92-96°C\n• Oran: 1:15-1:17 (kahve:su)\n• Taze çekilmiş kahve kullanın\n\n[Tüm ürünler]({url}/urunler) · [Abonelik]({url}/abonelik)`.replace(/\{url\}/g, SITE_URL);
+  return `**Sana en uygun kahveyi buldum!** 🎯\n\n**Ana Öneri:** ${fn(top1)}\n→ Neden bu: ${top1.roastLevel === "light" ? "Zarif ve aromatik" : top1.roastLevel === "dark" ? "Karakterli ve yoğun" : "İdeal ve herkese uygun"} bir profil. ${equipment.includes("v60") ? "V60 ile parlak asiditeleri harika açılıyor." : equipment.includes("french") || equipment.includes("press") ? "French Press ile yağlı gövdeli bir fincan vaat ediyor." : "Ekipmanınızla mükemmel uyum sağlar."}\n→ Öğütme: **${grind}**\n→ Ürün: [${top1.name}]({url}/urunler/${top1.slug})${freqMsg}\n\n${top2 ? `**Alternatif:** ${fn(top2)}\n→ Ürün: [${top2.name}]({url}/urunler/${top2.slug})\n` : ""}\n**Demleme İpucu:** ☕\n• Su sıcaklığı: 92-96°C\n• Oran: 1:15-1:17 (kahve:su)\n• Taze çekilmiş kahve kullanın\n\n[Tüm ürünler]({url}/urunler) · [Abonelik]({url}/abonelik)`.replace(/\{url\}/g, SITE_URL);
 }
 
 function greeting(): string {
@@ -387,7 +390,7 @@ const questions: {
   {
     patterns: [/ekipman/i, /alet/i, /malzeme/i, /terazi/i, /kettle/i, /değirmen/i, /kahve makinesi/i],
     response: () =>
-      `Ekipman seçiminiz, kahvenizin tadını doğrudan belirler. Her yöntem farklı bir profil çıkarır. 👇\n\n**☕ Demleme Yöntemleri ve Size Uygun Kahveler**\n\n• **V60 Dripper** (350 ₺) — Hafif, temiz, aromatik bir fincan. Çiçeksi ve meyvemsi notaları öne çıkarır. Parlak asiditeli Etiyopya veya Kenya gibi specialty kahvelerle mükemmel uyum sağlar.\n• **French Press** (450 ₺) — Dolgun gövdeli, yağlı doku. Metal filtre kahvenin doğal yağlarını korur. Çikolatalı, karamelli notaları olan Brezilya veya Guatemala gibi orta/koyu kavrumlar ideal.\n• **Aeropress** (750 ₺) — Pratik, hızlı, az tortulu. Her kahve profiline uyarlanabilir. Seyahat için harika.\n• **Espresso Makinesi** — Yoğun, kremalı. İnce öğütülmüş orta/koyu kavrum kahvelerle çikolata ve karamel notalarını maksimize eder.\n• **Moka Pot** — İtalyan usulü sert kahve. Orta-ince öğütme, orta/koyu kavrum.\n• **Cezve** — Geleneksel Türk kahvesi. Toz öğütme, orta kavrum, dengeli.\n• **Filtre Makine** — Otomatik damlama, pratik. Orta kavrum kahveler.\n• **Soğuk Demleme** — Düşük asiditeli, yumuşak. Orta/koyu kavrum, çikolatalı notalar.\n\n**⚖️ Yardımcı Ekipmanlar**\n• [Dijital Terazi]({url}/ekipmanlar) (890 ₺) — Doğru oran için olmazsa olmaz\n• [Su Isıtıcı]({url}/ekipmanlar) (1.290 ₺) — Sıcaklık kontrolü\n• [El Değirmeni]({url}/ekipmanlar) (1.590 ₺) — Taze çekim, bayat kahve yok\n\nKısacası: **Ekipman → Kavrum → Tat Profili** hepsi bir zincir. Hangi yöntemi kullanıyorsan ona göre kahve önereyim. "**Bana kahve öner**" yazman yeterli! 🎯\n\n[Tüm ekipmanlar]({url}/ekipmanlar) · [Abonelik]({url}/abonelik)`.replace(/\{url\}/g, SITE_URL),
+      `Ekipman seçiminiz, kahvenizin tadını doğrudan belirler. Her yöntem farklı bir profil çıkarır. 👇\n\n**☕ Demleme Yöntemleri ve Size Uygun Kahveler**\n\n• **V60 Dripper** (350 ₺) — Zarif, temiz, aromatik bir fincan. Çiçeksi ve meyvemsi notaları öne çıkarır. Parlak asiditeli Etiyopya veya Kenya gibi specialty kahvelerle mükemmel uyum sağlar.\n• **French Press** (450 ₺) — Dolgun gövdeli, yağlı doku. Metal filtre kahvenin doğal yağlarını korur. Çikolatalı, karamelli notaları olan Brezilya veya Guatemala gibi İdeal/Karakterli kavrumlar ideal.\n• **Aeropress** (750 ₺) — Pratik, hızlı, az tortulu. Her kahve profiline uyarlanabilir. Seyahat için harika.\n• **Espresso Makinesi** — Yoğun, kremalı. İnce öğütülmüş İdeal/Karakterli kavrum kahvelerle çikolata ve karamel notalarını maksimize eder.\n• **Moka Pot** — İtalyan usulü sert kahve. Orta-ince öğütme, İdeal/Karakterli kavrum.\n• **Cezve** — Geleneksel Türk kahvesi. Toz öğütme, İdeal kavrum, dengeli.\n• **Filtre Makine** — Otomatik damlama, pratik. İdeal kavrum kahveler.\n• **Soğuk Demleme** — Düşük asiditeli, yumuşak. İdeal/Karakterli kavrum, çikolatalı notalar.\n\n**⚖️ Yardımcı Ekipmanlar**\n• [Dijital Terazi]({url}/ekipmanlar) (890 ₺) — Doğru oran için olmazsa olmaz\n• [Su Isıtıcı]({url}/ekipmanlar) (1.290 ₺) — Sıcaklık kontrolü\n• [El Değirmeni]({url}/ekipmanlar) (1.590 ₺) — Taze çekim, bayat kahve yok\n\nKısacası: **Ekipman → Kavrum → Tat Profili** hepsi bir zincir. Hangi yöntemi kullanıyorsan ona göre kahve önereyim. "**Bana kahve öner**" yazman yeterli! 🎯\n\n[Tüm ekipmanlar]({url}/ekipmanlar) · [Abonelik]({url}/abonelik)`.replace(/\{url\}/g, SITE_URL),
   },
   {
     patterns: [/öner/i, /tavsiye/i, /seç/i, /ne al/i, /karar/i, /ürün/i, /hangisini/i, /kahve.*ön/i, /kahve/i],
@@ -395,18 +398,18 @@ const questions: {
       const featured = products.filter((p: any) => p.featured).slice(0, 4);
       if (featured.length > 0) {
         const list = featured.map(fmtProd).join("\n");
-        return `Öne çıkan kahvelerimiz:\n\n${list}\n\nHangisi ilgini çekti? Sana daha iyi yardımcı olabilmem için bir şey sorayım:\n\n🥛 **Sütlü** mü içersin?\n⚫ **Sade** mi?\n🧊 **Soğuk** sever misin?\n🌸 **Meyvemsi** — çiçeksi, hafif\n🍫 **Çikolatalı** — dolgun, sert\n🔬 **Specialty** — tek köken, özel üretim\n\nYa da hangi ekipmanla kahve yapıyorsun?`;
+        return `Öne çıkan kahvelerimiz:\n\n${list}\n\nHangisi ilgini çekti? Sana daha iyi yardımcı olabilmem için bir şey sorayım:\n\n🥛 **Sütlü** mü içersin?\n⚫ **Sade** mi?\n🧊 **Soğuk** sever misin?\n🌸 **Meyvemsi** — Parlak & Canlı\n🍫 **Çikolatalı** — Yoğun & Güçlü\n🔬 **Specialty** — tek köken, özel üretim\n\nYa da hangi ekipmanla kahve yapıyorsun?`;
       }
-      return `Sana nasıl bir kahve lazım? 🤔\n\n🥛 **Sütlü mü?** Latte, cappuccino için uygun kahveler\n⚫ **Sade/Siyah mı?** Filtre, espresso için ideal\n🧊 **Soğuk mu?** Cold brew, iced latte\n🌸 **Meyvemsi mi?** Çiçeksi, hafif kavrumlar\n🍫 **Çikolatalı mı?** Dolgun, sert kavrumlar\n🔬 **Specialty mi?** Tek köken, özel üretimler\n\nYa da hangi ekipmanla demliyorsun? ☕\n\n"**Bana kahve öner**" yazarsan sohbet içinde çözelim! 🎯`.replace(/\{url\}/g, SITE_URL);
+      return `Sana nasıl bir kahve lazım? 🤔\n\n🥛 **Sütlü mü?** Latte, cappuccino için uygun kahveler\n⚫ **Sade/Siyah mı?** Filtre, espresso için ideal\n🧊 **Soğuk mu?** Cold brew, iced latte\n🌸 **Meyvemsi mi?** Parlak & Canlı\n🍫 **Çikolatalı mı?** Yoğun & Güçlü\n🔬 **Specialty mi?** Tek köken, özel üretimler\n\nYa da hangi ekipmanla demliyorsun? ☕\n\n"**Bana kahve öner**" yazarsan sohbet içinde çözelim! 🎯`.replace(/\{url\}/g, SITE_URL);
     },
   },
   {
     patterns: [/günde/i, /kaç fincan/i, /fincan.*iç/i, /günlük.*tüketim/i, /haftada.*kaç/i, /ayda.*kaç/i, /ne kadar.*iç/i],
     response: (msg) => {
       const lm = msg.toLowerCase();
-      if (lm.includes("1") || lm.includes("bir")) return `Günde 1 fincan için **Başlangıç** (199 ₺/ay) paketi yeterli. Ayda 1 paket (250g) taze kavrum kahve, ücretsiz kargo. Düzenli kahve keyfi için ideal! ☕\n\nDetaylı bilgi: [Abonelik]({url}/abonelik)`.replace("{url}", SITE_URL);
-      if (lm.includes("2") || lm.includes("3") || lm.includes("iki") || lm.includes("üç")) return `Günde 2-3 fincan için **Keyif** (379 ₺/ay) paketi en popüler seçenek! Ayda 2 paket (250g x2), özel indirimli fiyat. Farklı çekirdekleri keşfetmek isteyenler için ideal.\n\nDetaylı bilgi: [Abonelik]({url}/abonelik)`.replace("{url}", SITE_URL);
-      if (lm.includes("4") || lm.includes("5") || lm.includes("dört") || lm.includes("beş") || lm.includes("fazla") || lm.includes("çok")) return `Günde 3+ fincan için **Gurme** (549 ₺/ay) paketi! Ayda 3 paket (250g x3), specialty seçkiler ve öncelikli müşteri desteği. Kahve tutkunları için tasarlandı.\n\nDetaylı bilgi: [Abonelik]({url}/abonelik)`.replace("{url}", SITE_URL);
+      if (lm.includes("1") || lm.includes("bir")) return `**Başlangıç** paketini öneririm: ayda 1 paket (250g) taze kavrum kahve, ücretsiz kargo. Hafif ve düzenli tüketenler için ideal! ☕\n\nDetaylı bilgi: [Abonelik]({url}/abonelik)`.replace("{url}", SITE_URL);
+      if (lm.includes("2") || lm.includes("3") || lm.includes("iki") || lm.includes("üç")) return `**Keyif** paketi en popüler seçenek! Ayda 2 paket (250g x2). Farklı çekirdekleri keşfetmek isteyenler için ideal.\n\nDetaylı bilgi: [Abonelik]({url}/abonelik)`.replace("{url}", SITE_URL);
+      if (lm.includes("4") || lm.includes("5") || lm.includes("dört") || lm.includes("beş") || lm.includes("fazla") || lm.includes("çok")) return `**Gurme** paketi: ayda 3 paket (250g x3), specialty seçkiler. Kahve tutkunları için tasarlandı.\n\nDetaylı bilgi: [Abonelik]({url}/abonelik)`.replace("{url}", SITE_URL);
       return null;
     },
   },
@@ -420,9 +423,44 @@ const questions: {
   {
     patterns: [/abonelik/i, /üyelik/i, /her ay/i, /düzenli/i, /paket/i, /abone/i],
     response: () => {
-      const list = subscriptions.map((s) => `**${s.name}** (${s.price} ₺/ay): ${s.desc}`).join("\n");
-      return `Abonelik paketlerimiz:\n\n${list}\n\n**Sana en uygun paketi bulalım!** 🤔\n\n☕ Günde kaç fincan içiyorsun?\n• 1 fincan → **Başlangıç** (199 ₺/ay)\n• 2-3 fincan → **Keyif** (379 ₺/ay) — en popüler\n• 3+ fincan → **Gurme** (549 ₺/ay, specialty seçkiler)\n\n🔄 Her ay aynı çekirdek mi, farklı bir macera mı?\n• **Sadık Abonelik** — Sevdiğin çekirdek her ay kapında\n• **Kaşif Aboneliği** — Her ay farklı origin, sürpriz\n• **"Beni Şaşırt"** — Kararı bana bırak, her ay bambaşka bir profil\n\nTaze kavrulmuş, kapına gelsin. Dilediğin zaman duraklat veya iptal et. ☕\n\n[Abonelik]({url}/abonelik) — [Yönet]({url}/abonelik/yonetim)`.replace(/\{url\}/g, SITE_URL);
+      const list = subscriptions.map((s) => `**${s.name}**: ${s.desc}`).join("\n");
+      return `Abonelik paketlerimiz:\n\n${list}\n\n**Sana en uygun paketi bulalım!** 🤔\n\n☕ Ne kadar tüketiyorsun?\n• Az / Hafif → **Başlangıç** (1 paket)\n• Orta / Düzenli → **Keyif** (2 paket) — en popüler\n• Fazla / Tutkulu → **Gurme** (3 paket, specialty seçkiler)\n\n🔄 Her ay aynı çekirdek mi, farklı bir macera mı?\n• **Sadık Abonelik** — Sevdiğin çekirdek her ay kapında\n• **Kaşif Aboneliği** — Her ay farklı origin, sürpriz\n• **"Beni Şaşırt"** — Kararı bana bırak, her ay bambaşka bir profil\n\nTaze kavrulmuş, kapına gelsin. Dilediğin zaman duraklat veya iptal et. ☕\n\n[Abonelik]({url}/abonelik) — [Yönet]({url}/abonelik/yonetim)`.replace(/\{url\}/g, SITE_URL);
     },
+  },
+  {
+    patterns: [/ertele/i, /geciktir/i, /ötele/i, /1 hafta/i, /bir hafta/i, /7 gün/i, /ertel/i],
+    response: () =>
+      `Aboneliğini bir hafta ertelemek mi istiyorsun? Hiç sorun değil! 🕐\n\nBunu iki şekilde yapabilirsin:\n\n1️⃣ **Kendin yap:** [Hesabım]({url}/hesabim) sayfasına git, aktif abonelik kartındaki "↻ 1 Hafta Ertele" butonuna tıkla, bir sonraki sevkiyatın otomatik 7 gün ertelensin.\n\n2️⃣ **Söyle bana:** Aboneliğinin ID'sini biliyorsan (abonelik yönetim sayfasında görebilirsin) buradan da erteleyebilirim.\n\n⚠️ Not: Yalnızca aktif abonelikler ertelenebilir.`.replace(/\{url\}/g, SITE_URL),
+  },
+  {
+    patterns: [/hızlandır/i, /hemen/i, /şimdi.*gönder/i, /acil/i, /hızlı.*bitsin/i, /bitmeden/i, /erken.*gönder/i, /öne.*çek/i],
+    response: () =>
+      `Kahven mi bitti, hemen gönderelim mi? ⚡\n\nBunu iki şekilde yapabilirsin:\n\n1️⃣ **Kendin yap:** [Hesabım]({url}/hesabim) sayfasındaki "⚡ Hemen Gönder" butonuna tıkla, bekleyen teslimatın kavrumu yarına alınsın.\n\n2️⃣ **Söyle bana:** Aboneliğinin ID'sini söylersen ben de yapabilirim.\n\n⚠️ Önümüzdeki teslimatı hızlandırır. Bekleyen teslimat yoksa maalesef yapamıyoruz.`.replace(/\{url\}/g, SITE_URL),
+  },
+  {
+    patterns: [/duraklat/i, /dondur/i, /durdur/i, /pause/i, /ara ver/i],
+    response: () =>
+      `Aboneliğini dondurmak mı istiyorsun? ⏸️\n\nBunu iki şekilde yapabilirsin:\n\n1️⃣ **Kendin yap:** [Hesabım]({url}/hesabim) sayfasındaki "⏸ Planı Dondur" butonuna tıkla, aboneliğin duraklatılsın.\n\n2️⃣ [Abonelik Yönetimi]({url}/abonelik/yonetim) sayfasından da duraklatabilirsin.\n\nDilediğin zaman aynı sayfadan tekrar aktifleştirebilirsin.`.replace(/\{url\}/g, SITE_URL),
+  },
+  {
+    patterns: [/hesabım/i, /dashboard/i, /panel/i, /kontrol merkezi/i, /profil.*nerede/i, /hesabım.*nerede/i],
+    response: () =>
+      `[Hesabım]({url}/hesabim) sayfası, kahve rutininin kontrol merkezidir. ☕\n\nBurada neler var?\n\n👋 **Karşılama:** Aboneliğinin kaçıncı döngüde olduğunu, bir sonraki sevkiyat tarihini ve aktif profilini görürsün.\n\n⚡ **Hızlı Aksiyonlar:**\n• ↻ **1 Hafta Ertele** — Tatildeysen veya kahven yetiyorsa sevkiyatı 7 gün ötele\n• ⚡ **Hemen Gönder** — Kahven bittiyse bekleyen teslimatı öne çek\n• ⏸ **Planı Dondur** — Aboneliğine ara ver, dilediğin zaman geri aç\n\n📦 **Siparişlerim** — Tüm sipariş geçmişin ve teslimat takibi\n📋 **Aboneliklerim** — Aktif/duraklatılmış/iptal aboneliklerin\n💎 **Çekirdek Kredi** — %5 iade, bakiyen, işlem geçmişin\n💳 **Cüzdan** — Bakiye sorgulama ve para yükleme\n👤 **Profil** — Adreslerin ve hesap bilgilerin\n\nKısacası: Aboneliğinle ilgili her şeyi buradan yönetirsin.`.replace(/\{url\}/g, SITE_URL),
+  },
+  {
+    patterns: [/cüzdan/i, /bakiye/i, /para yükle/i, /wallet/i, /cüzdan.*bakiye/i, /ne kadar.*para/i],
+    response: () =>
+      `Cüzdan, Rostello'daki ön ödeme bakiyendir. 💳\n\n[Cüzdan]({url}/cuzdan) sayfasında:\n\n• **Anlık bakiye** — Kullanılabilir bakiyeni görürsün\n• **Para yükle** — Banka havalesi ile 250/500/1000/2500 TL veya özel tutar yükleyebilirsin. Havale açıklamasına referans kodunu yazman yeterli.\n• **İşlem geçmişi** — Yükleme ve ödeme kayıtların\n\nÖdemelerinde cüzdan bakiyeni kullanabilirsin. Havale sonrası admin onayıyla bakiye aktifleşir.\n\n[Cüzdana Git]({url}/cuzdan)`.replace(/\{url\}/g, SITE_URL),
+  },
+  {
+    patterns: [/çekirdek kredi/i, /sadakat/i, /puan/i, /kredi.*nerede/i, /yüzde 5/i, /%5/i, /iade/i, /geri ödeme/i],
+    response: () =>
+      `Çekirdek Kredi, Rostello'nun sadakat programıdır. 💎\n\n**Nasıl çalışır?**\n• Abonelik siparişlerinden **%5** geri iade kazanırsın\n• Kazandığın krediler sonraki alışverişlerinde kullanılır\n• Aylık kazanım sınırı: 1.500 TL'ye kadar\n• Ayda 14 gün bekleme süresinden sonra kullanılabilir hale gelir\n\n**Nasıl kullanılır?**\n• Çekirdek krediler yalnızca kahve ürünlerinde geçerlidir (ekipman hariç)\n• Ödeme sayfasında otomatik olarak kullanılır\n• Son kullanma tarihi yoktur — planın aktif olduğu sürece birikir\n\n**Bonus:** Arkadaşını getir, ilk alışverişinde sana 100 TL kredi kazansın! 🎉\n\nBakiyeni ve işlem geçmişini [Hesabım]({url}/hesabim?tab=loyalty) sayfasından görebilirsin.`.replace(/\{url\}/g, SITE_URL),
+  },
+  {
+    patterns: [/adres/i, /adres.*güncelle/i, /adres.*ekle/i, /profil.*bilgi/i, /şifre/i, /hesap.*bilgi/i],
+    response: () =>
+      `Hesap bilgilerini ve adreslerini [Hesabım]({url}/hesabim?tab=profile) sayfasından yönetebilirsin. 👤\n\nBurada:\n• Adını ve e-postanı görüntüleyebilirsin\n• Teslimat adreslerini ekleyip düzenleyebilirsin\n• Varsayılan adresini belirleyebilirsin\n• Çıkış yapabilirsin\n\nAdres güncellemek için [buraya tıkla]({url}/hesabim?tab=profile).`.replace(/\{url\}/g, SITE_URL),
   },
   {
     patterns: [/b2b/i, /kurumsal/i, /toptan/i, /iş birliği/i, /cafe/i, /restoran/i, /otel/i, /ofis/i, /perakende/i],
@@ -515,8 +553,8 @@ async function getFallbackReply(msg: string, products: any[], threadId?: string 
     const testQuestions = [
       null,
       `**2. soru!** ☕\n\nSütlü mü içersin yoksa sade/siyah mı?\n\n• **Sütlü** (latte, cappuccino)\n• **Sade / Siyah** (filtre, espresso)\n• **Soğuk** (cold brew, iced)\n• **Fark etmez**` + `\n__OPTIONS__:Sütlü|Sade/Siyah|Soğuk|Fark etmez`,
-      `**3. soru!** 🎯\n\nHangi lezzet profili daha çok ilgini çekiyor?\n\n• **Meyvemsi & Çiçeksi** — Parlak, hafif, asiditeli\n• **Çikolatalı & Tatlı** — Karamel, çikolata, fındık\n• **Dolgun & Sert** — Koyu kavrum, bitter, yoğun\n• **Kararsızım / Hepsini denerim**` + `\n__OPTIONS__:Meyvemsi & Çiçeksi|Çikolatalı & Tatlı|Dolgun & Sert|Kararsızım`,
-      `**Son soru!** ☕\n\nGünde kaç fincan kahve içiyorsun?\n\n• **1 fincan**\n• **2-3 fincan**\n• **3+ fincan**\n• **Ara sıra / Haftada birkaç**` + `\n__OPTIONS__:1 fincan|2-3 fincan|3+ fincan|Ara sıra`,
+      `**3. soru!** 🎯\n\nHangi lezzet profili daha çok ilgini çekiyor?\n\n• **Meyvemsi** — Parlak & Canlı\n• **Dengeli** — Pürüzsüz & Klasik\n• **Çikolata** — Yoğun & Güçlü\n• **Kararsızım / Hepsini denerim**` + `\n__OPTIONS__:Meyvemsi|Dengeli|Çikolata|Kararsızım`,
+      `**Son soru!** ☕\n\nGünde kaç fincan kahve içiyorsun?\n\n• **1 fincan** (az tüketen)\n• **2-3 fincan** (düzenli)\n• **3+ fincan** (yoğun)\n• **Ara sıra / Haftada birkaç**` + `\n__OPTIONS__:1 fincan|2-3 fincan|3+ fincan|Ara sıra`,
     ];
 
     if (state.step < 4) {
@@ -559,7 +597,7 @@ function hasKey(name: string): boolean {
 
 async function buildContext(products: any[], session: any): Promise<{ catalog: string; subInfo: string }> {
   const catalog = products.map((p: any) =>
-    `- ${p.name} — ${p.origin || "Menşei bilinmiyor"} | ${p.category?.name || ""} | ${fmtPrice(p.price)}₺/kg | Kavrum: ${p.roastLevel === "light" ? "Hafif" : p.roastLevel === "medium" ? "Orta" : "Koyu"} | Detay: ${SITE_URL}/urunler/${p.slug}`
+    `- ${p.name} — ${p.origin || "Menşei bilinmiyor"} | ${p.category?.name || ""} | ${fmtPrice(p.price)}₺/kg | Kavrum: ${p.roastLevel === "light" ? "Zarif" : p.roastLevel === "medium" ? "İdeal" : "Karakterli"} | Detay: ${SITE_URL}/urunler/${p.slug}`
   ).join("\n");
 
   let subInfo = "";
@@ -674,20 +712,46 @@ function buildSystemPrompt(catalog: string, subInfo: string): string {
         abonelikKategorileri,
         ``,
         `Mevcut abonelik seçenekleri:`,
-        `- Başlangıç (199 ₺/ay): Günde 1 fincan, 1 paket 250g, ayda 1 gönderim`,
-        `- Keyif (379 ₺/ay): Günde 2-3 fincan, 2 paket 250g, en popüler`,
-        `- Gurme (549 ₺/ay): Günde 3+ fincan, 3 paket 250g, specialty seçkiler`,
+        `- Başlangıç: 1 paket 250g, hafif tüketenler için ideal`,
+        `- Keyif: 2 paket 250g, en popüler, düzenli tüketenler için`,
+        `- Gurme: 3 paket 250g, specialty seçkiler, yoğun tüketenler için`,
         ``,
         `Abonelik esnekliği — chatbot üzerinden yönet:`,
-        `- "Tatile çıkıyorum" → duraklat (kullanıcıya ${SITE_URL}/abonelik/yonetim sayfasını öner)`,
+        `- "Tatile çıkıyorum" → duraklat (kullanıcıya ${SITE_URL}/hesabim sayfasını öner)`,
         `- "Misafir geliyor" → bu ay çift gönder`,
+        `- "Kahvem hızlı bitti" → hızlandır (kullanıcıya ${SITE_URL}/hesabim sayfasını öner)`,
+        `- "Bu sevkiyatı ertele" → nextDelivery +7 gün (kullanıcıya ${SITE_URL}/hesabim sayfasını öner)`,
         `- "Bütçem daralıyor" → küçük pakete geç`,
         `- "Başka bir şey denemek istiyorum" → profili güncelle`,
         `Mevcut abonelik varsa bunu önce kontrol et ve ona göre yönlendir.`,
+        `Kullanıcının aktif aboneliği varsa ${SITE_URL}/hesabim sayfasındaki 3 hızlı aksiyon butonundan bahset:`,
+        `1. "↻ 1 Hafta Ertele" — nextDelivery +7 gün, sadece aktif abonelikte çalışır`,
+        `2. "⚡ Hemen Gönder" — bekleyen ilk teslimatın kavrum tarihini yarına çeker`,
+        `3. "⏸ Planı Dondur" — aboneliği duraklatır, dilediğin zaman geri açılır`,
         `${subInfo}`,
         ``,
-        `### ADIM 6 — SADAKAT & KİŞİSEL TARİH`,
-        `Müşterinin Rostello ile geçmişini canlı tut. Bunun için kullanıcının abonelik ve sipariş geçmişini kullan.`,
+        `### ADIM 6 — SADAKAT, CÜZDAN & KİŞİSEL TARİH`,
+        `Müşterinin Rostello ile geçmişini canlı tut.`,
+        ``,
+        `**Çekirdek Kredi (Sadakat Programı):**`,
+        `- Abonelik siparişlerinden %5 geri iade kazanılır`,
+        `- Aylık kazanım sınırı 1.500 TL'dir, 14 gün bekleme süresi vardır`,
+        `- Krediler yalnızca kahve ürünlerinde geçerlidir (ekipman hariç)`,
+        `- Referans: arkadaşını getir, sana 100 TL kredi kazandırsın`,
+        `- Kullanıcı bakiyesini ${SITE_URL}/hesabim?tab=loyalty sayfasında görebilir`,
+        `- Son kullanma tarihi yoktur, abonelik aktif olduğu sürece birikir`,
+        ``,
+        `**Cüzdan (Prepaid Wallet):**`,
+        `- Kullanıcı banka havalesi ile cüzdanına para yükleyebilir: ${SITE_URL}/cuzdan`,
+        `- Havale açıklamasına referans kodunu yazması gerekir`,
+        `- Admin onayından sonra bakiye kullanılabilir hale gelir`,
+        `- Ödemelerde cüzdan bakiyesi kullanılabilir`,
+        ``,
+        `**Hesabım Dashboard'ı:**`,
+        `- Kullanıcı ${SITE_URL}/hesabim sayfasında abonelik döngüsünü, sevkiyat tarihini ve profil özetini görebilir`,
+        `- 3 hızlı aksiyon: Ertele (nextDelivery +7 gün), Hızlandır (kavrumu yarına çek), Dondur (duraklat)`,
+        `- 5 tab: Siparişlerim, Aboneliklerim, Çekirdek Kredi, Cüzdan, Profil`,
+        ``,
         `Müşteri giriş yapmışsa ve geçmişi varsa:`,
         `- "Seninle [X] kavurma yaptık. Toplamda [Y] kg kahve içtin." gibi kişisel veriler paylaş`,
         `- Daha önce denediği çekirdekleri hatırla: "Geçen ay Ethiopia Sidamo'yu sevmiştin, bu ay benzer bir profil var"`,
@@ -749,6 +813,9 @@ function buildSystemPrompt(catalog: string, subInfo: string): string {
         `- Demleme Rehberi: ${SITE_URL}/demleme`,
         `- Abonelik: ${SITE_URL}/abonelik`,
         `- Abonelik Yönetimi: ${SITE_URL}/abonelik/yonetim`,
+        `- Hesabım (Dashboard): ${SITE_URL}/hesabim`,
+        `- Cüzdan (Wallet): ${SITE_URL}/cuzdan`,
+        `- Çekirdek Kredi: ${SITE_URL}/hesabim?tab=loyalty`,
         `- B2B / Kurumsal: ${SITE_URL}/b2b`,
         `- Blog: ${SITE_URL}/blog`,
         `- Sepet: ${SITE_URL}/sepet`,

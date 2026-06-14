@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { adminSubscriptionNotification } from "@/lib/email";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -13,6 +14,7 @@ export async function POST(req: Request) {
 
     const sub = await prisma.userSubscription.findFirst({
       where: { id: subscriptionId, userId: session.user.id },
+      include: { plan: true },
     });
     if (!sub) {
       return NextResponse.json({ error: "Abonelik bulunamadı" }, { status: 404 });
@@ -24,6 +26,14 @@ export async function POST(req: Request) {
         status: pause ? "paused" : "active",
         pauseDate: pause ? new Date() : null,
       },
+    });
+
+    adminSubscriptionNotification({
+      type: "duraklatma",
+      userName: session.user.name || "İsimsiz",
+      userEmail: session.user.email!,
+      planName: sub.plan.name,
+      details: pause ? "Abonelik duraklatıldı" : "Abonelik yeniden aktifleştirildi",
     });
 
     return NextResponse.json({ success: true });

@@ -12,10 +12,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Logo: `width={1380} height={752} className="w-28 lg:w-52 h-auto"` (asil en-boy orani korunur, rounded-full YOK)
 - `rounded-full` asla logo'ya eklenmeyecek (logo 1380x752 dikdörtgen, kare degil)
 
-## Ana Sayfa Demleme Bolumu (src/app/page.tsx)
-- Arkaplan: `bg-[#ebe7e0]` (açik bej)
+## Ana Sayfa Arkaplan
+- Tüm sectionlar: `bg-[#f5f2ed]` (tek tip arkaplan)
 - Görsel: `/celsus/demleme/demleme2.png` — `opacity-15` ile hafif doku olarak
-- Overlay: `from-[#ebe7e0]/80 via-[#ebe7e0]/50 to-[#ebe7e0]/80` (açik, kahverengi degil)
+- Overlay: `from-[#f5f2ed]/80 via-[#f5f2ed]/50 to-[#f5f2ed]/80`
 - Kartlar: `bg-white border border-[#e5e0d8]` (beyaz kartlar)
 
 ## Genel Kural
@@ -23,6 +23,54 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Header, homepage demleme, logo gibi kullanici tarafindan onaylanmis alanlara dokunulmayacak (yeni bir özellik eklenirken bile)
 - `git diff --stat HEAD` ile degisiklik öncesi kontrol yapilacak
 <!-- END:project-crucial-states -->
+
+<!-- BEGIN:build-command -->
+# Build
+- `npx next build` in project root — run after any change to ensure no type/build errors
+<!-- END:build-command -->
+
+<!-- BEGIN:tailwind-v4-rules -->
+# Tailwind v4 @theme Kuralları
+
+## `@theme inline` ZATEN CSS Değişkeni Üretir
+- `@theme inline { --color-primary: #C4724B; }` hem Tailwind utility class'ı (`bg-primary`) HEM DE CSS değişkeni (`var(--color-primary)`) oluşturur.
+- `:root` içinde ayrıca tanımlama YAPILMAYACAK — gereksiz ve cyclic dependency'e yol açar.
+- `@theme inline` içinde `var()` kullanarak kendine referans vermek (`--color-primary: var(--color-primary)`) CSS'de cyclic dependency yaratır, değişken değerini kaybeder.
+
+## ZORUNLU: @theme inline ÖNCE, :root SONRA
+
+Tailwind v4 `@theme inline` her zaman `var()` self-reference üretir (`--color-primary: var(--color-primary)`). Bu yüzden:
+
+```css
+/* 1. ÖNCE: @theme inline (Tailwind utility class'ları için bridge) */
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+}
+
+/* 2. SONRA: :root (gerçek değerler, @theme'in self-reference'ını ezer) */
+:root {
+  --color-primary: #C4724B;
+  --color-primary-hover: #B0603A;
+}
+```
+
+Sıra ÖNEMLİ: `:root` MUTLAKA `@theme inline`'dan SONRA gelmeli. Aksi halde değişkenler boş kalır.
+
+## Geçersiz Kullanım
+```css
+:root { --color-primary: #C4724B; }  /* önce gelirse ezilir */
+@theme inline { --color-primary: var(--color-primary); }  /* sonra gelip üstüne yazar → cyclic! */
+```
+
+VEYA:
+```css
+@theme inline { --color-primary: #C4724B; }  /* Tailwind hex'i var()'a çevirir! */
+```
+
+Tailwind v4 `--color-primary: #C4724B` yazsan bile derlenmiş CSS'de `--color-primary: var(--color-primary)` olur. Bu yüzden `:root` bloğu ŞART.
+```
+<!-- END:tailwind-v4-rules -->
 
 <!-- BEGIN:kahveni-bul-system -->
 # KAHVENI BUL SISTEMI

@@ -39,7 +39,7 @@ export default function ProductDetailModal({ product, onClose }: Props) {
   const numericPrice = parseFloat(displayPrice.replace(/\./g, "").replace(",", "."));
 
   const handleAdd = () => {
-    addItem({ id: product.id, name: product.title, price: numericPrice, image: product.image });
+    addItem({ id: product.id, name: product.title, price: numericPrice, image: product.image, weight: 250, grind: "whole" });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -54,7 +54,7 @@ export default function ProductDetailModal({ product, onClose }: Props) {
         {/* Close */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white text-[#1a1a1a] transition"
+          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white text-heading transition"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
@@ -63,7 +63,7 @@ export default function ProductDetailModal({ product, onClose }: Props) {
 
         <div className="grid grid-cols-1 md:grid-cols-2">
           {/* Image */}
-          <div className="aspect-square bg-[#f8f6f3] flex items-center justify-center overflow-hidden">
+          <div className="aspect-square bg-page-hover flex items-center justify-center overflow-hidden">
             <Image
               src={product.image}
               alt={product.title}
@@ -76,15 +76,15 @@ export default function ProductDetailModal({ product, onClose }: Props) {
           {/* Details */}
           <div className="p-6 md:p-8 flex flex-col">
             {product.cat && (
-              <span className="text-xs tracking-[0.2em] uppercase text-[#C4724B] font-medium mb-2">
+              <span className="text-xs tracking-[0.2em] uppercase text-primary font-medium mb-2">
                 {product.cat}
               </span>
             )}
-            <h2 className="text-xl md:text-2xl font-bold text-[#1a1a1a] leading-tight mb-4">
+            <h2 className="text-xl md:text-2xl font-bold text-heading leading-tight mb-4">
               {product.title}
             </h2>
 
-            <p className="text-sm text-[#4a4a4a] leading-relaxed mb-6">
+            <p className="text-sm text-body leading-relaxed mb-6">
               {product.desc}
             </p>
 
@@ -92,28 +92,28 @@ export default function ProductDetailModal({ product, onClose }: Props) {
             <div className="mb-6">
               {product.salePrice ? (
                 <div className="flex items-baseline gap-3">
-                  <span className="text-2xl font-bold text-[#1a1a1a]">{formatPrice(product.salePrice)} ₺</span>
-                  <span className="text-base text-[#8c8c8c] line-through">{formatPrice(product.price)} ₺</span>
+                  <span className="text-2xl font-bold text-heading">{formatPrice(product.salePrice)} ₺</span>
+                  <span className="text-base text-muted line-through">{formatPrice(product.price)} ₺</span>
                 </div>
               ) : (
-                <span className="text-2xl font-bold text-[#1a1a1a]">{formatPrice(product.price)} ₺</span>
+                <span className="text-2xl font-bold text-heading">{formatPrice(product.price)} ₺</span>
               )}
             </div>
 
             {/* Quantity */}
             <div className="mb-6">
-              <span className="text-xs font-medium text-[#8c8c8c] uppercase tracking-wider block mb-2">Adet</span>
+              <span className="text-xs font-medium text-muted uppercase tracking-wider block mb-2">Adet</span>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="w-10 h-10 border border-[#e5e0d8] flex items-center justify-center text-lg text-[#1a1a1a] hover:bg-[#f8f6f3] transition"
+                  className="w-10 h-10 border border-border flex items-center justify-center text-lg text-heading hover:bg-page-hover transition"
                 >
                   −
                 </button>
-                <span className="w-10 text-center text-lg font-medium text-[#1a1a1a]">{qty}</span>
+                <span className="w-10 text-center text-lg font-medium text-heading">{qty}</span>
                 <button
                   onClick={() => setQty(qty + 1)}
-                  className="w-10 h-10 border border-[#e5e0d8] flex items-center justify-center text-lg text-[#1a1a1a] hover:bg-[#f8f6f3] transition"
+                  className="w-10 h-10 border border-border flex items-center justify-center text-lg text-heading hover:bg-page-hover transition"
                 >
                   +
                 </button>
@@ -126,15 +126,15 @@ export default function ProductDetailModal({ product, onClose }: Props) {
               disabled={added}
               className={`w-full py-3 text-sm font-medium uppercase tracking-wider transition ${
                 added
-                  ? "bg-[#1a1a1a] text-white"
-                  : "bg-[#C4724B] hover:bg-[#B0603A] text-white"
+                  ? "bg-heading text-white"
+                  : "bg-primary hover:bg-primary-hover text-white"
               }`}
             >
               {added ? "✓ Sepete Eklendi" : "Sepete Ekle"}
             </button>
 
             {/* Total */}
-            <p className="text-xs text-[#8c8c8c] mt-3 text-center">
+            <p className="text-xs text-muted mt-3 text-center">
               Toplam: {formatPrice(numericPrice * qty)} ₺
             </p>
           </div>

@@ -44,22 +44,32 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     return `${selam} Ben Stello, Rostello'nun dijital baristasıyım. ☕ Sana en iyi kahveyi bulmak için buradayım. Şu anki bardağında ne içmek istersin?`;
   }
 
-  const saved = loadFromStorage<ChatMessage[] | null>(STORAGE_KEY, null);
-  const [messages, setMessages] = useState<ChatMessage[]>(
-    saved && saved.length > 0 ? saved : [{ role: "assistant" as const, content: ilkMesaj() }]
-  );
-  const [threadId, setThreadId] = useState<string | null>(
-    loadFromStorage<string | null>(THREAD_KEY, null)
-  );
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { role: "assistant" as const, content: ilkMesaj() }
+  ]);
+  const [threadId, setThreadId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    saveToStorage(STORAGE_KEY, messages);
-  }, [messages]);
+    const saved = loadFromStorage<ChatMessage[] | null>(STORAGE_KEY, null);
+    if (saved && saved.length > 0) {
+      setMessages(saved);
+    }
+    const savedThread = loadFromStorage<string | null>(THREAD_KEY, null);
+    if (savedThread) {
+      setThreadId(savedThread);
+    }
+    setHydrated(true);
+  }, []);
 
   useEffect(() => {
-    saveToStorage(THREAD_KEY, threadId);
-  }, [threadId]);
+    if (hydrated) saveToStorage(STORAGE_KEY, messages);
+  }, [messages, hydrated]);
+
+  useEffect(() => {
+    if (hydrated) saveToStorage(THREAD_KEY, threadId);
+  }, [threadId, hydrated]);
 
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || loading) return;
