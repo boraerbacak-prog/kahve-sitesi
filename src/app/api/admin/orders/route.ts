@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { orderConfirmEmail, orderShippedEmail, orderDeliveredEmail } from "@/lib/email";
+import { orderConfirmEmail, orderShippedEmail, orderDeliveredEmail, adminOrderNotification } from "@/lib/email";
 import { releasePendingEarn, refundOrderPoints, awardReferralReward } from "@/lib/loyalty";
 
 export async function GET() {
@@ -34,6 +34,13 @@ export async function PUT(req: Request) {
   // Loyalty: sipariş iptal edildi → pending points iade/refund
   if (status === "cancelled") {
     refundOrderPoints(order.id, refundedTotal).catch(() => {});
+    adminOrderNotification({
+      type: "siparis_iptal",
+      userName: order.user.name || "Bilinmiyor",
+      userEmail: order.user.email || "bilinmiyor",
+      orderTotal: order.total,
+      orderId: order.id,
+    }).catch(() => {});
   }
 
   // Email bildirimleri
