@@ -61,6 +61,8 @@ export default function BildirimBell() {
     duraklatma: "bg-yellow-500",
     erteleme: "bg-blue-500",
     hizlandirma: "bg-purple-500",
+    siparis: "bg-orange-500",
+    siparis_iptal: "bg-red-600",
   };
 
   return (

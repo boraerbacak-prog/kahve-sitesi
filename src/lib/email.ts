@@ -126,6 +126,36 @@ export async function adminSubscriptionNotification({
   }
 }
 
+export async function adminOrderNotification({
+  type,
+  userName,
+  userEmail,
+  orderTotal,
+  orderId,
+}: {
+  type: "siparis" | "siparis_iptal";
+  userName: string;
+  userEmail: string;
+  orderTotal: number;
+  orderId: string;
+}) {
+  const titles: Record<string, string> = {
+    siparis: "🛒 Yeni Sipariş",
+    siparis_iptal: "❌ Sipariş İptal Edildi",
+  };
+  try {
+    await prisma.adminNotification.create({
+      data: {
+        type,
+        title: `${titles[type]} — ${userName}`,
+        message: `${userName} (${userEmail}) · ${orderTotal.toFixed(2)} TL · #${orderId.slice(0, 8)}`,
+      },
+    });
+  } catch (e) {
+    console.error("Bildirim kaydedilemedi:", e);
+  }
+}
+
 export async function deliveryShippedEmail(to: string, deliveryId: string) {
   return sendEmail({
     to,

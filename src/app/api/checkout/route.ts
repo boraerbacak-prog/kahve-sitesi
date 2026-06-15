@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createPendingEarn, useCekirdekPara, hasKahveInCart, getCartKahveTotal } from "@/lib/loyalty";
 import { estimateDeliveryDate } from "@/lib/delivery-estimator";
+import { adminOrderNotification } from "@/lib/email";
 
 async function getClientIp(req: NextRequest | Request): Promise<string | null> {
   try {
@@ -187,6 +188,14 @@ export async function POST(req: NextRequest) {
   const earnedPoints = await createPendingEarn(session.user.id, order.id);
 
   await prisma.cartItem.deleteMany({ where: { userId: session.user.id } });
+
+  adminOrderNotification({
+    type: "siparis",
+    userName: session.user.name || "Bilinmiyor",
+    userEmail: session.user.email || "bilinmiyor",
+    orderTotal: total,
+    orderId: order.id,
+  }).catch(() => {});
 
   return NextResponse.json({
     success: true,
